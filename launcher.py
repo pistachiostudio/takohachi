@@ -5,17 +5,21 @@ bot = commands.Bot(command_prefix="!")
 
 @bot.event
 async def on_ready():
-    print("on_ready")
+    print ("on_ready")
 
 @bot.event
-async def on_voice_state_update(member, before, after):
-    
-    if after.channel is not None:
-        
-        text_channel = member.guild.text_channels[0]
+async def on_message(message):
+    if message.author == bot.user:
+         return
 
-        await text_channel.send(
-            f"{member.name}さんがボイチャ{after.channel.name}に入りました。")
+    if "Bot" in message.content:
+        await message.channel.send("はーい、Botです")
+
+    await bot.process_commands(message)
+
+@bot.command()
+async def hello(ctx):
+    await ctx.send(f"こんにちわ、{ctx.author.name}さん。")
 
 
 bot.run(config.TOKEN)
