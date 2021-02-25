@@ -29,6 +29,13 @@ async def on_message(message):
 
 @bot.command()
 async def yo(ctx):
-    await ctx.send(f"Yo bro, {ctx.author.name} dude.")
+
+    def check_message_author(messe):
+        return messe.author is ctx.author
+    
+    await ctx.send(f"Yo bro, {ctx.author.mention}. How do you do? dude!")
+
+    msse=await bot.wait_for('message', check=check_message_author)
+    await ctx.send(f"Great! You feel {messe.content}!!")
             
 bot.run(config.TOKEN)
