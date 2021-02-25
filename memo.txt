@@ -1,0 +1,43 @@
+・仮想環境 .venv
+
+
+・discord.pyをインストール
+    pip install discord.py
+
+
+・requirements.txtに書き出し
+    pip freeze > requirements.txt
+    pip install -r requirements.txt
+
+
+・from <package> import <module> でインポート
+    import <module>の場合もある。
+    from discord.ext import commands の場合はdiscord.extパッケージ内のcommandsモジュールをインポート
+
+・@bot.event == デコレーター
+
+
+・git
+    $git init == リポジトリの作成
+    .gitignoreに記載されたものは管理から外れる
+    $git status -s
+    $git add laucher.pyなどファイル名 == ステージング （Aになる）
+    $git add . で??をすべてステージング
+    $git reset でステージングをリセット
+    $git commit -m "コメント" == コミット
+    $git log == コミットのログを参照
+    赤色のM == 変更があったことを示す。再度ステージング→コミットが必要
+    緑色のM == ステージング完了
+
+・github
+    まずはgithubでリポジトリ（リモートリポジトリ）を作成
+    $git remote add リモート名(originなど) https://github.com/<ユーザー名>/<プロジェクト名>.git で紐付け
+    $git push origin master == マスターへプッシュ
+    $git branch == ブランチ一覧 (masterのみ)
+    $git branch 新しいブランチ名 == 新しいブランチを作る
+    $git checkout ブランチ名 == ブランチへの移動
+
+
+
+
+
