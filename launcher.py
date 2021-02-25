@@ -14,6 +14,7 @@ async def on_message(message):
         # Botからのメッセージには反応しない
         # この判定をしないと無限ループが起きる
         return
+        
     DIS_WORDS = ['バカ', 'ばか', 'あほ', '死ね', 'だめ', 'ゴミ']
     
     # 全NGワードについて存在確認
@@ -29,13 +30,11 @@ async def on_message(message):
 
 @bot.command()
 async def yo(ctx):
-
-    def check_message_author(messe):
-        return messe.author is ctx.author
-    
     await ctx.send(f"Yo bro, {ctx.author.mention}. How do you do? dude!")
 
-    msse=await bot.wait_for('message', check=check_message_author)
-    await ctx.send(f"Great! You feel {messe.content}!!")
-            
+@bot.command()
+async def apex(ctx):
+    await ctx.send(f"{ctx.author.mention} You are LEGENDS!!!")
+
+
 bot.run(config.TOKEN)
