@@ -13,6 +13,7 @@ class Greet(commands.Cog):
         # 待機するメッセージのチェック関数
         def check_message_author(msg):
             return msg.author is ctx.author
+            
         # あいさつする既存の処理
         await ctx.send(f"こんにちは、{ctx.author.name}さん。")
         await ctx.send("ご気分はいかがでしょうか？")
