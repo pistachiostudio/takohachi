@@ -19,10 +19,7 @@ async def on_message(self, message):
         if dis_word in message.content:
             # NGワードを発見したらテキストチャンネルに通知
             await message.channel.send(f"{dis_word}野郎はテメェだ！")
-
-    if "bot" in message.content:
-        await message.channel.send("はーい助六ボットです。")
-
+            return
 #    await self.bot.process_commands(message) これがcogでは不要になる！！
 
 
