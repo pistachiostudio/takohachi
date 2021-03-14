@@ -8,7 +8,7 @@ bot = commands.Bot(command_prefix="!!")
 
 @bot.event
 async def on_ready():
-    print("on_ready")
+    print("Yeah!_bot_is_on_ready")
     return
 
 
@@ -17,5 +17,6 @@ bot.load_extension("cogs.tanaka")
 bot.load_extension("cogs.yobro")
 bot.load_extension("cogs.vcalert")
 bot.load_extension("cogs.greet")
+bot.load_extension("cogs.notify")
 
 bot.run(config.TOKEN)
