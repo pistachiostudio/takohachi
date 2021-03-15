@@ -11,9 +11,7 @@ class Yobro(commands.Cog):
     @commands.is_owner()
     @commands.command()
     async def reload(self, ctx, module_name):
-        await ctx.send(f"**{module_name}** is 
-        
-        reloading")
+        await ctx.send(f"**{module_name}** is reloading")
         try:
             self.bot.reload_extension(module_name)
             await ctx.send(f"Well done!")
