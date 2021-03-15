@@ -5,6 +5,7 @@ import discord
 
 
 bot = commands.Bot(command_prefix="!!")
+token = os.environ['DISCORD_BOT_TOKEN']
 
 @bot.event
 async def on_ready():
@@ -19,4 +20,4 @@ bot.load_extension("cogs.vcalert")
 bot.load_extension("cogs.greet")
 bot.load_extension("cogs.notify")
 
-bot.run(config.TOKEN)
+bot.run(token)
