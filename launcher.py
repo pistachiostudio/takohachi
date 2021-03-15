@@ -12,7 +12,7 @@ async def on_ready():
     return
 
 
-#bot.load_extension("dispander") #diapanderをextensionとして読み込み
+bot.load_extension("dispander") #diapanderをextensionとして読み込み
 bot.load_extension("cogs.tanaka")
 bot.load_extension("cogs.yobro")
 bot.load_extension("cogs.vcalert")
