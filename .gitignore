@@ -1,1 +1,5 @@
+.venv/
+.vscode/
+config.py
+__pycache__/
 memo.txt
