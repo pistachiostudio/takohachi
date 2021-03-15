@@ -5,7 +5,6 @@ import discord
 
 
 bot = commands.Bot(command_prefix="!!")
-token = 'DISCORD_BOT_TOKEN'
 
 @bot.event
 async def on_ready():
@@ -13,11 +12,11 @@ async def on_ready():
     return
 
 
-bot.load_extension("dispander") #diapanderをextensionとして読み込み
+#bot.load_extension("dispander") #diapanderをextensionとして読み込み
 bot.load_extension("cogs.tanaka")
 bot.load_extension("cogs.yobro")
 bot.load_extension("cogs.vcalert")
 bot.load_extension("cogs.greet")
 bot.load_extension("cogs.notify")
 
-bot.run(token)
+bot.run(config.TOKEN)
