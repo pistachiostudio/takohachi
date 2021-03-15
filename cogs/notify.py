@@ -18,7 +18,7 @@ class Notify(commands.Cog):
         await ctx.send(f"「{ctx.channel.name}」に時報を通知します！")
 
 
-    @tasks.loop(seconds=10.0)
+    @tasks.loop(hours=1.0)
     async def notifier(self):
         print("start_notifier")
         now = datetime.now()
