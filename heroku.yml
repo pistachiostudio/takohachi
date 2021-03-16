@@ -1,17 +1,7 @@
-name: Check Syntax
-
-on: [push]
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v1
-    - name: Set up Python 3.9.1
-      uses: actions/setup-python@v1
-      with:
-        python-version: 3.9.1
-    - name: Install dependencies
-      run: python -m pip install discord.py[voice] flake8
-    - name: Run flake8
-      run: flake8 --ignore=E302,E501
+build:
+  languages:
+    - python
+  docker:
+    web: Dockerfile
+run:
+  discordbot: python launcher.py
