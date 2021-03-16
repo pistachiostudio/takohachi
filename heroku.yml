@@ -1,5 +1,2 @@
-build:
-  docker:
-    web: Dockerfile
 run:
   discordbot: python launcher.py
