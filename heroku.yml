@@ -1,0 +1,4 @@
+build:
+  null:
+run:
+  discordbot: python launcher.py
