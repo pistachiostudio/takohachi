@@ -1,0 +1,5 @@
+build:
+  languages:
+    - python
+run:
+  discordbot: python launcher.py
