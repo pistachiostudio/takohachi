@@ -1,6 +1,4 @@
 build:
-  languages:
-    - python
   docker:
     web: Dockerfile
 run:
