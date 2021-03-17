@@ -9,7 +9,7 @@ class Greet(commands.Cog):
 
     
     @commands.command()  # ★変更点1: bot -> commandsに修正
-    async def hello(self, ctx):  # ★変更点2: self引数を追加する
+    async def bobobob(self, ctx):  # ★変更点2: self引数を追加する
         # 待機するメッセージのチェック関数
         def check_message_author(msg):
             return msg.author is ctx.author
