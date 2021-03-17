@@ -10,7 +10,7 @@ bot = commands.Bot(command_prefix="!!")
 @bot.event
 async def on_ready():
     print("Yeah!_bot_is_on_ready")
-    await client.change_presence(activity=discord.Game(name="ピスタチオゲーム部", type=1))
+    await bot.change_presence(activity=discord.Game(name="ピスタチオゲーム部", type=1))
     return
 
 @bot.command()
