@@ -14,7 +14,7 @@ class Tanaka(commands.Cog):
         # この判定をしないと無限ループが起きる
             return
         
-        DIS_WORDS = ['バカ', 'ばか', 'あほ', '死ね', 'だめ', 'ゴミ']
+        DIS_WORDS = ['バカ', 'ばか', 'クソ', 'くそ', 'ゴミ', 'ごみ']
     
         # 全NGワードについて存在確認
         for dis_word in DIS_WORDS:
