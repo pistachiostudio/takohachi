@@ -18,7 +18,7 @@ class VC_alert(commands.Cog):
         not_05 = self.bot.get_channel(819874983290339338)
 
         #除外チャンネルの場合はreturn
-        if after.channel is not_01 or after.channel is not_02 or after.channel is not_03 or after.channel is not_04 or after.channel is not_05:
+        if after.channel in [not_01, not_02, not_03, not_04, not_05]:
             return
 
         else:
