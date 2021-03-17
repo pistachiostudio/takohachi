@@ -16,27 +16,27 @@ class VC_alert(commands.Cog):
         VC_ID_05 = self.bot.get_channel(819874983290339338)
 
         if after.channel is VC_ID_01 and not None:
-            channel_id = 786793644283265046
+            channel_id = 821790152085995561
             text_channel = self.bot.get_channel(channel_id)
             await text_channel.send(f"**{member.name}** が **{after.channel.name}** に入りました。")
 
         elif after.channel is VC_ID_02 and not None:
-            channel_id = 786793644283265046
+            channel_id = 821790152085995561
             text_channel = self.bot.get_channel(channel_id)
             await text_channel.send(f"**{member.name}** が **{after.channel.name}** に入りました。")
 
         elif after.channel is VC_ID_03 and not None:
-            channel_id = 786793644283265046
+            channel_id = 821790152085995561
             text_channel = self.bot.get_channel(channel_id)
             await text_channel.send(f"**{member.name}** が **{after.channel.name}** に入りました。")
 
         elif after.channel is VC_ID_04 and not None:
-            channel_id = 786793644283265046
+            channel_id = 821790152085995561
             text_channel = self.bot.get_channel(channel_id)
             await text_channel.send(f"**{member.name}** が **{after.channel.name}** に入りました。")
 
         elif after.channel is VC_ID_05 and not None:
-            channel_id = 786793644283265046
+            channel_id = 821790152085995561
             text_channel = self.bot.get_channel(channel_id)
             await text_channel.send(f"**{member.name}** が **{after.channel.name}** に入りました。")            
 
