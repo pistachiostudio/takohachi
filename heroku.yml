@@ -1,4 +1,4 @@
 build:
   null:
 run:
-  web: python launcher.py
+  bot: python launcher.py
