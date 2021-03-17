@@ -26,7 +26,7 @@ class VC_alert(commands.Cog):
                 #メッセージを送るテキストチャンネルID
                 channel_id = 821804359700185088
                 text_channel = self.bot.get_channel(channel_id)
-                await text_channel.send(f"**{member.name}** が **{after.channel.name}** に入りました。")
+                await text_channel.send(f"**{member.nick}** が **{after.channel.name}** に入りました。")
 
 def setup(bot):
     bot.add_cog(VC_alert(bot))
