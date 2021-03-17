@@ -11,14 +11,14 @@ class VC_alert(commands.Cog):
     async def on_voice_state_update(self, member, before, after):
         
         #省きたいチャンネルidを入力
-        not_01 = self.bot.get_channel(762575797327757322)
-        not_02 = self.bot.get_channel(762576631810228256)
-        not_03 = self.bot.get_channel(780611246155497482)
-        not_04 = self.bot.get_channel(812312211112198144)
-        not_05 = self.bot.get_channel(819874983290339338)
+        not_01 = self.bot.get_channel(803245850616791040)
+        not_02 = self.bot.get_channel(801064070399787028)
+        #not_03 = self.bot.get_channel()
+        #not_04 = self.bot.get_channel()
+        #not_05 = self.bot.get_channel()
 
         #除外チャンネルの場合はreturn
-        if after.channel in [not_01, not_02, not_03, not_04, not_05]:
+        if after.channel in [not_01, not_02]:
             return
 
         else:
