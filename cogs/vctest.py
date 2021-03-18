@@ -24,7 +24,7 @@ class VC_test(commands.Cog):
         else:
             if after.channel and len(after.channel.members) == 1:
                 #メッセージを送るテキストチャンネルID
-                channel_id = 821804359700185088
+                channel_id = 822096585429090324
                 text_channel = self.bot.get_channel(channel_id)
                 await text_channel.send(f"**{member.nick}** が **{after.channel.name}** をはじめました")
 
