@@ -25,6 +25,7 @@ bot.load_extension("cogs.tanaka")
 bot.load_extension("cogs.marimo")
 bot.load_extension("cogs.yobro")
 bot.load_extension("cogs.vcalert")
+bot.load_extension("cogs.vctest")
 bot.load_extension("cogs.greet")
 bot.load_extension("cogs.notify")
 
