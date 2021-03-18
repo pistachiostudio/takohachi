@@ -11,8 +11,8 @@ class VC_test(commands.Cog):
     async def on_voice_state_update(self, member, before, after):
         
         #省きたいチャンネルidを入力
-        not_01 = self.bot.get_channel(821763859949420615)
-        not_02 = self.bot.get_channel(821796392224948244)
+        not_01 = self.bot.get_channel(803245850616791040) #music club vc
+        not_02 = self.bot.get_channel(801064070399787028) #system vc
         #not_03 = self.bot.get_channel()
         #not_04 = self.bot.get_channel()
         #not_05 = self.bot.get_channel()
@@ -24,7 +24,7 @@ class VC_test(commands.Cog):
         else:
             if after.channel and len(after.channel.members) == 1:
                 #メッセージを送るテキストチャンネルID
-                channel_id = 821747117290160189
+                channel_id = 821804359700185088
                 text_channel = self.bot.get_channel(channel_id)
                 await text_channel.send(f"**{member.nick}** が **{after.channel.name}** をはじめました")
 
