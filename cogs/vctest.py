@@ -22,9 +22,7 @@ class VC_test(commands.Cog):
             return
 
         else:
-            if before.channel == after.channel
-                pass
-            else after.channel and len(after.channel.members) == 1:
+            if before.channel is None and after.channel and len(after.channel.members) == 1:
                 #メッセージを送るテキストチャンネルID
                 channel_id = 821747117290160189
                 text_channel = self.bot.get_channel(channel_id)
