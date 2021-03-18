@@ -26,14 +26,8 @@ class VC_test(commands.Cog):
                 #メッセージを送るテキストチャンネルID
                 channel_id = 821747117290160189
                 text_channel = self.bot.get_channel(channel_id)
-                await text_channel.send(f"**{member.nick}** が **{after.channel.name}** に入りました。")
+                await text_channel.send(f"**{member.nick}** が **{after.channel.name}** をはじめました")
 
-
-            if before.channel and len(before.channel.members) == 0:
-                #メッセージを送るテキストチャンネルID
-                channel_id = 821747117290160189
-                text_channel = self.bot.get_channel(channel_id)
-                await text_channel.send(f"**{member.nick}** が **{before.channel.name}** に入りました。")
 
 def setup(bot):
     bot.add_cog(VC_test(bot))
