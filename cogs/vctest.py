@@ -26,7 +26,7 @@ class VC_test(commands.Cog):
                 #メッセージを送るテキストチャンネルID
                 channel_id = 822096585429090324
                 text_channel = self.bot.get_channel(channel_id)
-                await text_channel.send(f"@vc_alert **{member.display_name}** が **{after.channel.name}** をはじめました！")
+                await text_channel.send(f"<@&822096110365442118> **{member.display_name}** が **{after.channel.name}** をはじめました！")
 
 
 def setup(bot):
