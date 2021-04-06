@@ -20,8 +20,7 @@ class Zenkaku(commands.Cog):
         for zenkaku in ZENWORDS:
             if zenkaku in message.content:
             # NGワードを発見したらテキストチャンネルに通知
-                for reaction in [":kissing:", ":eyes:",]:
-                    await ctx.add_reaction(reaction)
+                await message.add_reaction("😙")
                 
     #await self.bot.process_commands(message) これがcogでは不要になる！！
 
