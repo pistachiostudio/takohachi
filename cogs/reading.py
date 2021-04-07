@@ -10,7 +10,6 @@ class Reading(commands.Cog):
 
 voiceChannel: VoiceChannel
 
-    @commands.is_owner()
     @commands.command()
     async def hi(self, ctx):
 
