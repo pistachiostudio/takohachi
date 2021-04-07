@@ -4,7 +4,6 @@ import asyncio
 import discord
 from discord.channel import VoiceChannel
 from typing import Dict
-from dbot.core.bot import DBot
 
 class Voice(commands.Cog):
     def __init__(self, bot: DBot):
