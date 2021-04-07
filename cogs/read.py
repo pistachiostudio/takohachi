@@ -8,7 +8,7 @@ class Reading(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-   @commands.command()
+    @commands.command()
     async def hi(self, ctx):
         # VoiceChannel未参加
         if not ctx.author.voice or not ctx.author.voice.channel:
