@@ -34,6 +34,16 @@ class Hankaku(commands.Cog):
                     await message.add_reaction(reaction)
                     
                     
+        KNGWWORDS = ['神奈川', 'kanagawa', 'Kanagawa', 'KANAGAWA', 'かながわ', 'カナガワ', 'kngw', 'KNGW', 'k.n.g.w', "K.N.G.W"]
+    
+        # 全NGワードについて存在確認
+        for kngw in KNGWWORDS:
+            if kngw in message.content:
+            # NGワードを発見したらテキストチャンネルに通知
+                for reaction in [":regional_indicator_k:", ":regional_indicator_n:", ":regional_indicator_g:", ":regional_indicator_w:", "👀"]:
+                    await message.add_reaction(reaction)
+                    
+                    
                 
     #await self.bot.process_commands(message) これがcogでは不要になる！！
 
