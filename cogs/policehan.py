@@ -40,7 +40,7 @@ class Hankaku(commands.Cog):
         for kngw in KNGWWORDS:
             if kngw in message.content:
             # NGワードを発見したらテキストチャンネルに通知
-                for reaction in ["regional indicator k regional indicator", "🇰", "👀"]:
+                for reaction in ["🇰", "🇳", "🇬", "🇼", "👀"]:
                     await message.add_reaction(reaction)
                     
                     
