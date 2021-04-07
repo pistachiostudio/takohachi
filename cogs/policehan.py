@@ -22,6 +22,18 @@ class Hankaku(commands.Cog):
             # NGワードを発見したらテキストチャンネルに通知
                 for reaction in ["a:p00_siren:801424753419354133", ":p01_text_han:828978524596731937", ":p01_text_kaku:828979073694040084", ":p01_text_ch4:808200593813274644", ":p01_text_ch13:808515343957098496", "👀"]:
                     await message.add_reaction(reaction)
+                   
+                
+        GOMIWORDS = ['ごみ', 'ゴミ', '53', '５３']
+    
+        # 全NGワードについて存在確認
+        for gomi in GOMIWORDS:
+            if gomi in message.content:
+            # NGワードを発見したらテキストチャンネルに通知
+                for reaction in ["a:p00_gomi:802176598756425779", "👀"]:
+                    await message.add_reaction(reaction)
+                    
+                    
                 
     #await self.bot.process_commands(message) これがcogでは不要になる！！
 
