@@ -14,7 +14,7 @@ class Marimo(commands.Cog):
     async def mt(self, ctx):
         now = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=-4)))
         JST = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=+9)))
-        await ctx.send(f"marimo time = {now.strftime('**%m/%d %H:%M**')} \n In Japan = {JST.strftime('**%m/%d %H:%M**')}")
+        await ctx.send(f"marimo time = {now.strftime('**%m/%d %H:%M**')}\n(In Japan = {JST.strftime('%m/%d %H:%M')})")
 
 
 def setup(bot):
