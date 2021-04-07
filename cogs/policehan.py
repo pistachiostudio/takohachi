@@ -24,7 +24,7 @@ class Hankaku(commands.Cog):
                     await message.add_reaction(reaction)
                    
                 
-        GOMIWORDS = ['ごみ', 'ゴミ', '53', '５３']
+        GOMIWORDS = ['gomi', 'GOMI', 'Gomi', 'ごみ', 'ゴミ', '53', '５３']
     
         # 全NGワードについて存在確認
         for gomi in GOMIWORDS:
