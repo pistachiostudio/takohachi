@@ -13,12 +13,12 @@ class VC_alert(commands.Cog):
         #省きたいチャンネルidを入力
         not_01 = self.bot.get_channel(803245850616791040) #music club vc
         not_02 = self.bot.get_channel(801064070399787028) #system vc
-        #not_03 = self.bot.get_channel()
+        not_03 = self.bot.get_channel(762561932229738509) #sukeroku voice
         #not_04 = self.bot.get_channel()
         #not_05 = self.bot.get_channel()
 
         #除外チャンネルの場合はreturn
-        if after.channel in [not_01, not_02]:
+        if after.channel in [not_01, not_02, not_03]:
             return
 
         else:
