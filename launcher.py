@@ -23,7 +23,6 @@ async def playing(ctx, title):
 bot.load_extension("dispander") #diapanderをextensionとして読み込み
 #bot.load_extension("cogs.tanaka")
 bot.load_extension("cogs.marimo")
-bot.load_extension("cogs.reading")
 bot.load_extension("cogs.policezen")
 bot.load_extension("cogs.policehan")
 bot.load_extension("cogs.react")
