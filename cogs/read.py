@@ -3,28 +3,20 @@ import config
 import asyncio
 import discord
 from discord.channel import VoiceChannel
-from typing import Dict
 
-class Voice(commands.Cog):
-    def __init__(self, bot: DBot):
+class Reading(commands.Cog):
+    def __init__(self, bot):
         self.bot = bot
-        self.voice_clients: Dict[int, discord.VoiceClient] = {}
 
-    @commands.command()
-    async def hi(self, ctx: commands.Context):
+   @commands.command()
+    async def hi(self, ctx):
         # VoiceChannel未参加
         if not ctx.author.voice or not ctx.author.voice.channel:
             return await ctx.send('先にボイスチャンネルに参加してください')
         vc = await ctx.author.voice.channel.connect()
         self.voice_clients[ctx.guild.id] = vc
+        await message.channel.send('読み上げBotが参加しました')
 
-    @commands.command()
-    async def bye(self, ctx: commands.Context):
-        vc = self.voice_clients.get(ctx.guild.id)
-        if vc is None:
-            return await ctx.send('ボイスチャンネルにまだ未参加です')
-        await vc.disconnect()
-        del self.voice_clients[ctx.guild.id]
 
 def setup(bot):
-    bot.add_cog(Voice(bot))
+    bot.add_cog(Reading(bot))
