@@ -13,7 +13,8 @@ class Marimo(commands.Cog):
     @commands.command()
     async def mt(self, ctx):
         now = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=-4)))
-        await ctx.send(f"marimo time = {now.strftime('**%m/%d %H:%M**')} ")
+        JST = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=+9)))
+        await ctx.send(f"marimo time = {now.strftime('**%m/%d %H:%M**')}\In Japan = {JST.strftime('**%m/%d %H:%M**')}")
 
 
 def setup(bot):
