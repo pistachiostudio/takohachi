@@ -30,7 +30,7 @@ bot.load_extension("cogs.react")
 bot.load_extension("cogs.yobro")
 #bot.load_extension("cogs.vcalert")
 bot.load_extension("cogs.vctest")
-bot.load_extension("cogs.greet")
+#bot.load_extension("cogs.greet")
 bot.load_extension("cogs.notify")
 
 bot.run(config.TOKEN)

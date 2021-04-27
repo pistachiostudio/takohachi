@@ -20,7 +20,7 @@ class Hankaku(commands.Cog):
         for hankaku in HANWORDS:
             if hankaku in message.content:
             # NGワードを発見したらテキストチャンネルに通知
-                for reaction in ["a:p00_siren:801424753419354133", ":p01_text_han:828978524596731937", ":p01_text_kaku:828979073694040084", ":p01_text_ch4:808200593813274644", ":p01_text_ch13:808515343957098496", "👀"]:
+                for reaction in ["a:p00_siren:801424753419354133", ":p01_text_han:828978524596731937", ":p01_text_kaku:828979073694040084", "👀"]:
                     await message.add_reaction(reaction)                   
                     
                 
