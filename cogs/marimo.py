@@ -1,5 +1,4 @@
 from discord.ext import commands
-import config
 import discord
 import asyncio
 import datetime
