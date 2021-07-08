@@ -1,10 +1,12 @@
-from discord.ext import commands
-import config
-import asyncio
-import discord
+import os
 
+import discord
+from discord.ext import commands
 
 bot = commands.Bot(command_prefix="!!")
+
+# 環境変数からトークンを読み込む
+TOKEN = os.environ["TOKEN"]
 
 
 @bot.event
@@ -13,6 +15,7 @@ async def on_ready():
     await bot.change_presence(activity=discord.Game(name="ピスタチオゲーム部", type=1))
     return
 
+
 @bot.command()
 async def playing(ctx, title):
     client = bot
@@ -20,17 +23,17 @@ async def playing(ctx, title):
     await client.change_presence(activity=game)
 
 
-bot.load_extension("dispander") #diapanderをextensionとして読み込み
-#bot.load_extension("cogs.tanaka")
+bot.load_extension("dispander")  # diapanderをextensionとして読み込み
+# bot.load_extension("cogs.tanaka")
 bot.load_extension("cogs.marimo")
-#bot.load_extension("cogs.read")
-#bot.load_extension("cogs.policezen")
-#bot.load_extension("cogs.policehan")
-#bot.load_extension("cogs.react")
-#bot.load_extension("cogs.yobro")
-#bot.load_extension("cogs.vcalert")
+# bot.load_extension("cogs.read")
+# bot.load_extension("cogs.policezen")
+# bot.load_extension("cogs.policehan")
+# bot.load_extension("cogs.react")
+# bot.load_extension("cogs.yobro")
+# bot.load_extension("cogs.vcalert")
 bot.load_extension("cogs.vctest")
-#bot.load_extension("cogs.greet")
-#bot.load_extension("cogs.notify")
+# bot.load_extension("cogs.greet")
+# bot.load_extension("cogs.notify")
 
-bot.run(config.TOKEN)
+bot.run(TOKEN)
