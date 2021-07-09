@@ -35,5 +35,6 @@ bot.load_extension("cogs.marimo")
 bot.load_extension("cogs.vctest")
 # bot.load_extension("cogs.greet")
 # bot.load_extension("cogs.notify")
+bot.load_extension("cogs.what_today")
 
 bot.run(TOKEN)
