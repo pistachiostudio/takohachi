@@ -1,11 +1,8 @@
-import asyncio
-import datetime
 import re
 from datetime import datetime, timedelta, timezone
 from random import randint
 from urllib import parse
 
-import discord
 import requests
 from discord.ext import commands
 
