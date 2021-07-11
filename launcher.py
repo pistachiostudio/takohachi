@@ -12,10 +12,10 @@ TOKEN = os.environ["TOKEN"]
 
 def init():
     # GoogleDrive API のクレデンシャル情報を保持したファイルを生成する
-    client_secrets = os.environ["CLIENT_SECRET"]
+    client_secrets = os.environ['CLIENT_SECRET']
     current_path = Path(os.path.realpath(__file__)).parent
-    file = current_path / "client_secrets.json"
-    with open(file, "w") as f:
+    file = current_path / 'client_secrets.json'
+    with open(file, 'w') as f:
         f.write(client_secrets)
 
 

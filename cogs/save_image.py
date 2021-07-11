@@ -6,7 +6,7 @@ import discord
 from discord.ext import commands
 from pydrive2.auth import GoogleAuth
 from pydrive2.drive import GoogleDrive
-
+from oauth2client.service_account import ServiceAccountCredentials
 
 class SavaImage(commands.Cog):
     def __init__(self, bot):
@@ -66,8 +66,11 @@ class SavaImage(commands.Cog):
                 os.remove(filename)
 
     def _upload_img(self, filename, upload_filename):
+        scope = ['https://www.googleapis.com/auth/drive']
+        json_keyfile = 'client_secrets.json'
+        credentials = ServiceAccountCredentials.from_json_keyfile_name(json_keyfile, scope)
         gauth = GoogleAuth()
-        gauth.CommandLineAuth()
+        gauth.credentials = credentials
         drive = GoogleDrive(gauth)
 
         folder_id = os.environ["DRIVE_FOLDER_ID"]
