@@ -81,7 +81,7 @@ class SavaImage(commands.Cog):
         filename = str(uuid.uuid4())
         return filename
 
-    def _get_neko_emoji_count(reactions) -> int:
+    def _get_neko_emoji_count(self, reactions) -> int:
         for reaction in reactions:
             if str(reaction.emoji) == "<:p01_neko:863117588757872730>":
                 count = reaction.count
