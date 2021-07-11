@@ -1,9 +1,0 @@
-client_config_file: client_secrets.json
-
-# 認証情報をファイルに保存する設定
-save_credentials: True
-save_credentials_backend: file
-save_credentials_file: credentials.json
-
-# 認証情報(credentials)を自動で更新する設定（ブラウザが立ち上がらなくなる）
-get_refresh_token: True
