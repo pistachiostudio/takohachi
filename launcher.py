@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 
 import discord
 from discord.ext import commands
@@ -7,6 +8,15 @@ bot = commands.Bot(command_prefix="!!")
 
 # 環境変数からトークンを読み込む
 TOKEN = os.environ["TOKEN"]
+
+
+def init():
+    # GoogleDrive API のクレデンシャル情報を保持したファイルを生成する
+    client_secrets = os.environ["CLIENT_SECRET"]
+    current_path = Path(os.path.realpath(__file__)).parent
+    file = current_path / "client_secrets.json"
+    with open(file, "w") as f:
+        f.write(client_secrets)
 
 
 @bot.event
@@ -23,6 +33,8 @@ async def playing(ctx, title):
     await client.change_presence(activity=game)
 
 
+init()
+
 bot.load_extension("dispander")  # diapanderをextensionとして読み込み
 # bot.load_extension("cogs.tanaka")
 bot.load_extension("cogs.marimo")
@@ -36,5 +48,7 @@ bot.load_extension("cogs.vctest")
 # bot.load_extension("cogs.greet")
 # bot.load_extension("cogs.notify")
 bot.load_extension("cogs.what_today")
+bot.load_extension("cogs.save_image")
+bot.load_extension("cogs.delete_image")
 
 bot.run(TOKEN)
