@@ -5,3 +5,5 @@ __pycache__/
 memo.txt
 spread.py
 takohachi-c337db7af3a7.json
+credentials.json
+client_secrets.json
