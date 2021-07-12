@@ -40,5 +40,5 @@ Discord サーバーへの加入は[こちら](https://discord.com/invite/6XbCyR
 
 ## License
 
-Takohachi is Released under the MIT license.  
+Takohachi is released under the MIT license.  
 Copyright (c) 2021 Pistachio Gaming & Pistachio Studio
