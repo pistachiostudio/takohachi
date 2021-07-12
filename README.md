@@ -22,11 +22,6 @@ Discord サーバーへの加入は[こちら](https://discord.com/invite/6XbCyR
 	- その他参考
 		- [Qiita - 【Heroku】Herokuで環境変数を設定する方法](https://qiita.com/mzmz__02/items/64db94b8fc67ee0a9068)
 
-## License
-
-Takohachi is Released under the MIT lisence .
-Copyright (c) 2021 Pistachio Gaming & Pistachio Studio
-
 ## Pistachio Studio
 
 川崎のヒップホップ/録音/プロデューサーチーム。ヒップホップクルー = [CBS](https://youtu.be/A3oshdbRbBI)とそのバックバンドChicken Is Nice中心に15年以上活動中。
@@ -42,3 +37,8 @@ Copyright (c) 2021 Pistachio Gaming & Pistachio Studio
 - [YouTube](https://www.youtube.com/c/pistachiostudiokngw)
 - [Soundcloud](https://soundcloud.com/pistachio-studio)
 - [Spotify Playlist](https://open.spotify.com/user/2wf7ulo34ef46fu3awnq984wj?si=mm3fQfatR1OF2Kgr_uieGw)
+
+## License
+
+Takohachi is Released under the MIT lisence.  
+Copyright (c) 2021 Pistachio Gaming & Pistachio Studio
