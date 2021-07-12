@@ -23,7 +23,9 @@ Discord サーバーへの加入は[こちら](https://discord.com/invite/6XbCyR
 		- [Qiita - 【Heroku】Herokuで環境変数を設定する方法](https://qiita.com/mzmz__02/items/64db94b8fc67ee0a9068)
 
 ## License
-MIT？
+
+Takohachi is Released under the MIT lisence .
+Copyright (c) 2021 Pistachio Gaming & Pistachio Studio
 
 ## Pistachio Studio
 
