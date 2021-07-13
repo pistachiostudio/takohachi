@@ -1,4 +1,4 @@
-# Discord Bot `タコ八`
+# <img src="https://user-images.githubusercontent.com/4445606/125382515-c0116400-e3d0-11eb-9237-8b3ec76996b3.png" width="40px"> Discord Bot `タコ八` <img src="https://user-images.githubusercontent.com/4445606/125382515-c0116400-e3d0-11eb-9237-8b3ec76996b3.png" width="40px">
 
 ピスタチオゲーム部親睦会というDiscordサーバーで動いている Bot です。
 Discord サーバーへの加入は[こちら](https://discord.com/invite/6XbCyRF)から！  
