@@ -13,6 +13,7 @@ Discord サーバーへの加入は[こちら](https://discord.com/invite/6XbCyR
 
 - 画像付きのチャットへ特定の絵文字でリアクションをするとその画像を指定のGoogle Driveフォルダへアップロード  
 たくさん投稿されるペットの写真で特にかわいいものを保存し、来年のカレンダーを作るぞ！  
+(このサーバーでは12時間経過すると書き込みが削除されていくという狂ったものとなっているため、保存していかないとすべて消えてしまいます)
 ![image](https://user-images.githubusercontent.com/4445606/125381129-555f2900-e3ce-11eb-8de4-9b055dcdf3ac.png)  
 
 - チャットのパーマリンクが投稿された場合に内容を展開する。[dispander](https://github.com/DiscordBotPortalJP/dispander)をそのままお借りしています。  
