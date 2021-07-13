@@ -37,7 +37,7 @@ Discord サーバーへの加入は[こちら](https://discord.com/invite/6XbCyR
 
 ## Pistachio Studio
 
-川崎のヒップホップ/録音/プロデューサーチーム。ヒップホップクルー = [CBS](https://youtu.be/A3oshdbRbBI)とそのバックバンドChicken Is Nice中心に15年以上活動中。
+川崎のヒップホップ/録音/プロデューサーチーム。ヒップホップクルー = [CBS](https://youtu.be/A3oshdbRbBI)とそのバックバンドChicken Is Niceを中心に15年以上活動中。
 全員30超え、仕事あり、家庭あり、ガキもあり、ペットもあり、かなり限界ながらも活動中。
 [chelmico](https://www.youtube.com/watch?v=76sNmqMzUuI)というラップユニットの裏方や、シンガーソングライター [iri](https://www.youtube.com/watch?v=3WlOZTy072k)のプロデュースなどもやっています。
 **ピスタチオゲーム部親睦会**はPistachio Studioのメンバーが中心となって発足したエンジョイゲームコミュニティです。
