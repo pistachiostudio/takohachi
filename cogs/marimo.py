@@ -1,6 +1,4 @@
 from discord.ext import commands
-import discord
-import asyncio
 import datetime
 from datetime import timedelta
 
@@ -13,7 +11,9 @@ class Marimo(commands.Cog):
     async def mt(self, ctx):
         now = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=-4)))
         JST = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=+9)))
-        await ctx.send(f"marimo time = {now.strftime('**%m/%d %H:%M**')}\n(In Japan = {JST.strftime('%m/%d %H:%M')})")
+        marimo_time = f"{now.month}/{now.day} {now.hour}:{now.minute:02}"
+        japan_time = f"{JST.month}/{JST.day} {JST.hour}:{JST.minute:02}"
+        await ctx.send(f"marimo time = **{marimo_time}**\n(In Japan = {japan_time})")
 
 
 def setup(bot):
