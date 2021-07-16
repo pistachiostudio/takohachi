@@ -51,7 +51,7 @@ class SavaImage(commands.Cog):
 
                 embed.color = discord.Color.green()
                 # 本当はこのthumbnailは毎回その該当の画像になるようにしたい...
-                embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/814524400832741437/861511918219821056/image0.jpg")
+                embed.set_thumbnail(url=attachment.url)
                 embed.set_author(name="殿堂・オブ・ピスタチオ・アニマルズ",
                                 url="https://drive.google.com/drive/folders/1Vh0efZjmlXjHYenDT5YyipvLGcEXaY8A?usp=sharing",
                                 icon_url="https://user-images.githubusercontent.com/4445606/125683381-65c62bf9-3380-4167-8c69-224ecc86fc11.png")
@@ -65,11 +65,11 @@ class SavaImage(commands.Cog):
 
                 embed.color = discord.Color.red()
                 # 本当はこのthumbnailは毎回その該当の画像になるようにしたい...
-                embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/814524400832741437/861511918219821056/image0.jpg")
+                embed.set_thumbnail(url=attachment.url)
                 embed.set_author(name="殿堂・オブ・ピスタチオ・アニマルズ",
                                 url="https://drive.google.com/drive/folders/1Vh0efZjmlXjHYenDT5YyipvLGcEXaY8A?usp=sharing",
                                 icon_url="https://user-images.githubusercontent.com/4445606/125683381-65c62bf9-3380-4167-8c69-224ecc86fc11.png")
-                embed.description = "ファイルアップロードに失敗しました"
+                embed.description = ":warning: ファイルアップロードに失敗しました"
                 embed.add_field(name="file:", value=filename)
                 await channel.send(embed=embed)
             finally:
