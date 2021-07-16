@@ -50,7 +50,6 @@ class SavaImage(commands.Cog):
                 self._upload_img(filename, upload_filename)
 
                 embed.color = discord.Color.green()
-                # 本当はこのthumbnailは毎回その該当の画像になるようにしたい...
                 embed.set_thumbnail(url=attachment.url)
                 embed.set_author(name="殿堂・オブ・ピスタチオ・アニマルズ",
                                 url="https://drive.google.com/drive/folders/1Vh0efZjmlXjHYenDT5YyipvLGcEXaY8A?usp=sharing",
@@ -64,7 +63,6 @@ class SavaImage(commands.Cog):
                 traceback.print_exc()
 
                 embed.color = discord.Color.red()
-                # 本当はこのthumbnailは毎回その該当の画像になるようにしたい...
                 embed.set_thumbnail(url=attachment.url)
                 embed.set_author(name="殿堂・オブ・ピスタチオ・アニマルズ",
                                 url="https://drive.google.com/drive/folders/1Vh0efZjmlXjHYenDT5YyipvLGcEXaY8A?usp=sharing",
