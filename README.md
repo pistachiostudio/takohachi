@@ -6,24 +6,25 @@ Discord サーバーへの加入は[こちら](https://discord.com/invite/6XbCyR
 ## Cogs
 
 - コマンドで特定地域の現在時間を返す。（米東海岸の友達の現在時刻を素早く表示）  
-![image](https://user-images.githubusercontent.com/4445606/125380906-f6011900-e3cd-11eb-8ecf-5cc350d9e27d.png)  
+![image](https://user-images.githubusercontent.com/4445606/125953710-c672d3fa-3a60-43eb-b871-6b70595f5472.png)  
 
 - 新しいVCがスタートしたら特定のテキストチャンネルへアラートを投稿  
-![image](https://user-images.githubusercontent.com/4445606/125380983-192bc880-e3ce-11eb-812f-6bf17a4155f1.png)  
+![image](https://user-images.githubusercontent.com/4445606/125953884-10528778-3b56-414f-972e-197d35e51b64.png)  
 
 - 画像付きのチャットへ特定の絵文字でリアクションをするとその画像を指定のGoogle Driveフォルダへアップロード  
 たくさん投稿されるペットの写真で特にかわいいものを保存し、来年のカレンダーを作るぞ！  
 (このサーバーでは12時間経過すると書き込みが削除されていくという狂ったものとなっているため、保存していかないとすべて消えてしまいます)  
-![image](https://user-images.githubusercontent.com/4445606/125381129-555f2900-e3ce-11eb-8de4-9b055dcdf3ac.png)  
+![image](https://user-images.githubusercontent.com/4445606/125954117-b54ef041-254f-4bf9-855e-d62e614aeb0e.png)  
 
 - チャットのパーマリンクが投稿された場合に内容を展開する。[dispander](https://github.com/DiscordBotPortalJP/dispander)をそのままお借りしています。  
-![image](https://user-images.githubusercontent.com/4445606/125381253-8a6b7b80-e3ce-11eb-94aa-1a34eb0ae527.png)  
+![image](https://user-images.githubusercontent.com/4445606/125954215-2ff8b9b1-8e5e-4c9c-a45c-0a79409e8fd3.png)  
 
 - `!!whatToday` コマンドで[wikipediaのHTML](https://ja.wikipedia.org/wiki/Wikipedia:%E4%BB%8A%E6%97%A5%E3%81%AF%E4%BD%95%E3%81%AE%E6%97%A5_7%E6%9C%88)から取得したその日の出来事をかえす。  
-![Screenshot 7-13-21 at 11 24 13](https://user-images.githubusercontent.com/4445606/125380596-652a3d80-e3cd-11eb-9a4f-0bc2c4f6a576.png)  
+![image](https://user-images.githubusercontent.com/4445606/125954287-51a42d02-61ec-4c1e-b114-5faf225c0b50.png)  
 
 - 半角カタカナが使用されたらリアクションで知らせる（通称:半角警察）、全角英数字が使用されたらリアクションで知らせる（全角警察）  
-![image](https://user-images.githubusercontent.com/4445606/125381379-c0a8fb00-e3ce-11eb-836f-126caad808a9.png)  
+![image](https://user-images.githubusercontent.com/4445606/125954408-8d8b9f38-c5ff-4d0f-b524-82aeb938b2da.png)  
+
 
 ## Deproyment
 
@@ -54,4 +55,4 @@ Discord サーバーへの加入は[こちら](https://discord.com/invite/6XbCyR
 ## License
 
 Takohachi is released under the MIT license.  
-(c) 2021 Pistachio Gaming & Pistachio Studio
+©2021 Pistachio Gaming & Pistachio Studio.
