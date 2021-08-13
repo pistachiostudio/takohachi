@@ -5,7 +5,7 @@ Discord サーバーへの加入は[こちら](https://discord.com/invite/6XbCyR
 
 ## Cogs
 
-- コマンドで特定地域の現在時間を返す。（米東海岸の友達の現在時刻を素早く表示）  
+- コマンドで特定地域の現在時間を返す（米東海岸の友達の現在時刻を素早く表示）  
 ![image](https://user-images.githubusercontent.com/4445606/125953710-c672d3fa-3a60-43eb-b871-6b70595f5472.png)  
 
 - 新しいVCがスタートしたら特定のテキストチャンネルへアラートを投稿  
