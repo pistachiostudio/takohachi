@@ -50,5 +50,6 @@ bot.load_extension("cogs.vctest")
 bot.load_extension("cogs.what_today")
 bot.load_extension("cogs.save_image")
 # bot.load_extension("cogs.delete_image")
+bot.load_extension("cogs.apex_tracker")
 
 bot.run(TOKEN)
