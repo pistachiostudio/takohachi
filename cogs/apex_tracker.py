@@ -27,7 +27,7 @@ class ApexTracker(commands.Cog):
             return 255, 0, 0
 
     @commands.command()
-    async def apexRank(self, ctx, platform, user_id):
+    async def apexrank(self, ctx, platform, user_id):
         url = f"https://public-api.tracker.gg/v2/apex/standard/profile/{platform}/{user_id}"
         trn_api_key = os.environ["TRN_API_KEY"]
         headers = {"TRN-Api-Key": trn_api_key}
