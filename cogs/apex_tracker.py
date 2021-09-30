@@ -63,7 +63,7 @@ class ApexTracker(commands.Cog):
 
         embed.color = discord.Color.from_rgb(r, g, b)  # Gold
         embed.set_thumbnail(url=icon_url)
-        embed.set_author(name="",
+        embed.set_author(name=f"{user_id}'s profile",
                          url=f"https://apex.tracker.gg/apex/profile/{platform}/{user_id}/overview",
                          icon_url="https://github.com/pistachiostudio/takohachi/blob/master/images/apex%20legends.jpg?raw=true")
         embed.description = f"{user_id} の現在のランクポイントを表示します."
