@@ -54,6 +54,7 @@ class ApexTracker(commands.Cog):
         embed = discord.Embed()
         JST = timezone(timedelta(hours=+9), "JST")
         embed.timestamp = datetime.now(JST)
+        embed.url = "https://github.com/pistachiostudio/takohachi"
 
         if rank_name == "Apex Predator":
             rank_zone = rank_name
