@@ -4,7 +4,7 @@ from pathlib import Path
 import discord
 from discord.ext import commands
 
-bot = commands.Bot(command_prefix="!!")
+bot = commands.Bot(command_prefix="!!", help_command=None)
 
 # 環境変数からトークンを読み込む
 TOKEN = os.environ["TOKEN"]
@@ -51,5 +51,6 @@ bot.load_extension("cogs.what_today")
 bot.load_extension("cogs.save_image")
 # bot.load_extension("cogs.delete_image")
 bot.load_extension("cogs.apex_tracker")
+bot.load_extension("cogs.commandslist")
 
 bot.run(TOKEN)
