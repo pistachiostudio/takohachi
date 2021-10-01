@@ -54,7 +54,6 @@ class ApexTracker(commands.Cog):
         embed = discord.Embed()
         JST = timezone(timedelta(hours=+9), "JST")
         embed.timestamp = datetime.now(JST)
-        embed.url = "https://github.com/pistachiostudio/takohachi"
 
         if rank_name == "Apex Predator":
             rank_zone = rank_name
@@ -70,6 +69,7 @@ class ApexTracker(commands.Cog):
         embed.description = f"{user_id} の現在のランクポイントを表示します."
         embed.add_field(name="ランクポイント",
                         value=f"{rank_point} point ({rank_name})")
+        embed.footer = "[Tako-Hachi on GitHub](https://github.com/pistachiostudio/takohachi)"
         await ctx.send(embed=embed)
 
 
