@@ -16,6 +16,10 @@ Discord サーバーへの加入は[こちら](https://discord.com/invite/6XbCyR
 (このサーバーでは12時間経過すると書き込みが削除されていくという狂ったものとなっているため、保存していかないとすべて消えてしまいます)  
 ![image](https://user-images.githubusercontent.com/4445606/125954117-b54ef041-254f-4bf9-855e-d62e614aeb0e.png)  
 
+- Apex LegendsのランクポイントをトラッカーサイトのAPIを叩いて返す。  
+![image](https://user-images.githubusercontent.com/4445606/135667133-5d095edd-1c70-4cb6-a760-6d96f81b0fed.png)
+
+
 - チャットのパーマリンクが投稿された場合に内容を展開する。[dispander](https://github.com/DiscordBotPortalJP/dispander)をそのままお借りしています。  
 ![image](https://user-images.githubusercontent.com/4445606/125954215-2ff8b9b1-8e5e-4c9c-a45c-0a79409e8fd3.png)  
 
