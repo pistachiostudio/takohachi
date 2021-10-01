@@ -69,7 +69,6 @@ class ApexTracker(commands.Cog):
         embed.description = f"{user_id} の現在のランクポイントを表示します."
         embed.add_field(name="ランクポイント",
                         value=f"{rank_point} point ({rank_name})")
-        embed.footer = "[Tako-Hachi on GitHub](https://github.com/pistachiostudio/takohachi)"
         await ctx.send(embed=embed)
 
 
