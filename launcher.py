@@ -4,7 +4,7 @@ from pathlib import Path
 import discord
 from discord.ext import commands
 
-bot = commands.Bot(command_prefix="!!")
+bot = commands.Bot(command_prefix="!!", help_command=None)
 
 # 環境変数からトークンを読み込む
 TOKEN = os.environ["TOKEN"]
