@@ -3,12 +3,12 @@ import discord
 from datetime import datetime, timedelta, timezone
 
 
-class Commands(commands.Cog):
+class Help(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
     @commands.command()
-    async def commands(self, ctx):
+    async def help(self, ctx):
     
         embed = discord.Embed()
         JST = timezone(timedelta(hours=+9), "JST")
@@ -30,4 +30,4 @@ class Commands(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(Commands(bot))
+    bot.add_cog(Help(bot))
