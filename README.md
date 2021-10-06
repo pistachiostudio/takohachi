@@ -19,6 +19,10 @@ Discord サーバーへの加入は[こちら](https://discord.com/invite/6XbCyR
 - Apex LegendsのランクポイントをトラッカーサイトのAPIを叩いて返す。  
 ![image](https://user-images.githubusercontent.com/4445606/135667133-5d095edd-1c70-4cb6-a760-6d96f81b0fed.png)
 
+- Spotifyから曲情報やアーティスト情報を返す。  
+![image](https://user-images.githubusercontent.com/4445606/136231698-5a9d10be-1e5f-4155-9a94-c6b2a4956efc.png)  
+![image](https://user-images.githubusercontent.com/4445606/136231834-b1daf6f6-cb76-4857-b70b-7d4a84507ebe.png)  
+
 
 - チャットのパーマリンクが投稿された場合に内容を展開する。[dispander](https://github.com/DiscordBotPortalJP/dispander)をそのままお借りしています。  
 ![image](https://user-images.githubusercontent.com/4445606/125954215-2ff8b9b1-8e5e-4c9c-a45c-0a79409e8fd3.png)  
