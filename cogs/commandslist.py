@@ -15,16 +15,7 @@ class Help(commands.Cog):
         embed.timestamp = datetime.now(JST)
         embed.title = "Tako-Hachi commands help"
         embed.color = discord.Color.blue()
-        embed.description = "Prefix は `!!` です。"
-
-        embed.add_field(name="apexrank A B",
-                        value="```APEXのランクポイントを表示します。\nA = origin or psn or xbl\nB = YourID```")
-
-        embed.add_field(name="mt",
-                        value="```まりもタイム```")
-
-        embed.add_field(name="whatToday",
-                        value="```今日は何の日？```")
+        embed.description = "Prefix は `!!` です。\n[View more info on GitHub](https://github.com/pistachiostudio/takohachi/blob/master/mannual.md)\n**mt**\n```まりもたいむ！```\n**whatToday**\n```今日はなんの日？```\n**apexrank A B**\n```APEXのランクポイントを表示します。\nA = origin or psn or xbl\nB = YourID```\n**sp SEARCH**\n```Spotifyの曲情報をゲットします！\nex) !!sp chelmico power```\n**spartist ARTIST**\n```Spotifyのアーティスト情報をゲットします！\nex) !!spartist in the blue shirt```"
 
         await ctx.send(embed=embed)
 
