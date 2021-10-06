@@ -14,5 +14,14 @@
 
     例: `!!apexrank origin stylishnoob4`
 
+#### `!!sp SEARCH`
+spotifyの曲情報を色々返します！  
+例: `!!sp chelmico power`
+
+#### `!!spartist ARTIST`
+spotifyのアーティスト情報を色々返します！  
+例: `!!spartist in the blue shirt`
+
+
 ## Others
 Sorry WIP

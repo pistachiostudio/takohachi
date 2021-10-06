@@ -15,10 +15,9 @@ class Help(commands.Cog):
         embed.timestamp = datetime.now(JST)
         embed.title = "Tako-Hachi commands help"
         embed.color = discord.Color.blue()
-        embed.description = "Prefix は `!!` です。\n[View more info on GitHub](https://github.com/pistachiostudio/takohachi/blob/master/mannual.md)\n**mt**\n```まりもたいむ！```\n**whatToday**\n```今日はなんの日？```\n**apexrank A B**\n```APEXのランクポイントを表示します。\nA = origin or psn or xbl\nB = YourID```\n**sp SEARCH**\n```Spotifyの曲情報をゲットします！\nex) !!sp chelmico power```\n**spartist ARTIST**\n```Spotifyのアーティスト情報をゲットします！\nex) !!spartist in the blue shirt```"
+        embed.description = "Prefix は `!!` です。\n[View more info on GitHub](https://github.com/pistachiostudio/takohachi/blob/master/mannual.md)\n\n**mt**\n```まりもたいむ！```\n**whatToday**\n```今日はなんの日？```\n**apexrank A B**\n```APEXのランクポイントを表示します。\nA = origin or psn or xbl\nB = YourID```\n**sp SEARCH**\n```Spotifyの曲情報をゲットします！\nex) !!sp chelmico power```\n**spartist ARTIST**\n```Spotifyのアーティスト情報をゲットします！\nex) !!spartist in the blue shirt```"
 
         await ctx.send(embed=embed)
-
 
 def setup(bot):
     bot.add_cog(Help(bot))
