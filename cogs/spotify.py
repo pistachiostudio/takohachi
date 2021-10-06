@@ -51,7 +51,7 @@ class Spotify(commands.Cog):
         for item in feature:
             loudness = item['loudness']
             key = item['key']
-            bpm = item['tempo']
+            bpm = round(item['tempo'])
             time_signature = item['time_signature']
             danceability = round(item['danceability'] * 100)
             energy = round(item['energy'] * 100)
@@ -137,7 +137,6 @@ class Spotify(commands.Cog):
         JST = timezone(timedelta(hours=+9), "JST")
         embed.timestamp = datetime.now(JST)
         embed.title = f"{artistname}'s Profile"
-
 
         embed.color = discord.Color.green()
 
