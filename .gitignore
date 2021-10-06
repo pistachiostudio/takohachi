@@ -7,3 +7,6 @@ spread.py
 takohachi-c337db7af3a7.json
 credentials.json
 client_secrets.json
+spotify_artist.py
+spotify_track.py
+.cache
