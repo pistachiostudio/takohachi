@@ -52,5 +52,6 @@ bot.load_extension("cogs.save_image")
 # bot.load_extension("cogs.delete_image")
 bot.load_extension("cogs.apex_tracker")
 bot.load_extension("cogs.commandslist")
+bot.load_extension("cogs.spotify")
 
 bot.run(TOKEN)
