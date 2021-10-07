@@ -10,3 +10,4 @@ client_secrets.json
 spotify_artist.py
 spotify_track.py
 .cache
+gototop.py
