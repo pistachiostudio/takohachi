@@ -1,4 +1,6 @@
-# <img src="https://user-images.githubusercontent.com/4445606/125382515-c0116400-e3d0-11eb-9237-8b3ec76996b3.png" width="40px"> Discord Bot `タコ八` <img src="https://user-images.githubusercontent.com/4445606/125382515-c0116400-e3d0-11eb-9237-8b3ec76996b3.png" width="40px">
+# <img src="https://user-images.githubusercontent.com/4445606/136433333-96b165e0-447c-481a-9e91-50f02b5689d4.png" width="50px"> Discord Bot `タコ八` <img src="https://user-images.githubusercontent.com/4445606/136433333-96b165e0-447c-481a-9e91-50f02b5689d4.png" width="50px">
+
+
 
 ピスタチオゲーム部親睦会というDiscordサーバーで動いている Bot です。
 Discord サーバーへの加入は[こちら](https://discord.com/invite/6XbCyRF)から！  
@@ -43,6 +45,10 @@ Discord サーバーへの加入は[こちら](https://discord.com/invite/6XbCyR
 - 設定方法は公式ドキュメントを参考にする([設定と環境設定 - Heroku Dashboard を使用する](https://devcenter.heroku.com/ja/articles/config-vars#using-the-heroku-dashboard))
 	- その他参考
 		- [Qiita - 【Heroku】Herokuで環境変数を設定する方法](https://qiita.com/mzmz__02/items/64db94b8fc67ee0a9068)
+
+## Icon
+drawn by Go Inagaki.  
+<img src="https://user-images.githubusercontent.com/4445606/136433333-96b165e0-447c-481a-9e91-50f02b5689d4.png" width="500px">
 
 ## Pistachio Studio
 
