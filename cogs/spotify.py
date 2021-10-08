@@ -49,15 +49,15 @@ class Spotify(commands.Cog):
         # 曲のidをfeatureに渡した
         feature = spo.audio_features(song_id)
         for item in feature:
-            loudness = item['loudness']
+            loudness = round(item['loudness'], 1)
             key = item['key']
-            bpm = round(item['tempo'])
+            bpm = round(item['tempo'], 1)
             time_signature = item['time_signature']
-            danceability = round(item['danceability'] * 100)
-            energy = round(item['energy'] * 100)
-            acousticness = round(item['acousticness'] * 100)
-            liveness = round(item['liveness'] * 100)
-            inst = round(item['instrumentalness'] * 100)
+            danceability = round(item['danceability'] * 100, 1)
+            energy = round(item['energy'] * 100, 1)
+            acousticness = round(item['acousticness'] * 100, 1)
+            liveness = round(item['liveness'] * 100, 1)
+            inst = round(item['instrumentalness'] * 100, 1)
             duration_ms = item['duration_ms']
             duration = (duration_ms / 60000)
             mode = item['mode']
@@ -82,7 +82,7 @@ class Spotify(commands.Cog):
         embed.add_field(name="Key", value=f"```{keys}```")
         embed.add_field(name="Mode", value=f"```{majmin}```")
         embed.add_field(name="BPM", value=f"```{bpm}```")
-        embed.add_field(name="T/S", value=f"```{time_signature}/4```")
+        embed.add_field(name="TS", value=f"```{time_signature}/4```")
         embed.add_field(name="Loudness", value=f"```{loudness}db```")
         embed.add_field(name="Danceability", value=f"```{danceability}%```")
         embed.add_field(name="Energy", value=f"```{energy}%```")
