@@ -14,7 +14,7 @@ class Spotify(commands.Cog):
     @commands.command()
     async def sp(self, ctx, *args):
         arguments = ' '.join(args)
-        
+
         # 起動
         client_id = os.environ["SPOTIFY_CLIENT_ID"]
         client_secret = os.environ["SPOTIFY_CLIENT_SECRET"]
@@ -69,7 +69,7 @@ class Spotify(commands.Cog):
         # mojor, minor変換
         modedic = {0:"Minor", 1:"Major"}
         majmin = modedic[mode]
-        
+
         # embed
         embed = discord.Embed()
         JST = timezone(timedelta(hours=+9), "JST")

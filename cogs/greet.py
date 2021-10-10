@@ -7,13 +7,12 @@ class Greet(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    
     @commands.command()  # ★変更点1: bot -> commandsに修正
     async def bobobob(self, ctx):  # ★変更点2: self引数を追加する
         # 待機するメッセージのチェック関数
         def check_message_author(msg):
             return msg.author is ctx.author
-            
+
         # あいさつする既存の処理
         await ctx.send(f"こんにちは、{ctx.author.name}さん。")
         await ctx.send("ご気分はいかがでしょうか？")

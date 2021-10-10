@@ -14,7 +14,7 @@ class Reading(commands.Cog):
     @commands.command()
     async def apex(self, ctx):
         await ctx.send(f"{ctx.author.mention} You are LEGENDS!!!")
-        
+
 
 def setup(bot):
     bot.add_cog(Reading(bot))
