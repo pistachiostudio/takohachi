@@ -50,8 +50,12 @@ Discord サーバーへの加入は[こちら](https://discord.com/invite/6XbCyR
 		- [Qiita - 【Heroku】Herokuで環境変数を設定する方法](https://qiita.com/mzmz__02/items/64db94b8fc67ee0a9068)
 
 ## Icon
-drawn by Go Inagaki.  
+### by [Go Inagaki](https://hodwn.com/go-inagaki/)  
 <img src="https://user-images.githubusercontent.com/4445606/136433333-96b165e0-447c-481a-9e91-50f02b5689d4.png" width="500px">
+
+### by [Imoya](https://twitter.com/arakudai2)  
+<img src="https://user-images.githubusercontent.com/4445606/136697820-c7526860-2b48-4a34-b32a-06b38fbb76a1.png" width="500px">
+
 
 ## Pistachio Studio
 
