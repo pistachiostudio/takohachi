@@ -3,11 +3,11 @@ venv/
 .vscode/
 __pycache__/
 memo.txt
-spread.py
-takohachi-c337db7af3a7.json
 credentials.json
 client_secrets.json
 spotify_artist.py
 spotify_track.py
 .cache
 gototop.py
+secret_json
+addssl_client_secrets.json

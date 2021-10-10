@@ -5,7 +5,7 @@
 - **`!!whatToday`**  
 今日の出来事をwikipediaから引っ張ってきて返します。
 
-- **`!!apexrank PLATFORM YOURID`**  
+- **`!!apexrank <PLATFORM> <YOURID>`**  
   - PLATFORM  
   origin, psn, xblの中から自分のプラットフォームを入力してください。steamの場合は連携しているorigin ID。
 
@@ -14,12 +14,16 @@
 
     例: `!!apexrank origin stylishnoob4`
 
-- **`!!sp SEARCH`**  
+- **`!!sp <SEARCH>`**  
 spotifyの曲情報を色々返します！
 例: `!!sp chelmico power`
 
-- **`!!spartist ARTIST`**  
+- **`!!spartist <ARTIST>`**  
 spotifyのアーティスト情報を色々返します！  例: `!!spartist in the blue shirt`
+
+- **`!!addssl <URL>`**  
+ピスタチオゲーム部がSSL未対応の監視を続ける監視リストへURLを登録します。  
+https://ssl-checker.vercel.app
 
 
 ## Others

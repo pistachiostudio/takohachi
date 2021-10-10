@@ -18,6 +18,13 @@ def init():
     with open(file, 'w') as f:
         f.write(client_secrets)
 
+    # addssl用のjsonファイルを生成
+    addssl_client_secrets = os.environ['TAKOHACHI_JSON']
+    addssl_current_path = Path(os.path.realpath(__file__)).parent
+    file = addssl_current_path/ 'addssl_client_secrets.json'
+    with open(file, 'w') as f:
+        f.write(addssl_client_secrets)
+
 
 @bot.event
 async def on_ready():
@@ -43,6 +50,7 @@ bot.load_extension("cogs.vcwhite")
 bot.load_extension("cogs.marimo")
 bot.load_extension("cogs.what_today")
 bot.load_extension("cogs.save_image")
+bot.load_extension("cogs.addssl")
 # bot.load_extension("cogs.tanaka")
 # bot.load_extension("cogs.read")
 # bot.load_extension("cogs.policezen")
