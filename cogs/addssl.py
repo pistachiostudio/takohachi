@@ -18,7 +18,7 @@ class SSLadd(commands.Cog):
 
         #ちゃんとURLかチェック！
         if f"{addurl}".startswith('http'):
-            
+
             #URLからHPのタイトルをとってくる
             url = f"{addurl}"
             session = requests.Session()
@@ -30,26 +30,30 @@ class SSLadd(commands.Cog):
             #環境変数を設定
             TAKO_GSP_JSON = os.environ["TAKOHACHI_JSON"]
             SSLADD_GSP_KEY = os.environ["SSLADD_KEY"]
-            
+
             #2つのAPIを記述しないとリフレッシュトークンを3600秒毎に発行し続けなければならないです！
             scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
 
             #認証情報設定
             #ダウンロードしたjsonファイル名をクレデンシャル変数に設定（秘密鍵、Pythonファイルから読み込みしやすい位置に置く）
-            credentials = ServiceAccountCredentials.from_json_keyfile_name(TAKO_GSP_JSON, scope)
+            addssl_json_keyfile = 'addssl_client_secrets.json'
+            credentials = ServiceAccountCredentials.from_json_keyfile_name(addssl_json_keyfile, scope)
+
+
+            #json_keyfile = 'client_secrets.json'
+            #credentials = ServiceAccountCredentials.from_json_keyfile_name(TAKO_GSP_JSON, scope)
 
             #OAuth2の資格情報を使用してGoogle APIにログインします。
             gc = gspread.authorize(credentials)
-            
+
 
             #共有設定したスプレッドシートのシート1を開く
-            SSLCHECK_SPREADSHEET_KEY = SSLADD_GSP_KEY
-            worksheet = gc.open_by_key(SSLCHECK_SPREADSHEET_KEY).sheet1
+            worksheet = gc.open_by_key(SSLADD_GSP_KEY).sheet1
 
             # A列とB列にappend。Aはとりあえず空欄。後々はURLからタイトルとってきていれたい
             export_value = [title, url]
             worksheet.append_row(export_value)
-            
+
             #自分の最初のコマンドに絵文字リアクション
             message = ctx.message
             await message.add_reaction('👍')
