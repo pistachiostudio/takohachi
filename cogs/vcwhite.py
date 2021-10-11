@@ -11,7 +11,7 @@ class Vcwhite(commands.Cog):
 
         #通知の対象としたいチャンネルidを入力
         allow_01 = self.bot.get_channel(762575797327757322) #犬
-        allow_02 = self.bot.get_channel(762576579507126273) #猫
+        allow_02 = self.bot.get_channel(762576631810228256) #猫
         allow_03 = self.bot.get_channel(780611246155497482) #亀
         allow_04 = self.bot.get_channel(812312211112198144) #恐竜
 
