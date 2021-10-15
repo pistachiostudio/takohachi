@@ -70,26 +70,25 @@ class SSLAdd(commands.Cog):
             for l in domain_lists:
                 if domain in l:
                     await ctx.send('すでに登録されています！')
-                    break
+                    break;
 
-                else:
-                    #新規登録と判断できたらgspに書き込みを行う
-                    # A, B, C列にappend
-                    export_value = [plain_title, addurl, domain]
-                    worksheet.append_row(export_value)
+            else:
+                #新規登録と判断できたらgspに書き込みを行う
+                # A, B, C列にappend
+                export_value = [plain_title, addurl, domain]
+                worksheet.append_row(export_value)
 
-                    #自分の最初のコマンドに絵文字リアクション
-                    message = ctx.message
-                    await message.add_reaction('✅')
+                #自分の最初のコマンドに絵文字リアクション
+                message = ctx.message
+                await message.add_reaction('✅')
 
-                    #その後レスポンスメッセージ
-                    embed = discord.Embed()
-                    JST = timezone(timedelta(hours=+9), "JST")
-                    embed.timestamp = datetime.now(JST)
-                    embed.color = discord.Color.green()
-                    embed.description = f"**「{plain_title}」** を監視いたします。\n\n[SSL Checker](https://ssl-checker.vercel.app/) | [SSLC Database](https://docs.google.com/spreadsheets/d/1c25pvMyjQ89OBCvB9whCQQLM_BPXKyY7umsj5wmpP2k/edit?usp=sharing)"
-                    await ctx.send(embed=embed)
-                    break
+                #その後レスポンスメッセージ
+                embed = discord.Embed()
+                JST = timezone(timedelta(hours=+9), "JST")
+                embed.timestamp = datetime.now(JST)
+                embed.color = discord.Color.green()
+                embed.description = f"**「{plain_title}」** を監視いたします。\n\n[SSL Checker](https://ssl-checker.vercel.app/) | [SSLC Database](https://docs.google.com/spreadsheets/d/1c25pvMyjQ89OBCvB9whCQQLM_BPXKyY7umsj5wmpP2k/edit?usp=sharing)"
+                await ctx.send(embed=embed)
 
 def setup(bot):
     bot.add_cog(SSLAdd(bot))
