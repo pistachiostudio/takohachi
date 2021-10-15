@@ -3,39 +3,51 @@
 
 
 ピスタチオゲーム部親睦会というDiscordサーバーで動いている Bot です。
-Discord サーバーへの加入は[こちら](https://discord.com/invite/6XbCyRF)から！  
+Discord サーバーへの加入は[こちら](https://discord.com/invite/6XbCyRF)から！
 
 ## Cogs
 
-- 特定地域の現在時間を返す（米東海岸の友達の現在時刻を素早く表示） `!!mt`  
-![image](https://user-images.githubusercontent.com/4445606/125953710-c672d3fa-3a60-43eb-b871-6b70595f5472.png)  
+- コマンド `!!mt` で特定地域の現在時間を返す（米東海岸の友達の現在時刻を素早く表示）
 
-- 新しいVCがスタートしたら特定のテキストチャンネルへアラートを投稿  
-![image](https://user-images.githubusercontent.com/4445606/125953884-10528778-3b56-414f-972e-197d35e51b64.png)  
+  ![image](https://user-images.githubusercontent.com/4445606/137534883-c3279ba7-40bc-477c-92c5-7c91297a723c.png)  
 
-- 画像付きのチャットへ特定の絵文字でリアクションをするとその画像を指定のGoogle Driveフォルダへアップロード  
-たくさん投稿されるペットの写真で特にかわいいものを保存し、来年のカレンダーを作るぞ！  
-(このサーバーでは12時間経過すると書き込みが削除されていくという狂ったものとなっているため、保存していかないとすべて消えてしまいます)  
-![image](https://user-images.githubusercontent.com/4445606/125954117-b54ef041-254f-4bf9-855e-d62e614aeb0e.png)  
+- 新しいVCがスタートしたら特定のテキストチャンネルへアラートを投稿
 
-- Apex LegendsのランクポイントをトラッカーサイトのAPIを叩いて返す。`!!apedxtracker <PLATFORM> <ID>`  
-![image](https://user-images.githubusercontent.com/4445606/135667133-5d095edd-1c70-4cb6-a760-6d96f81b0fed.png)
+  ![image](https://user-images.githubusercontent.com/4445606/125953884-10528778-3b56-414f-972e-197d35e51b64.png)  
 
-- Spotifyから曲情報やアーティスト情報を返す。`!!sp <SERTCH>` `!!spartist <ARTIST>`  
-![image](https://user-images.githubusercontent.com/4445606/136231698-5a9d10be-1e5f-4155-9a94-c6b2a4956efc.png)  
-![image](https://user-images.githubusercontent.com/4445606/136231834-b1daf6f6-cb76-4857-b70b-7d4a84507ebe.png)  
+- 画像付きのチャットへ特定の絵文字でリアクションをするとその画像を指定のGoogle Driveフォルダへアップロード
 
-- ピスタチオゲーム部が監視を続ける周辺のSSL未対応のHPのチェッカー [SSL Checker](https://ssl-checker.vercel.app/) のデータベースへのURL登録。`!!addssl <URL>`  
-![image](https://user-images.githubusercontent.com/4445606/136697259-b696b6d8-5162-40ef-a3ff-fbf6c12239b0.png)  
+  ![image](https://user-images.githubusercontent.com/4445606/125954117-b54ef041-254f-4bf9-855e-d62e614aeb0e.png)  
 
-- チャットのパーマリンクが投稿された場合に内容を展開する。[dispander](https://github.com/DiscordBotPortalJP/dispander)をそのままお借りしています。  
-![image](https://user-images.githubusercontent.com/4445606/125954215-2ff8b9b1-8e5e-4c9c-a45c-0a79409e8fd3.png)  
+- コマンド `!!apedxtracker <PLATFORM> <ID>` でApex LegendsのランクポイントをトラッカーサイトのAPIを叩いて返す。
+ 
+  ![image](https://user-images.githubusercontent.com/4445606/137535053-bf274d66-5387-4ddf-a0fb-788c208efd60.png)
 
-- コマンドで[wikipediaのHTML](https://ja.wikipedia.org/wiki/Wikipedia:%E4%BB%8A%E6%97%A5%E3%81%AF%E4%BD%95%E3%81%AE%E6%97%A5_7%E6%9C%88)から取得したその日の出来事をかえす。`!!whatToday`  
-![image](https://user-images.githubusercontent.com/4445606/125954287-51a42d02-61ec-4c1e-b114-5faf225c0b50.png)  
+- コマンド `!!sp <SERTCH>` `!!spartist <ARTIST>` Spotifyから曲情報やアーティスト情報を返す。
 
-- 半角カタカナが使用されたらリアクションで知らせる（通称:半角警察）、全角英数字が使用されたらリアクションで知らせる（全角警察）  
-![image](https://user-images.githubusercontent.com/4445606/125954408-8d8b9f38-c5ff-4d0f-b524-82aeb938b2da.png) 
+  ![image](https://user-images.githubusercontent.com/4445606/136231698-5a9d10be-1e5f-4155-9a94-c6b2a4956efc.png)  
+
+  ![image](https://user-images.githubusercontent.com/4445606/136231834-b1daf6f6-cb76-4857-b70b-7d4a84507ebe.png)  
+
+- コマンド `!!addssl <URL>` ピスタチオゲーム部が監視を続ける周辺のSSL未対応のHPのチェッカー [SSL Checker](https://ssl-checker.vercel.app/) のデータベースへのURL登録。
+
+  ![image](https://user-images.githubusercontent.com/4445606/136697259-b696b6d8-5162-40ef-a3ff-fbf6c12239b0.png)  
+
+- チャットのパーマリンクが投稿された場合に内容を展開する。[dispander](https://github.com/DiscordBotPortalJP/dispander)をそのままお借りしています。
+
+  ![image](https://user-images.githubusercontent.com/4445606/125954215-2ff8b9b1-8e5e-4c9c-a45c-0a79409e8fd3.png)
+
+- コマンド `!!whatToday` [wikipediaのHTML](https://ja.wikipedia.org/wiki/Wikipedia:%E4%BB%8A%E6%97%A5%E3%81%AF%E4%BD%95%E3%81%AE%E6%97%A5_7%E6%9C%88)から取得したその日の出来事をかえす。
+
+  ![image](https://user-images.githubusercontent.com/4445606/125954287-51a42d02-61ec-4c1e-b114-5faf225c0b50.png)
+
+- コマンド `!!count` が書き込まれたテキストチャンネルの現在のメッセージの総件数を知らせる。
+
+  ![image](https://user-images.githubusercontent.com/4445606/137533505-b2b87f80-c17d-4bf0-8a45-38abb26d91c4.png)
+
+- 半角カタカナが使用されたらリアクションで知らせる（通称:半角警察）、全角英数字が使用されたらリアクションで知らせる（全角警察）
+
+  ![image](https://user-images.githubusercontent.com/4445606/125954408-8d8b9f38-c5ff-4d0f-b524-82aeb938b2da.png) 
 
 
 
