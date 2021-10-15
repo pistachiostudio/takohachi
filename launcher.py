@@ -42,7 +42,7 @@ async def playing(ctx, title):
 
 init()
 
-bot.load_extension("dispander")  # diapanderをextensionとして読み込み
+bot.load_extension("dispander")
 bot.load_extension("cogs.apex_tracker")
 bot.load_extension("cogs.commandslist")
 bot.load_extension("cogs.spotify")
@@ -52,15 +52,6 @@ bot.load_extension("cogs.what_today")
 bot.load_extension("cogs.save_image")
 bot.load_extension("cogs.addssl")
 bot.load_extension("cogs.message_count")
-# bot.load_extension("cogs.tanaka")
-# bot.load_extension("cogs.read")
-# bot.load_extension("cogs.policezen")
-# bot.load_extension("cogs.policehan")
-# bot.load_extension("cogs.react")
-# bot.load_extension("cogs.yobro")
-# bot.load_extension("cogs.vctest")
-# bot.load_extension("cogs.greet")
-# bot.load_extension("cogs.notify")
 # bot.load_extension("cogs.delete_image")
 
 
