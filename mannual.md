@@ -7,10 +7,10 @@
 
 - `!!apexrank <PLATFORM> <YOURID>`  
   - PLATFORM  
-  origin, psn, xblの中から自分のプラットフォームを入力してください。steamの場合は連携しているorigin ID。
+  origin, psn, xblの中から自分のプラットフォームを入力してください。steamの場合は連携しているorigin。
 
   - YOURID  
-  検索したいアカウントのID。
+  検索したいアカウントのID。steamの場合は連携しているorigin id。
 
     例: `!!apexrank origin stylishnoob4`
 
