@@ -9,6 +9,7 @@ from bs4 import BeautifulSoup
 import re
 import discord
 from datetime import datetime, timedelta, timezone
+from urllib.parse import urlparse
 
 
 class SSLAdd(commands.Cog):
@@ -52,9 +53,9 @@ class SSLAdd(commands.Cog):
             #共有設定したスプレッドシートのシート1を開く
             worksheet = gc.open_by_key(SSLADD_GSP_KEY).sheet1
 
-            #//以降の文字列を抽出(便宜的にこれをドメインとする)
-            removehttp = re.sub('(https?://)','', addurl)
-            domain = re.sub('(/.*$)','', removehttp)
+            #//C列に記載するドメインを抽出
+            out = urlparse(addurl)
+            domain = out.hostname
 
             #ワークシートのデータが入っている行数ゲットする
             row = worksheet.row_count
