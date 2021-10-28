@@ -9,6 +9,7 @@ from bs4 import BeautifulSoup
 import re
 import discord
 from datetime import datetime, timedelta, timezone
+from urllib.parse import urlparse
 
 
 class SSLAdd(commands.Cog):
@@ -52,13 +53,9 @@ class SSLAdd(commands.Cog):
             #共有設定したスプレッドシートのシート1を開く
             worksheet = gc.open_by_key(SSLADD_GSP_KEY).sheet1
 
-            #登録のURLの末尾に/が入っている場合はそれを削除したURL(完全一致判定のため)
-            #not_slash_url = addurl.rstrip('/')
-
-            #//以降の文字列を抽出(便宜的にこれをドメインとする)
-            target = '//'
-            idx = addurl.find(target)
-            domain = addurl[idx+len(target):].rstrip('/')
+            #//C列に記載するドメインを抽出
+            out = urlparse(addurl)
+            domain = out.hostname
 
             #ワークシートのデータが入っている行数ゲットする
             row = worksheet.row_count
@@ -69,7 +66,7 @@ class SSLAdd(commands.Cog):
             #今回登録したURLの便宜的ドメインが登録されているC列のドメインリストにないかチェック。すでに登録されていた場合はエラーを返す
             for l in domain_lists:
                 if domain in l:
-                    await ctx.send('すでに登録されています！')
+                    await ctx.send('このドメインはすでに登録されています！')
                     break;
 
             else:
