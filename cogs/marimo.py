@@ -19,19 +19,30 @@ class Marimo(commands.Cog):
         japan_time = f"{JST.month}/{JST.day} {JST.hour}:{JST.minute:02}"
 
         #コマンド自体のチャットを削除する
-        message = ctx.message
-        await message.delete()
+        #message = ctx.message
+        #await message.delete()
+
+        #slot
+        slot_list = ['🍒', '🔔', '🍉', '🍇', '🍋', '🐈', '🐬', '🦕', '🐢', '🐕']
+        slot_left = random.choice(slot_list)
+        slot_center = random.choice(slot_list)
+        slot_right = random.choice(slot_list)
 
         #おみくじ！
-        omikuji_list = ['大吉🎯', '中吉🐬', '小吉🍓', '末吉🍦', '吉🍨', '凶👾', '大凶💀']
-        omikuji = random.choice(omikuji_list)
+        #omikuji_list = ['大吉🎯', '中吉🐬', '小吉🍓', '末吉🍦', '吉🍨', '凶👾', '大凶💀']
+        #omikuji = random.choice(omikuji_list)
 
         #embed
         embed = discord.Embed()
         embed.color = discord.Color.dark_green()
-        embed.set_footer(text=f"mt占い: {omikuji}")
+        embed.set_footer(text=f"mt slot: {slot_left}{slot_center}{slot_right}")
         embed.description = f"marimo time = **{marimo_time}**\npaul time = **{paul_time}**\n(In Japan = {japan_time})"
         await ctx.send(embed=embed)
+
+        if slot_left == slot_center == slot_right:
+            await ctx.send('🎉Congratulations!! Hit the Jackpot!!🎉')
+        else:
+            pass
 
 def setup(bot):
     bot.add_cog(Marimo(bot))
