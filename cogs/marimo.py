@@ -40,7 +40,7 @@ class Marimo(commands.Cog):
         await ctx.send(embed=embed)
 
         if slot_left == slot_center == slot_right:
-            await ctx.send('🎉Congratulations!! Hit the Jackpot!!🎉')
+            await ctx.send(f"🎉Congratulations!! {ctx.author.mention} hits the Jackpot!!🎉")
         else:
             pass
 
