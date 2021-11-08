@@ -19,8 +19,8 @@ class Marimo(commands.Cog):
         japan_time = f"{JST.month}/{JST.day} {JST.hour}:{JST.minute:02}"
 
         #コマンド自体のチャットを削除する
-        #message = ctx.message
-        #await message.delete()
+        message = ctx.message
+        await message.delete()
 
         #slot
         slot_list = ['🍒', '🔔', '🍉', '🍇', '🍋', '🐈', '🐬', '🦕', '🐢', '🐕']
