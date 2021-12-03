@@ -1,14 +1,22 @@
 import os
+import logging
 
 import discord
 import requests
 from discord.ext import commands
 from datetime import datetime, timedelta, timezone
 
+from ..libs.logging import DiscordBotHandler
+
+
+LOG_TEXT_CHANNEL_ID = os.environ["log_text_channel_id"]
+
+logger = logging.getLogger(__name__)
+
 
 class ApexTracker(commands.Cog):
     def __init__(self, bot):
-        self.bot = bot
+        self.bot: commands.Bot = bot
 
     def __get_rank_zone_rgb(self, rank_zone: str):
         if rank_zone == "Bronze":
@@ -35,6 +43,7 @@ class ApexTracker(commands.Cog):
         res = requests.get(url, headers=headers)
 
         if res.status_code != 200:
+            logger.error(res.json())
             await ctx.send(f"ランクポイントの取得に失敗しました...")
             return
 
@@ -72,5 +81,13 @@ class ApexTracker(commands.Cog):
         await ctx.send(embed=embed)
 
 
-def setup(bot):
+def setup(bot: commands.Bot):
     bot.add_cog(ApexTracker(bot))
+    log_channel = bot.get_channel(LOG_TEXT_CHANNEL_ID)
+    logger.setLevel(logging.DEBUG)
+
+    handler = DiscordBotHandler(log_channel)
+    handler.setLevel(logging.INFO)
+
+    # add ch to logger
+    logger.addHandler(handler)
