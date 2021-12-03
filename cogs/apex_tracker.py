@@ -6,10 +6,10 @@ import requests
 from discord.ext import commands
 from datetime import datetime, timedelta, timezone
 
-from ..libs.logging import DiscordBotHandler
+from libs.logging import DiscordBotHandler
 
 
-LOG_TEXT_CHANNEL_ID = os.environ["log_text_channel_id"]
+LOG_TEXT_CHANNEL_ID = os.environ["LOG_TEXT_CHANNEL_ID"]
 
 logger = logging.getLogger(__name__)
 

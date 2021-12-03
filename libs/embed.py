@@ -1,6 +1,6 @@
 import discord
 
-from utils import get_now_timestamp_jst
+from libs.utils import get_now_timestamp_jst
 
 
 # 共通で利用するカスタム embed を返します
