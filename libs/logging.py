@@ -1,6 +1,7 @@
+import asyncio
 import logging
 import traceback
-import asyncio
+from concurrent import futures
 
 import discord
 from discord import Color
@@ -12,9 +13,10 @@ from libs.utils import get_now_timestamp_jst
 
 class DiscordBotHandler(logging.Handler):
 
-    def __init__(self, log_channel: discord.TextChannel = None) -> None:
+    def __init__(self, log_channel: discord.TextChannel) -> None:
         logging.Handler.__init__(self)
         self.log_channel = log_channel
+        self.thread_pool = futures.ThreadPoolExecutor(max_workers=1)
         self.colors = {
             "DEBUG": Color.blue(),
             "INFO": Color.from_rgb(255, 255, 255),
@@ -40,7 +42,7 @@ class DiscordBotHandler(logging.Handler):
             embed.color = self.colors[level]
             embed.add_field(name=record.levelname,
                         value=f"```{log_body}```")
-            self.send_log(embed)
+            asyncio.create_task(self.send_log(embed))
         except Exception as e:
             print(repr(e))
             print(traceback.format_exc())

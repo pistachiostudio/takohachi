@@ -17,7 +17,20 @@ logger = logging.getLogger(__name__)
 class ApexTracker(commands.Cog):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
+    
+    @commands.Cog.listener()
+    async def on_ready(self):
+        print(self.bot.user)
+        print(LOG_TEXT_CHANNEL_ID)
+        log_channel = self.bot.get_channel(int(LOG_TEXT_CHANNEL_ID))
+        print(type(log_channel))
+        logger.setLevel(logging.DEBUG)
 
+        handler = DiscordBotHandler(log_channel)
+        handler.setLevel(logging.INFO)
+
+        # add ch to logger
+        logger.addHandler(handler)
     def __get_rank_zone_rgb(self, rank_zone: str):
         if rank_zone == "Bronze":
             return 122, 89, 47
@@ -83,11 +96,3 @@ class ApexTracker(commands.Cog):
 
 def setup(bot: commands.Bot):
     bot.add_cog(ApexTracker(bot))
-    log_channel = bot.get_channel(LOG_TEXT_CHANNEL_ID)
-    logger.setLevel(logging.DEBUG)
-
-    handler = DiscordBotHandler(log_channel)
-    handler.setLevel(logging.INFO)
-
-    # add ch to logger
-    logger.addHandler(handler)
