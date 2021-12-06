@@ -20,10 +20,7 @@ class ApexTracker(commands.Cog):
     
     @commands.Cog.listener()
     async def on_ready(self):
-        print(self.bot.user)
-        print(LOG_TEXT_CHANNEL_ID)
         log_channel = self.bot.get_channel(int(LOG_TEXT_CHANNEL_ID))
-        print(type(log_channel))
         logger.setLevel(logging.DEBUG)
 
         handler = DiscordBotHandler(log_channel)
