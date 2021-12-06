@@ -1,7 +1,6 @@
 import asyncio
 import logging
 import traceback
-from concurrent import futures
 
 import discord
 from discord import Color
@@ -16,7 +15,6 @@ class DiscordBotHandler(logging.Handler):
     def __init__(self, log_channel: discord.TextChannel) -> None:
         logging.Handler.__init__(self)
         self.log_channel = log_channel
-        self.thread_pool = futures.ThreadPoolExecutor(max_workers=1)
         self.colors = {
             "DEBUG": Color.blue(),
             "INFO": Color.from_rgb(255, 255, 255),
