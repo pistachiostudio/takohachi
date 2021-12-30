@@ -33,28 +33,21 @@ class MessageCount(commands.Cog):
         kame_id = self.bot.get_channel(780611197350576200) #亀
         kyoryu_id = self.bot.get_channel(812312154371784704) #恐竜
 
-        inu_count = 0
-        neko_count = 0
-        kame_count = 0
-        kyoryu_count = 0
+        all_counter = 0
 
         async for _ in inu_id.history(limit=None):
-            inu_count += 1
-            inu_ttl_count = f"{inu_count:,}"
+            all_counter += 1
 
         async for _ in neko_id.history(limit=None):
-            neko_count += 1
-            neko_ttl_count = f"{neko_count:,}"
+            all_counter += 1
 
         async for _ in kame_id.history(limit=None):
-            kame_count += 1
-            kame_ttl_count = f"{kame_count:,}"
+            all_counter += 1
 
         async for _ in kyoryu_id.history(limit=None):
-            kyoryu_count += 1
-            kyoryu_ttl_count = f"{kyoryu_count:,}"
+            all_counter += 1
 
-        ttl_count = int(inu_ttl_count) + int(neko_ttl_count) + int(kame_ttl_count) + int(kyoryu_ttl_count)
+        ttl_count = f"{all_counter:,}"
 
         embed = discord.Embed()
         JST = timezone(timedelta(hours=+9), "JST")
