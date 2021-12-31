@@ -23,7 +23,17 @@ class HappyNewYear(commands.Cog):
             "https://www.fg-a.com/new-year/2019-happy-new-year-3d-animation.gif",
             "https://www.fg-a.com/new-year/2022-happy-new-year-animated.gif",
             "https://www.fg-a.com/new-year/party-celebrate.jpg",
-            "https://www.fg-a.com/new-year/happy-new-year-on-black.gif"
+            "https://www.fg-a.com/new-year/happy-new-year-on-black.gif",
+            "https://www.fg-a.com/new-year/happy-new-year-balloons-b.gif",
+            "https://www.fg-a.com/new-year/2020-happy-new-year-purple-clipart.jpg",
+            "https://www.fg-a.com/new-year/2022-happy-new-year-celebrating.jpg",
+            "https://www.fg-a.com/new-year/happy-new-year-fireworks.gif",
+            "https://www.fg-a.com/new-year/new-year-star-animation.gif",
+            "https://www.fg-a.com/new-year/dance-happy-new-year.jpg",
+            "https://www.fg-a.com/new-year/new-year-clock-balloons.jpg",
+            "https://www.fg-a.com/new-year/friends-new-year-celebration.jpg",
+            "https://www.fg-a.com/new-year/2019-happy-new-year-baby-new-year.jpg",
+            "https://www.fg-a.com/new-year/2021-happy-new-year-animated-fireworks.gif"
         ]
         image_url = random.choice(image_url_list)
 
