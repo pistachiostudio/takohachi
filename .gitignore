@@ -18,3 +18,10 @@ tanaka.py
 yobro.py
 notify.py
 greet.py
+mp3/
+ffmpeg.exe
+ffplay.exe
+ffprobe.exe
+play.py
+play2.py
+lantest.py

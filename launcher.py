@@ -53,6 +53,7 @@ bot.load_extension("cogs.save_image")
 bot.load_extension("cogs.addssl")
 bot.load_extension("cogs.message_count")
 bot.load_extension("cogs.happy_new_year")
+bot.load_extension("cogs.card_count")
 # bot.load_extension("cogs.delete_image")
 
 
