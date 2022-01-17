@@ -74,7 +74,7 @@ class CardCount(commands.Cog):
                     add_cell = worksheet.find(str(author_name))
                     add_sum = f'=SUM(B{add_cell.row}:D{add_cell.row})'
                     worksheet.update_cell(int(add_cell.row), 5, add_sum)
-                    worksheet.update_cell(int(add_cell.row), 6, user_id)
+                    worksheet.update_cell(int(add_cell.row), 6, str(user_id))
 
 
                 #author_nameがすでにある場合はカウントアップ
@@ -96,7 +96,7 @@ class CardCount(commands.Cog):
                     add_cell = worksheet.find(str(author_name))
                     add_sum = f'=SUM(B{add_cell.row}:D{add_cell.row})'
                     worksheet.update_cell(int(add_cell.row), 5, add_sum)
-                    worksheet.update_cell(int(add_cell.row), 6, user_id)
+                    worksheet.update_cell(int(add_cell.row), 6, str(user_id))
 
 
                 #author_nameがすでにある場合はカウントアップ
@@ -118,7 +118,7 @@ class CardCount(commands.Cog):
                     add_cell = worksheet.find(str(author_name))
                     add_sum = f'=SUM(B{add_cell.row}:D{add_cell.row})'
                     worksheet.update_cell(int(add_cell.row), 5, add_sum)
-                    worksheet.update_cell(int(add_cell.row), 6, user_id)
+                    worksheet.update_cell(int(add_cell.row), 6, str(user_id))
 
 
                 #author_nameがすでにある場合はカウントアップ
