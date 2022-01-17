@@ -70,7 +70,10 @@ class CardCount(commands.Cog):
                 if cell == None:
                     export_value = [str(author_name), 1, 0, 0]
                     worksheet.append_row(export_value)
-                    return
+                    add_cell = worksheet.find(str(author_name))
+                    add_sum = f'=SUM(B{add_cell.row}:D{add_cell.row})'
+                    worksheet.update_cell(int(add_cell.row), 5, add_sum)
+
 
                 #author_nameがすでにある場合はカウントアップ
                 else:
@@ -78,7 +81,7 @@ class CardCount(commands.Cog):
                     cell_value = worksheet.cell(cell.row, update_col).value
                     update_value = int(cell_value) + 1
                     worksheet.update_cell(cell.row, update_col, update_value)
-                    return
+
 
 
             #絵文字がレッドカードの場合
@@ -88,7 +91,10 @@ class CardCount(commands.Cog):
                 if cell == None:
                     export_value = [str(author_name), 0, 1, 0]
                     worksheet.append_row(export_value)
-                    return
+                    add_cell = worksheet.find(str(author_name))
+                    add_sum = f'=SUM(B{add_cell.row}:D{add_cell.row})'
+                    worksheet.update_cell(int(add_cell.row), 5, add_sum)
+
 
                 #author_nameがすでにある場合はカウントアップ
                 else:
@@ -96,7 +102,7 @@ class CardCount(commands.Cog):
                     cell_value = worksheet.cell(cell.row, update_col).value
                     update_value = int(cell_value) + 1
                     worksheet.update_cell(cell.row, update_col, update_value)
-                    return
+
 
 
             #絵文字がパトランプの場合
@@ -106,7 +112,10 @@ class CardCount(commands.Cog):
                 if cell == None:
                     export_value = [str(author_name), 0, 0, 1]
                     worksheet.append_row(export_value)
-                    return
+                    add_cell = worksheet.find(str(author_name))
+                    add_sum = f'=SUM(B{add_cell.row}:D{add_cell.row})'
+                    worksheet.update_cell(int(add_cell.row), 5, add_sum)
+
 
                 #author_nameがすでにある場合はカウントアップ
                 else:
@@ -114,7 +123,10 @@ class CardCount(commands.Cog):
                     cell_value = worksheet.cell(cell.row, update_col).value
                     update_value = int(cell_value) + 1
                     worksheet.update_cell(cell.row, update_col, update_value)
-                    return
+
+
+        #E列のTTLを降順でソートする Sort sheet A -> Z by column 'E'
+        worksheet.sort((5, 'des'))
 
 def setup(bot):
     bot.add_cog(CardCount(bot))
