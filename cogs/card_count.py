@@ -34,6 +34,7 @@ class CardCount(commands.Cog):
             channel = self.bot.get_channel(payload.channel_id)
             message = await channel.fetch_message(payload.message_id)
             author_name = message.author
+            user_id = message.id
 
             #環境変数を設定
             CARDCOUNT_KEY = os.environ["CARDCOUNT_KEY"]
@@ -73,6 +74,7 @@ class CardCount(commands.Cog):
                     add_cell = worksheet.find(str(author_name))
                     add_sum = f'=SUM(B{add_cell.row}:D{add_cell.row})'
                     worksheet.update_cell(int(add_cell.row), 5, add_sum)
+                    worksheet.update_cell(int(add_cell.row), 6, user_id)
 
 
                 #author_nameがすでにある場合はカウントアップ
@@ -94,6 +96,7 @@ class CardCount(commands.Cog):
                     add_cell = worksheet.find(str(author_name))
                     add_sum = f'=SUM(B{add_cell.row}:D{add_cell.row})'
                     worksheet.update_cell(int(add_cell.row), 5, add_sum)
+                    worksheet.update_cell(int(add_cell.row), 6, user_id)
 
 
                 #author_nameがすでにある場合はカウントアップ
@@ -115,6 +118,7 @@ class CardCount(commands.Cog):
                     add_cell = worksheet.find(str(author_name))
                     add_sum = f'=SUM(B{add_cell.row}:D{add_cell.row})'
                     worksheet.update_cell(int(add_cell.row), 5, add_sum)
+                    worksheet.update_cell(int(add_cell.row), 6, user_id)
 
 
                 #author_nameがすでにある場合はカウントアップ
