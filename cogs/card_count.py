@@ -16,17 +16,15 @@ class CardCount(commands.Cog):
         if payload.member.bot:
             return
 
-        count_list = ["<:p05_card_yellow:833930008413470720>",
-                      "<:p05_card_red:835089889593786388>",
-                      "<a:p00_siren:801424753419354133>",
-                      "<:p05_siren:801693375043862580>",
-                      "<a:p00_sirenblue:802091428057579521>",
-                      "<a:p00_sirenpurple:805201572111974401>"]
+        yellow_card = "<:p05_card_yellow:833930008413470720>"
+        red_card = "<:p05_card_red:835089889593786388>"
+        siren_red = "<a:p00_siren:801424753419354133>"
+        siren_blue = "<a:p00_sirenblue:802091428057579521>"
+        siren_purple = "<a:p00_sirenpurple:805201572111974401>"
+        siren_emoji = "<:p05_siren:801693375043862580>"
 
-        siren_list = ["<a:p00_siren:801424753419354133>",
-                      "<:p05_siren:801693375043862580>",
-                      "<a:p00_sirenblue:802091428057579521>",
-                      "<a:p00_sirenpurple:805201572111974401>"]
+        count_list = [yellow_card, red_card, siren_red, siren_blue, siren_purple, siren_emoji]
+        siren_list = [siren_red, siren_blue, siren_purple, siren_emoji]
 
         #count_list共通処理
         if str(payload.emoji) in count_list:
@@ -65,7 +63,7 @@ class CardCount(commands.Cog):
 
             #ここから絵文字の種類で分岐
             #絵文字がイエローカードの場合
-            if str(payload.emoji) == "<:p05_card_yellow:833930008413470720>":
+            if str(payload.emoji) == yellow_card:
 
                 #author_nameが新規の場合
                 if cell == None:
@@ -87,7 +85,7 @@ class CardCount(commands.Cog):
 
 
             #絵文字がレッドカードの場合
-            if str(payload.emoji) == "<:p05_card_red:835089889593786388>":
+            if str(payload.emoji) == red_card:
 
                 #author_nameが新規の場合
                 if cell == None:
@@ -119,7 +117,6 @@ class CardCount(commands.Cog):
                     add_sum = f'=SUM(B{add_cell.row}:D{add_cell.row})'
                     worksheet.update_cell(int(add_cell.row), 5, add_sum)
                     worksheet.update_cell(int(add_cell.row), 6, str(user_id))
-
 
                 #author_nameがすでにある場合はカウントアップ
                 else:
