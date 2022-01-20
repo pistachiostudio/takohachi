@@ -53,6 +53,9 @@ Discord サーバーへの加入は[こちら](https://discord.com/invite/6XbCyR
 
   ![スクリーンショット 2022-01-19 021505](https://user-images.githubusercontent.com/4445606/149985902-b5714b7e-1086-466c-8c3d-64f495557c0b.png)
 
+- 記録した警告カードの集計を返す。`!!card`でトップ5、`!!cardall`ですべて。
+
+  ![image](https://user-images.githubusercontent.com/4445606/150370012-61c017a1-a448-4bb6-8c9a-ddfc53d06b40.png)
 
 
 ## Deproyment
