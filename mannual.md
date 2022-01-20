@@ -22,12 +22,15 @@ spotifyの曲情報を色々返します。
 - `!!spartist <ARTIST>`  
 spotifyのアーティスト情報を色々返します！  例: `!!spartist in the blue shirt`
 
-- `!!addssl <URL>` 
+- `!!addssl <URL>`  
 ピスタチオゲーム部がSSL未対応の監視を続ける監視リストへURLを登録します。  
 [https://ssl-checker.vercel.app](https://ssl-checker.vercel.app)
 
-- `!!count`  
+- `!!count` `!!countall`  
 コマンドを書き込んだチャンネルのメッセージの総件数を返します。
+
+- `!!card` `!!cardall`  
+記録したイエローカードやレッドカードリアクションの集計を返します。cardはベスト5。
 
 ## Others
 

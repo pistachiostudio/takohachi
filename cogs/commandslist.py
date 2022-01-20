@@ -37,7 +37,11 @@ B = YourID```
         **addssl <URL>**
         ```SSL Checkerのデータベースに新しい監視URLを登録します。```
         [SSL Checker](https://ssl-checker.vercel.app) ｜ [SSLC database](https://docs.google.com/spreadsheets/d/1c25pvMyjQ89OBCvB9whCQQLM_BPXKyY7umsj5wmpP2k/edit?usp=sharing)"
-                            """
+        **card**
+        ```イエローカードやレッドカードの集計結果のベスト5を返します。```
+        **cardall**
+        ```イエローカードやレッドカードのすべての集計結果を返します。```
+        """
 
         await ctx.send(embed=embed)
 
