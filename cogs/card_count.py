@@ -16,14 +16,16 @@ class CardCount(commands.Cog):
         if payload.member.bot:
             return
 
-        yellow_card = "<:p05_card_yellow:833930008413470720>"
-        red_card = "<:p05_card_red:835089889593786388>"
+        yellow_card = "<:p05_card_yellow:934125477424140308>"
+        red_card = "<:p05_card_red:934125543111131187>"
+        shake_yellow_card = "<a:p00_card_yellow:934125609544745030>"
+        shake_red_card = "<a:p00_card_red:934125658529988648>"
         siren_red = "<a:p00_siren:801424753419354133>"
         siren_blue = "<a:p00_sirenblue:802091428057579521>"
         siren_purple = "<a:p00_sirenpurple:805201572111974401>"
         siren_emoji = "<:p05_siren:801693375043862580>"
 
-        count_list = [yellow_card, red_card, siren_red, siren_blue, siren_purple, siren_emoji]
+        count_list = [yellow_card, red_card, shake_yellow_card, shake_red_card, siren_red, siren_blue, siren_purple, siren_emoji]
         siren_list = [siren_red, siren_blue, siren_purple, siren_emoji]
 
         #count_list共通処理
@@ -63,7 +65,7 @@ class CardCount(commands.Cog):
 
             #ここから絵文字の種類で分岐
             #絵文字がイエローカードの場合
-            if str(payload.emoji) == yellow_card:
+            if str(payload.emoji) == yellow_card or shake_yellow_card:
 
                 #author_nameが新規の場合
                 if cell == None:
@@ -85,7 +87,7 @@ class CardCount(commands.Cog):
 
 
             #絵文字がレッドカードの場合
-            if str(payload.emoji) == red_card:
+            if str(payload.emoji) == red_card or shake_red_card:
 
                 #author_nameが新規の場合
                 if cell == None:

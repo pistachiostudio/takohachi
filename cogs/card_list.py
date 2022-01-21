@@ -16,11 +16,8 @@ class CardList(commands.Cog):
     @commands.command()
     async def card(self, ctx):
 
-        yellow_card = "<:p05_card_yellow:833930008413470720>"
-        red_card = "<:p05_card_red:835089889593786388>"
-        siren_red = "<a:p00_siren:801424753419354133>"
-        siren_blue = "<a:p00_sirenblue:802091428057579521>"
-        siren_purple = "<a:p00_sirenpurple:805201572111974401>"
+        yellow_card = "<:p05_card_yellow:934125477424140308>"
+        red_card = "<:p05_card_red:934125543111131187>"
         siren_emoji = "<:p05_siren:801693375043862580>"
         database_url = "[Check database](https://docs.google.com/spreadsheets/d/1pDagY2BfCXA5ILOy_vXZUa31shsKhL-YpS-beyK12M0/edit?usp=sharing)"
 
@@ -65,11 +62,8 @@ class CardList(commands.Cog):
     @commands.command()
     async def cardall(self, ctx):
 
-        yellow_card = "<:p05_card_yellow:833930008413470720>"
-        red_card = "<:p05_card_red:835089889593786388>"
-        siren_red = "<a:p00_siren:801424753419354133>"
-        siren_blue = "<a:p00_sirenblue:802091428057579521>"
-        siren_purple = "<a:p00_sirenpurple:805201572111974401>"
+        yellow_card = "<:p05_card_yellow:934125477424140308>"
+        red_card = "<:p05_card_red:934125543111131187>"
         siren_emoji = "<:p05_siren:801693375043862580>"
         database_url = "[Check database](https://docs.google.com/spreadsheets/d/1pDagY2BfCXA5ILOy_vXZUa31shsKhL-YpS-beyK12M0/edit?usp=sharing)"
 
