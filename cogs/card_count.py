@@ -26,6 +26,8 @@ class CardCount(commands.Cog):
         siren_emoji = "<:p05_siren:801693375043862580>"
 
         count_list = [yellow_card, red_card, shake_yellow_card, shake_red_card, siren_red, siren_blue, siren_purple, siren_emoji]
+        yellow_list = [yellow_card, shake_yellow_card]
+        red_list = [red_card, shake_red_card]
         siren_list = [siren_red, siren_blue, siren_purple, siren_emoji]
 
         #count_list共通処理
@@ -65,7 +67,7 @@ class CardCount(commands.Cog):
 
             #ここから絵文字の種類で分岐
             #絵文字がイエローカードの場合
-            if str(payload.emoji) == yellow_card or shake_yellow_card:
+            if str(payload.emoji) in yellow_list:
 
                 #author_nameが新規の場合
                 if cell == None:
@@ -87,7 +89,7 @@ class CardCount(commands.Cog):
 
 
             #絵文字がレッドカードの場合
-            if str(payload.emoji) == red_card or shake_red_card:
+            if str(payload.emoji) in red_list:
 
                 #author_nameが新規の場合
                 if cell == None:
