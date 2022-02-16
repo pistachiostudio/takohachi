@@ -56,6 +56,11 @@ Discord サーバーへの加入は[こちら](https://discord.com/invite/6XbCyR
 - 記録した警告カードの集計を返す。`!!card`でトップ5、`!!cardall`ですべて。
 
   ![image](https://user-images.githubusercontent.com/4445606/150370012-61c017a1-a448-4bb6-8c9a-ddfc53d06b40.png)
+  
+  
+- サーバー内でしか使われない難読ワードをデータベースに登録しアクセスできる。`!!dic <WORDS>`
+  ![image](https://user-images.githubusercontent.com/4445606/154196740-08380a57-5a4a-41f0-aba3-c99531e68406.png)
+
 
 
 ## Deproyment
