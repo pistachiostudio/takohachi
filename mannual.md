@@ -32,7 +32,7 @@ spotifyのアーティスト情報を色々返します！  例: `!!spartist in 
 - `!!card` `!!cardall`  
 記録したイエローカードやレッドカードリアクションの集計を返します。cardはベスト5。
 
-- `!!dic <WORDS>`
+- `!!dic <WORDS>`  
 <WORDS>がデータベースに登録されている場合はその意味をレスポンスします。
 
 ## Others
