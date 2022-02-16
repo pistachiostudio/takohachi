@@ -51,23 +51,32 @@ class Dictionary(commands.Cog):
             #ワークシートのデータが入っている行数ゲットする
             row = worksheet.row_count
 
-            #A列のauthor_nameをリストで取得する
+            #A列のwordをリストで取得する
             word_list = worksheet.get(f'A2:C{row}')
 
             cell = worksheet.find(str(words))
 
-            dic_value = worksheet.cell(cell.row, 3).value
-            dic_hiragana = worksheet.cell(cell.row, 2).value
+            if cell == None:
+                embed = discord.Embed()
+                embed.title = f"ピスタチオゲーム部ディクショナリー"
+                JST = timezone(timedelta(hours=+9), "JST")
+                embed.timestamp = datetime.now(JST)
+                embed.color = discord.Color.dark_gold()
+                embed.description = f'登録がないようです。\n[check & edit the dictionary](https://docs.google.com/spreadsheets/d/15QCsHsmtZAs1FtiCplLmybU80WyxWw4C7G6ESf2b9f4/edit?usp=sharing)'
+                await ctx.send(embed=embed)
 
-            embed = discord.Embed()
-            embed.title = f"{words}: {dic_hiragana}"
-            JST = timezone(timedelta(hours=+9), "JST")
-            embed.timestamp = datetime.now(JST)
-            embed.color = discord.Color.purple()
-            embed.description = f'{dic_value}\n\n[check & edit the dictionary](https://docs.google.com/spreadsheets/d/15QCsHsmtZAs1FtiCplLmybU80WyxWw4C7G6ESf2b9f4/edit?usp=sharing)'
-            await ctx.send(embed=embed)
-            return
+            else:
+                dic_value = worksheet.cell(cell.row, 3).value
+                dic_hiragana = worksheet.cell(cell.row, 2).value
 
+                embed = discord.Embed()
+                embed.title = f"{words}: {dic_hiragana}"
+                JST = timezone(timedelta(hours=+9), "JST")
+                embed.timestamp = datetime.now(JST)
+                embed.color = discord.Color.purple()
+                embed.description = f'{dic_value}\n\n[check & edit the dictionary](https://docs.google.com/spreadsheets/d/15QCsHsmtZAs1FtiCplLmybU80WyxWw4C7G6ESf2b9f4/edit?usp=sharing)'
+                await ctx.send(embed=embed)
+                return
 
 def setup(bot):
     bot.add_cog(Dictionary(bot))
