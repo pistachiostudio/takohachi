@@ -19,7 +19,7 @@ class Currency(commands.Cog):
             return
 
 # リアクションで初期費用のボーナスBONUS_VALUE pisを与える
-# ここでは重複発生を防ぐためbonusカラムの0 or 1で配布済かどうかを判定します。
+# ここでは重複配布を防ぐためbonusカラムの0 or 1で配布済かどうかを判定します。
 
         # リアクションを許可するテキストチャットのID
         true_text_id = str('943501656283291662')
@@ -49,7 +49,7 @@ class Currency(commands.Cog):
             c.execute(query,tuple_id)
             istrue = c.fetchall()
 
-            # user_idカラムにuser_idがない場合（dbに新規登録）はbonus 1でBONUS_VALUEpisをもらい新規登録
+            # user_idカラムにuser_idがない場合dbに新規登録はbonus 1でBONUS_VALUEpisをもらい新規登録
             if len(istrue) == 0:
                 sql = 'insert into currency (user_id,user_name,bonus,money) values(?,?,?,?)'
                 data = (react_user_id, react_user_name, '1', BONUS_VALUE)
@@ -304,7 +304,7 @@ class Currency(commands.Cog):
     @commands.command()
     async def shop(self, ctx):
 
-        # money上位5件を上限に返す。
+        # リストすべてを返す
         db = sqlite3.connect(DB_DIRECTORY)
         c = db.cursor()
         query = 'select * from shop order by price'
@@ -340,7 +340,7 @@ class Currency(commands.Cog):
         if buy_item == 'default':
             embed = discord.Embed()
             embed.color = discord.Color.dark_green()
-            embed.description = '買いたい商品を指定してください。\n!!buy <商品> です。商品一覧は!!shopコマンドを使用してください。'
+            embed.description = ':warning:買いたい商品を指定してください。\n!!buy <商品名> です。商品一覧は!!shopコマンドを使用してください。'
             await ctx.send(embed=embed)
             return
 
@@ -356,7 +356,7 @@ class Currency(commands.Cog):
             if len(item_all_record) == 0:
                 embed = discord.Embed()
                 embed.color = discord.Color.dark_green()
-                embed.description = f":warning:商品名が違うようです。!!shopコマンドで正しい商品名を確認してください。"
+                embed.description = f":warning:その商品は現在販売されていないようです。!!shopコマンドで販売中の商品を確認してください。"
                 await ctx.send(embed=embed)
                 return
 
@@ -428,9 +428,9 @@ class Currency(commands.Cog):
 
 
     '''
-    //////////////////////
-    ここからは管理者のみのコマンド
-    //////////////////////
+    ////////////////////////////
+    ///ここからは管理者のみのコマンド///
+    ////////////////////////////
     '''
 
 
