@@ -5,6 +5,8 @@ import os
 from discord.ext import commands
 
 DB_DIRECTORY = os.environ["DB_DIRECTORY"]
+BONUS_VALUE = 3000
+OWENER_USER_ID = '538992968254619649' #一部の管理者専用のコマンドで使用
 
 class Currency(commands.Cog):
     def __init__(self, bot):
@@ -16,7 +18,7 @@ class Currency(commands.Cog):
         if payload.member.bot:
             return
 
-# リアクションで初期費用のボーナス3000pisを与える
+# リアクションで初期費用のボーナスBONUS_VALUE pisを与える
 # ここでは重複発生を防ぐためbonusカラムの0 or 1で配布済かどうかを判定します。
 
         # リアクションを許可するテキストチャットのID
@@ -47,10 +49,10 @@ class Currency(commands.Cog):
             c.execute(query,tuple_id)
             istrue = c.fetchall()
 
-            # user_idカラムにuser_idがない場合（dbに新規登録）はbonus 1で3000円をもらい新規登録
+            # user_idカラムにuser_idがない場合（dbに新規登録）はbonus 1でBONUS_VALUEpisをもらい新規登録
             if len(istrue) == 0:
                 sql = 'insert into currency (user_id,user_name,bonus,money) values(?,?,?,?)'
-                data = (react_user_id, react_user_name, '1', 3000)
+                data = (react_user_id, react_user_name, '1', BONUS_VALUE)
                 c.execute(sql, data)
                 db.commit()
 
@@ -76,13 +78,13 @@ class Currency(commands.Cog):
                     await channel.send(embed=embed)
                     return
 
-                # bonusが0の場合はmoneyの値に3000を足して更新する
+                # bonusが0の場合はmoneyの値にBONUS_VALUEを足して更新する
                 else:
                     query = 'select money from currency where user_id = ?'
                     c.execute(query, tuple_id)
                     user_money = c.fetchall()
                     user_money = user_money[0][0]
-                    update_user_money = user_money + 3000
+                    update_user_money = user_money + BONUS_VALUE
                     tupled = (update_user_money, react_user_id)
 
                     # user_idのmoneyをupdate_user_moneyに更新する
@@ -423,6 +425,153 @@ class Currency(commands.Cog):
                     embed.description = f"<@{command_sender_id}> は {buy_item}({item_price_t} PIS) を購入しました。\n残りの所持金は {update_customer_money_t} PISです。\nご利用ありがとうございます。"
                     await ctx.send(embed=embed)
                     return
+
+
+    '''
+    //////////////////////
+    ここからは管理者のみのコマンド
+    //////////////////////
+    '''
+
+
+# !!resetcurrency
+# currencyテーブルのすべてのレコードを削除します。
+
+    @commands.command()
+    async def resetcurrency(self, ctx):
+
+        #俺だけが使えるコマンド
+        command_sender_id = str(ctx.author.id)
+        if command_sender_id == OWENER_USER_ID:
+            db = sqlite3.connect(DB_DIRECTORY)
+            c = db.cursor()
+            query = 'delete from currency'
+            c.execute(query)
+            db.commit()
+            embed = discord.Embed()
+            embed.color = discord.Color.dark_green()
+            embed.description = f"データベースのテーブル currency のデータをすべて削除しました。"
+            await ctx.send(embed=embed)
+            return
+
+        else:
+            embed = discord.Embed()
+            embed.color = discord.Color.dark_green()
+            embed.description = 'そのコマンドは許可されていません。'
+            await ctx.send(embed=embed)
+            return
+
+
+# !!givebonus <@user_mention>
+# 管理者がコマンドで与えることもできるようにする
+
+    @commands.command()
+    async def givebonus(self, ctx, bonus_give_user: discord.Member):
+
+        #俺だけが使えるコマンド
+        command_sender_id = str(ctx.author.id)
+        if command_sender_id == OWENER_USER_ID:
+
+            # user_idカラムからuser_idを探す
+            give_user_id = str(bonus_give_user.id)
+            tuple_give_user_id = (give_user_id,)
+            db = sqlite3.connect(DB_DIRECTORY)
+            c = db.cursor()
+            query = 'select * from currency where user_id = ? limit 1'
+            c.execute(query,tuple_give_user_id)
+            istrue = c.fetchall()
+
+            # user_idカラムにuser_idがない場合（dbに新規登録）はbonus 1でBONUS_VALUE円をもらい新規登録
+            if len(istrue) == 0:
+                sql = 'insert into currency (user_id,user_name,bonus,money) values(?,?,?,?)'
+                data = (str(give_user_id), str(bonus_give_user), '1', BONUS_VALUE)
+                c.execute(sql, data)
+                db.commit()
+
+                BONUS_VALUE_t = '{:,}'.format(BONUS_VALUE)
+                embed = discord.Embed()
+                embed.color = discord.Color.dark_green()
+                embed.description = f"<@{give_user_id}> に{BONUS_VALUE_t} PIS ボーナスを配布しました。"
+                await ctx.send(embed=embed)
+                return
+
+            else:
+                embed = discord.Embed()
+                embed.color = discord.Color.dark_green()
+                embed.description = f"<@{give_user_id}> はすでにボーナスを受け取っています。"
+                await ctx.send(embed=embed)
+                return
+
+        else:
+            embed = discord.Embed()
+            embed.color = discord.Color.dark_green()
+            embed.description = 'そのコマンドは許可されていません。'
+            await ctx.send(embed=embed)
+            return
+
+
+# !!setmoney <amount> <bonus_flag> <@user_mention>se
+# 管理者がコマンドで与えることもできるようにする
+
+    @commands.command()
+    async def setmoney(self, ctx, amount: int, bonus: str, set_user: discord.Member):
+
+        #俺だけが使えるコマンド
+        command_sender_id = str(ctx.author.id)
+        if command_sender_id == OWENER_USER_ID:
+
+            #bonusは0か1しかセットできない
+            if bonus == '0' or bonus ==  '1':
+                # user_idカラムからuser_idを探す
+                set_user_id = str(set_user.id)
+                tuple_set_user_id = (set_user_id,)
+                db = sqlite3.connect(DB_DIRECTORY)
+                c = db.cursor()
+                query = 'select * from currency where user_id = ? limit 1'
+                c.execute(query,tuple_set_user_id)
+                istrue = c.fetchall()
+
+                # 新規登録の場合
+                if len(istrue) == 0:
+                    sql = 'insert into currency (user_id,user_name,bonus,money) values(?,?,?,?)'
+                    data = (str(set_user_id), str(set_user), str(bonus), int(amount))
+                    c.execute(sql, data)
+                    db.commit()
+
+                    amount_t = '{:,}'.format(amount)
+                    embed = discord.Embed()
+                    embed.color = discord.Color.dark_green()
+                    embed.description = f"<@{set_user_id}> に{amount_t} PIS セットしました。bonus_flagは{bonus}です。"
+                    await ctx.send(embed=embed)
+                    return
+
+                # 新規登録ではない場合も更新する
+                else:
+                    set_update_tuple = (str(bonus), int(amount), str(set_user_id))
+                    sql = 'update currency set bonus = ?, money = ? where user_id = ?'
+                    c.execute(sql, set_update_tuple)
+                    db.commit()
+
+                    amount_t = '{:,}'.format(amount)
+                    embed = discord.Embed()
+                    embed.color = discord.Color.dark_green()
+                    embed.description = f"<@{set_user_id}> の所持金{amount_t} PISにを更新しました。bonus_flagは{bonus}です。"
+                    await ctx.send(embed=embed)
+                    return
+
+            else:
+                embed = discord.Embed()
+                embed.color = discord.Color.dark_green()
+                embed.description = f"bonus_flagは0か1以外設定できません。"
+                await ctx.send(embed=embed)
+                return
+
+        else:
+            embed = discord.Embed()
+            embed.color = discord.Color.dark_green()
+            embed.description = 'そのコマンドは許可されていません。'
+            await ctx.send(embed=embed)
+            return
 
 
 def setup(bot):
