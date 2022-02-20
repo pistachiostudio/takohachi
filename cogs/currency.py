@@ -56,10 +56,13 @@ class Currency(commands.Cog):
                 c.execute(sql, data)
                 db.commit()
 
-                '''
-                ここは10秒間くらいだけ表示する「ボーナスを獲得しました」的なメッセージを作る。
-                そもそもいるか？
-                '''
+                #ボーナス獲得メッセージを5秒間表示
+                embed = discord.Embed()
+                JST = timezone(timedelta(hours=+9), "JST")
+                embed.timestamp = datetime.now(JST)
+                embed.color = discord.Color.green()
+                embed.description = f":moneybag:<@{react_user_id}>はボーナスを獲得しました。"
+                await channel.send(embed=embed, delete_after = 5.0)
 
             else:
                 # user_idがある場合はbonusカラムをチェックする
@@ -68,14 +71,14 @@ class Currency(commands.Cog):
                 bonus_flag = c.fetchall()
                 bonus_flag = bonus_flag[0][0]
 
-                # bonusが1の場合は獲得済みのエラーメッセージ
+                # bonusが1の場合はすでに獲得済みのエラーメッセージを5秒間
                 if bonus_flag == '1':
                     embed = discord.Embed()
                     JST = timezone(timedelta(hours=+9), "JST")
                     embed.timestamp = datetime.now(JST)
-                    embed.color = discord.Color.green()
-                    embed.description = f":warning: <@{react_user_id}>はすでにボーナスを獲得しています。"
-                    await channel.send(embed=embed)
+                    embed.color = discord.Color.red()
+                    embed.description = f":warning:<@{react_user_id}>はすでにボーナスを獲得しています。ボーナスは一度しかもらえません。"
+                    await channel.send(embed=embed, delete_after = 5.0)
                     return
 
                 # bonusが0の場合はmoneyの値にBONUS_VALUEを足して更新する
@@ -97,9 +100,15 @@ class Currency(commands.Cog):
                     c.execute(sql, tuple_id)
                     db.commit()
 
-                    '''
-                    # ここは10秒間くらいだけ表示する「ボーナスを獲得しました」的なメッセージを作る？
-                    '''
+                    #ボーナス獲得メッセージを5秒間表示
+                    update_user_money_t = '{:,}'.format(update_user_money)
+                    embed = discord.Embed()
+                    JST = timezone(timedelta(hours=+9), "JST")
+                    embed.timestamp = datetime.now(JST)
+                    embed.color = discord.Color.green()
+                    embed.description = f":moneybag:<@{react_user_id}>はボーナスを獲得し、所持金の合計が {update_user_money_t} PISになりました。"
+                    await channel.send(embed=embed, delete_after = 5.0)
+
         else:
             return
 
@@ -429,7 +438,7 @@ class Currency(commands.Cog):
 
     '''
     ////////////////////////////
-    ///ここからは管理者のみのコマンド///
+    ここからは管理者のみのコマンド
     ////////////////////////////
     '''
 
