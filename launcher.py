@@ -59,5 +59,4 @@ bot.load_extension("cogs.dic")
 bot.load_extension("cogs.trigger")
 
 
-
 bot.run(TOKEN)

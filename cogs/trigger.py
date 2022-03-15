@@ -80,6 +80,5 @@ class Trigger(commands.Cog):
                     return
 
 
-
 def setup(bot):
     bot.add_cog(Trigger(bot))
