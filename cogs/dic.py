@@ -26,7 +26,7 @@ class Dictionary(commands.Cog):
             JST = timezone(timedelta(hours=+9), "JST")
             embed.timestamp = datetime.now(JST)
             embed.color = discord.Color.dark_gold()
-            embed.description = f'`!!dic <word>`で意味を返すします。\n[check & edit the dictionary](https://docs.google.com/spreadsheets/d/15QCsHsmtZAs1FtiCplLmybU80WyxWw4C7G6ESf2b9f4/edit?usp=sharing)'
+            embed.description = f'`!!dic <word>`で意味を返します。\n[check & edit the dictionary](https://docs.google.com/spreadsheets/d/15QCsHsmtZAs1FtiCplLmybU80WyxWw4C7G6ESf2b9f4/edit?usp=sharing)'
             await ctx.send(embed=embed)
             return
 
