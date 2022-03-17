@@ -40,6 +40,7 @@ class Trigger(commands.Cog):
             trigger = message.content.lstrip('!!')
             trigger_cell = worksheet.find(str(trigger),in_column=1,case_sensitive=False)
 
+
             if trigger_cell == None:
                 return
 
