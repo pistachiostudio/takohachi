@@ -38,8 +38,7 @@ class Trigger(commands.Cog):
             word_list = worksheet.get('A3:C200')
 
             trigger = message.content.lstrip('!!')
-            trigger_cell = worksheet.find(str(trigger),in_column=1)
-
+            trigger_cell = worksheet.find(str(trigger),in_column=1,case_sensitive=False)
 
             if trigger_cell == None:
                 return
