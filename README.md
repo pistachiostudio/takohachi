@@ -98,4 +98,4 @@ Discord サーバーへの加入は[こちら](https://discord.com/invite/6XbCyR
 ## License
 
 Takohachi is released under the MIT license.  
-©2021 Pistachio Gaming & Pistachio Studio.
+©2022 Pistachio Gaming & Pistachio Studio.
