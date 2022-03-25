@@ -49,7 +49,6 @@ class Trigger(commands.Cog):
             pad_len = len(header_list) - len(trigger_value_list)
             pad_list = ["" for _ in range(pad_len)]
             trigger_value_list.extend(pad_list)
-            print(trigger_value_list)
 
             # 取得対象のカラム名リスト
             colomn_names = ["response", "title", "description", "right_small_image_URL", "big_image_URL"]
@@ -59,14 +58,11 @@ class Trigger(commands.Cog):
 
             for col_name in colomn_names:
                 col_index = self._get_index(header_list, col_name)
-                print("colindex", col_index)
                 if col_index is None:
                     value = None
                 else:
                     value = trigger_value_list[col_index]
                 embed_dict[col_name] = value
-
-            print(embed_dict)
 
             if embed_dict["response"]:
                 await message.channel.send(f'{embed_dict["response"]}')
