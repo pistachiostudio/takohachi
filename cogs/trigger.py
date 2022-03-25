@@ -65,7 +65,7 @@ class Trigger(commands.Cog):
                 else:
                     value = trigger_value_list[col_index]
                 embed_dict[col_name] = value
-            
+
             print(embed_dict)
 
             if embed_dict["response"]:
@@ -75,7 +75,7 @@ class Trigger(commands.Cog):
                 JST = timezone(timedelta(hours=+9), "JST")
                 embed.timestamp = datetime.now(JST)
                 if embed_dict["title"]:
-                    embed.title = f'test: {embed_dict["title"]}'
+                    embed.title = f'{embed_dict["title"]}'
                 if embed_dict["description"]:
                     embed.description = f'{embed_dict["description"]}\n\n[Check DB](https://docs.google.com/spreadsheets/d/15QCsHsmtZAs1FtiCplLmybU80WyxWw4C7G6ESf2b9f4/edit#gid=1264027664&range=A1)'
                 if embed_dict["right_small_image_URL"]:
