@@ -25,3 +25,6 @@ ffprobe.exe
 play.py
 play2.py
 lantest.py
+
+# 環境変数
+.env
