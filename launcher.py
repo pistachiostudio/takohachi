@@ -55,7 +55,6 @@ bot.load_extension("cogs.message_count")
 bot.load_extension("cogs.happy_new_year")
 bot.load_extension("cogs.card_count")
 bot.load_extension("cogs.card_list")
-bot.load_extension("cogs.dic")
 bot.load_extension("cogs.trigger")
 
 bot.run(TOKEN)
