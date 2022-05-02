@@ -15,35 +15,36 @@ class Help(commands.Cog):
         embed.title = "takohachi commands help"
         embed.color = discord.Color.blue()
         embed.description = """
-        Prefix は `!!` です。
-        [View more info on GitHub](https://github.com/pistachiostudio/takohachi/blob/master/mannual.md)
+Prefix は `!!` です。
+[View more info on GitHub](https://github.com/pistachiostudio/takohachi/blob/master/mannual.md)
 
-        **mt**
-        ```まりもたいむ！```
-        **whatToday**
-        ```今日はなんの日？```
-        **apexrank <A> <B>**
-        ```APEXのランクポイントを表示します。
+**!!mt**
+```まりもたいむ！```
+**!!whatToday**
+```今日はなんの日？```
+**!!apexrank <A> <B>**
+```APEXのランクポイントを表示します。
 A = origin or psn or xbl
 B = YourID```
-        **sp <SEARCH>**
-        ```Spotifyの曲情報をゲットします。```
-        **spartist <ARTIST>**
-        ```Spotifyのアーティスト情報をゲットします。```
-        **count**
-        ```コマンドを書き込んだチャンネルの現在のメッセージの総件数を返します。```
-        **countall**
-        ```犬～恐竜の4チャンネルの現在のメッセージの合計を返します。```
-        **card**
-        ```イエローカードやレッドカードの集計結果のベスト5を返します。```
-        **cardall**
-        ```イエローカードやレッドカードのすべての集計結果を返します。```
-        **dic <WORDS>**
-        ```<WORDS>がデータベースに登録されていればその意味を返します。```
-        **addssl <URL>**
-        ```SSL Checkerのデータベースに新しい監視URLを登録します。```
-        [SSL Checker](https://ssl-checker.vercel.app) ｜ [SSLC database](https://docs.google.com/spreadsheets/d/1c25pvMyjQ89OBCvB9whCQQLM_BPXKyY7umsj5wmpP2k/edit?usp=sharing)"
-        """
+**!!sp <SEARCH WORDS>**
+```Spotifyの曲情報をゲットします。```
+**!!spartist <ARTIST WORDS>**
+```Spotifyのアーティスト情報をゲットします。```
+**!!count**
+```コマンドを書き込んだチャンネルの現在のメッセージの総件数を返します。```
+**!!countall**
+```犬～恐竜の4チャンネルの現在のメッセージの合計を返します。```
+**!!card**
+```イエローカードやレッドカードの集計結果のベスト5を返します。```
+**!!cardall**
+```イエローカードやレッドカードのすべての集計結果を返します。```
+**!!addssl <URL>**
+```SSL Checkerのデータベースに新しい監視URLを登録します。```
+**!!d**
+```Valorantのマップをランダムで返します。diceのdです。```
+**!!b**
+```自分のニックネームの頭に🛀をつけます。もう一度同じコマンドで🛀をはずします。bathのbです。```
+"""
 
         await ctx.send(embed=embed)
 
