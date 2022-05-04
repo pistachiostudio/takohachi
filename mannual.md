@@ -20,20 +20,24 @@ spotifyの曲情報を色々返します。
 例: `!!sp chelmico power`
 
 - `!!spartist <ARTIST>`  
-spotifyのアーティスト情報を色々返します！  例: `!!spartist in the blue shirt`
+spotifyのアーティスト情報を色々返します！  
+例: `!!spartist in the blue shirt`
 
 - `!!addssl <URL>`  
 ピスタチオゲーム部がSSL未対応の監視を続ける監視リストへURLを登録します。  
 [https://ssl-checker.vercel.app](https://ssl-checker.vercel.app)
 
 - `!!count` `!!countall`  
-コマンドを書き込んだチャンネルのメッセージの総件数を返します。
+コマンドを書き込んだチャンネルのメッセージの総件数を返します。countallの場合は指定したチャンネルの合計メッセージ数を返します。
 
 - `!!card` `!!cardall`  
 記録したイエローカードやレッドカードリアクションの集計を返します。cardはベスト5。
 
-- `!!dic <WORDS>`  
-<WORDS>がデータベースに登録されている場合はその意味をレスポンスします。
+- `!!d`  
+Valorantのマップを1つランダムで返します。カスタムの時のマップピックのために。
+
+- `!!b`
+自分のニックネームの頭に🛀が付きます。AFKのときにつけたりするといいかもしれません。もう一度`!!b`で絵文字が取れます。
 
 ## Others
 
