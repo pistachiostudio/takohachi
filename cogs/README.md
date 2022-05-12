@@ -30,6 +30,11 @@
 - ヘルプコマンドコマンド `!!help` です。  
   ![image](https://user-images.githubusercontent.com/4445606/166939285-0d548be6-b13b-4c34-a38b-be28db3080cb.png)
 
+### currency.py
+
+- work in progress! まだ動いていません。
+- サーバー内で遊べる通過機能。実装予定機能は[issue](https://github.com/pistachiostudio/takohachi/issues/42)にあります。
+
 ### delete_image.py
 
 - save_image.pyの削除機能。現在動いてないです。wip  
