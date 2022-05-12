@@ -33,7 +33,7 @@
 ### currency.py
 
 - work in progress! まだ動いていません。
-- サーバー内で遊べる通過機能。実装予定機能は[issue](https://github.com/pistachiostudio/takohachi/issues/42)にあります。
+- サーバー内で遊べる通貨機能。実装予定機能は[issue](https://github.com/pistachiostudio/takohachi/issues/42)にあります。
 
 ### delete_image.py
 
