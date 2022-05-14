@@ -33,3 +33,30 @@ def get_what_today(this_month: int, this_day: int) -> str:
     ul_match_sub_list = [re.sub('<.+?>', '', s) for s in ul_match_list]
     result = ul_match_sub_list[randint(0, len(ul_match_sub_list) - 1)]
     return result
+
+def get_weather(citycode: int):
+
+    url = 'https://weather.tsukumijima.net/api/forecast'
+
+    #citycode一覧"https://weather.tsukumijima.net/primary_area.xml"
+    params = {
+        'city': citycode
+    }
+
+    res = requests.get(url, params=params)
+    json = res.json()
+
+    date = json['forecasts'][0]['date']
+    district = json['location']['district']
+    body_text = json['description']['bodyText']
+    weather = json['forecasts'][0]['detail']['weather']
+    weather = weather.replace("　", "")
+    min_temp = json['forecasts'][0]['temperature']['min']['celsius']
+    max_temp = json['forecasts'][0]['temperature']['max']['celsius']
+    chanceOfRain_morning = json['forecasts'][0]['chanceOfRain']['T06_12']
+    chanceOfRain_evening = json['forecasts'][0]['chanceOfRain']['T12_18']
+    chanceOfRain_night = json['forecasts'][0]['chanceOfRain']['T18_24']
+
+    result = f"{district}: {weather}\n☔ 朝: {chanceOfRain_morning} | 昼: {chanceOfRain_evening} | 晩: {chanceOfRain_night}"
+
+    return result

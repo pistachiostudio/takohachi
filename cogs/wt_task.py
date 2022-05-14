@@ -1,7 +1,5 @@
 from datetime import datetime, timedelta, timezone
-
-from libs.utils import get_what_today
-
+from libs.utils import get_what_today, get_weather
 from discord.ext import commands, tasks
 import discord
 
@@ -30,7 +28,12 @@ class WTTasks(commands.Cog):
         if this_hour == 7 and 0 <= this_minute <= 9:
             result = get_what_today(this_month, this_day)
 
+            #東京地方。citycode一覧 "https://weather.tsukumijima.net/primary_area.xml"
+            citycode = 130010
+            weather = get_weather(citycode)
+
             embed = discord.Embed()
+            embed.set_footer(text=weather)
             embed.timestamp = datetime.now(JST)
             embed.color = discord.Color.green()
             embed.title = f'7時です。今日はなんの日？'
