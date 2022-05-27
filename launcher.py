@@ -76,5 +76,8 @@ async def main():
         
         await bot.start(TOKEN)
 
+        for cmd in bot.walk_commands():
+            print(cmd)
+
 init()
 asyncio.run(main())
