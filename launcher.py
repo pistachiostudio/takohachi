@@ -58,8 +58,11 @@ bot.load_extension("cogs.happy_new_year")
 bot.load_extension("cogs.card_count")
 bot.load_extension("cogs.card_list")
 bot.load_extension("cogs.trigger")
-bot.load_extension("cogs.wt_task")
 bot.load_extension("cogs.dice")
 bot.load_extension("cogs.bath")
+
+# Productionのみで読み込むcogs
+if PREFIX == '!!':
+    bot.load_extension("cogs.wt_task")
 
 bot.run(TOKEN)
