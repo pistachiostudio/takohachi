@@ -7,7 +7,7 @@ class Help(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.command(name="help")
+    @commands.command()
     async def help(self, ctx):
 
         print("exec help")

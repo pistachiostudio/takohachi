@@ -4,10 +4,12 @@ from pathlib import Path
 
 import discord
 from discord.ext import commands
+from dispander import dispand
 
 PREFIX = os.environ["PREFIX"]
 
-intents = discord.Intents.all()
+intents = discord.Intents.default()
+intents.message_content = True
 bot = commands.Bot(command_prefix=PREFIX, help_command=None, intents=intents)
 
 # 環境変数からトークンを読み込む
@@ -52,7 +54,14 @@ async def playing(ctx, title):
 @bot.event
 async def on_message(message):
     print(message.content)
+    if message.author.bot:
+        return
+    await dispand(message)
 
+
+class Takohachi(commands.Bot):
+    async def setup_hook(self):
+        await self.load_extension('my_extension')
 
 async def main():
     async with bot:
