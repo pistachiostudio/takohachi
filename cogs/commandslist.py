@@ -4,7 +4,7 @@ from datetime import datetime, timedelta, timezone
 
 
 class Help(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
 
     @commands.command()
@@ -48,5 +48,5 @@ B = YourID```
 
         await ctx.send(embed=embed)
 
-def setup(bot):
-    bot.add_cog(Help(bot))
+async def setup(bot: commands.Bot):
+    await bot.add_cog(Help(bot))

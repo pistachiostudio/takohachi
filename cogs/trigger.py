@@ -11,7 +11,7 @@ DIC_KEY = os.environ["DIC_KEY"]
 PREFIX = os.environ["PREFIX"]
 
 class Trigger(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
 
     @commands.Cog.listener()
@@ -89,5 +89,5 @@ class Trigger(commands.Cog):
             return None
 
 
-def setup(bot):
-    bot.add_cog(Trigger(bot))
+async def setup(bot: commands.Bot):
+    await bot.add_cog(Trigger(bot))

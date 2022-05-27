@@ -5,7 +5,7 @@ from datetime import datetime, timedelta, timezone
 
 
 class MessageCount(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
 
     @commands.command()
@@ -57,5 +57,5 @@ class MessageCount(commands.Cog):
         await ctx.send(embed=embed)
 
 
-def setup(bot):
-    bot.add_cog(MessageCount(bot))
+async def setup(bot: commands.Bot):
+    await bot.add_cog(MessageCount(bot))

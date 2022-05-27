@@ -9,7 +9,7 @@ BONUS_VALUE = 3000
 OWENER_USER_ID = '538992968254619649' #一部の管理者専用のコマンドで使用
 
 class Currency(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
 
     @commands.Cog.listener()
@@ -583,5 +583,5 @@ class Currency(commands.Cog):
             return
 
 
-def setup(bot):
-    bot.add_cog(Currency(bot))
+async def setup(bot: commands.Bot):
+    await bot.add_cog(Currency(bot))

@@ -1,3 +1,4 @@
+import asyncio
 import os
 from pathlib import Path
 
@@ -6,7 +7,8 @@ from discord.ext import commands
 
 PREFIX = os.environ["PREFIX"]
 
-bot = commands.Bot(command_prefix=PREFIX, help_command=None)
+intents = discord.Intents.default()
+bot = commands.Bot(command_prefix=PREFIX, help_command=None, intents=intents)
 
 # 環境変数からトークンを読み込む
 TOKEN = os.environ["TOKEN"]
@@ -42,27 +44,31 @@ async def playing(ctx, title):
     await client.change_presence(activity=game)
 
 
+async def main():
+    async with bot:
+        await bot.load_extension('my_extension')
+        await bot.load_extension("dispander")
+        await bot.load_extension("cogs.apex_tracker")
+        await bot.load_extension("cogs.commandslist")
+        await bot.load_extension("cogs.spotify")
+        await bot.load_extension("cogs.vcwhite")
+        await bot.load_extension("cogs.marimo")
+        await bot.load_extension("cogs.what_today")
+        await bot.load_extension("cogs.save_image")
+        await bot.load_extension("cogs.addssl")
+        await bot.load_extension("cogs.message_count")
+        await bot.load_extension("cogs.happy_new_year")
+        await bot.load_extension("cogs.card_count")
+        await bot.load_extension("cogs.card_list")
+        await bot.load_extension("cogs.trigger")
+        await bot.load_extension("cogs.dice")
+        await bot.load_extension("cogs.bath")
+
+        # Productionのみで読み込むcogs
+        if PREFIX == '!!':
+            await bot.load_extension("cogs.wt_task")
+        
+        await bot.start(TOKEN)
+
 init()
-
-bot.load_extension("dispander")
-bot.load_extension("cogs.apex_tracker")
-bot.load_extension("cogs.commandslist")
-bot.load_extension("cogs.spotify")
-bot.load_extension("cogs.vcwhite")
-bot.load_extension("cogs.marimo")
-bot.load_extension("cogs.what_today")
-bot.load_extension("cogs.save_image")
-bot.load_extension("cogs.addssl")
-bot.load_extension("cogs.message_count")
-bot.load_extension("cogs.happy_new_year")
-bot.load_extension("cogs.card_count")
-bot.load_extension("cogs.card_list")
-bot.load_extension("cogs.trigger")
-bot.load_extension("cogs.dice")
-bot.load_extension("cogs.bath")
-
-# Productionのみで読み込むcogs
-if PREFIX == '!!':
-    bot.load_extension("cogs.wt_task")
-
-bot.run(TOKEN)
+asyncio.run(main())

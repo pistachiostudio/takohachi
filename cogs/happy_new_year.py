@@ -4,7 +4,7 @@ import discord
 from discord.ext import commands
 
 class HappyNewYear(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
     
     @commands.command()
@@ -46,5 +46,5 @@ class HappyNewYear(commands.Cog):
         await ctx.send(image_url)
 
 
-def setup(bot):
-    bot.add_cog(HappyNewYear(bot))
+async def setup(bot: commands.Bot):
+    await bot.add_cog(HappyNewYear(bot))

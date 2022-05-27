@@ -27,5 +27,5 @@ class Vcwhite(commands.Cog):
         else:
             pass
 
-def setup(bot):
-    bot.add_cog(Vcwhite(bot))
+async def setup(bot):
+    await bot.add_cog(Vcwhite(bot))

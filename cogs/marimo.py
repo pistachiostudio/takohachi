@@ -6,7 +6,7 @@ import random
 
 
 class Marimo(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
 
     @commands.command()
@@ -44,5 +44,5 @@ class Marimo(commands.Cog):
         else:
             pass
 
-def setup(bot):
-    bot.add_cog(Marimo(bot))
+async def setup(bot: commands.Bot):
+    await bot.add_cog(Marimo(bot))

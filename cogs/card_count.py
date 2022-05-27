@@ -3,11 +3,9 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from discord.ext import commands
 import os
-from typing import Any
-from datetime import datetime, timedelta, timezone
 
 class CardCount(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
 
     @commands.Cog.listener()
@@ -133,5 +131,5 @@ class CardCount(commands.Cog):
         #E列のTTLを降順でソートする Sort sheet A -> Z by column 'E'
         worksheet.sort((5, 'des'))
 
-def setup(bot):
-    bot.add_cog(CardCount(bot))
+async def setup(bot: commands.Bot):
+    await bot.add_cog(CardCount(bot))

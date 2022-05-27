@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 
 class ApexTracker(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot: commands.Bot = bot
     
     @commands.Cog.listener()
@@ -91,5 +91,5 @@ class ApexTracker(commands.Cog):
         await ctx.send(embed=embed)
 
 
-def setup(bot: commands.Bot):
-    bot.add_cog(ApexTracker(bot))
+async def setup(bot: commands.Bot):
+    await bot.add_cog(ApexTracker(bot))
