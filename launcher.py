@@ -34,6 +34,9 @@ def init():
 @bot.event
 async def on_ready():
     print("Yeah!_bot_is_on_ready")
+    for cmd in bot.walk_commands():
+        print(cmd)
+
     await bot.change_presence(activity=discord.Game(name="ピスタチオゲーム部", type=1))
     return
 
@@ -75,9 +78,6 @@ async def main():
             await bot.load_extension("cogs.save_image")
         
         await bot.start(TOKEN)
-
-        for cmd in bot.walk_commands():
-            print(cmd)
 
 init()
 asyncio.run(main())
