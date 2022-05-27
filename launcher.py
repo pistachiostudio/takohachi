@@ -34,8 +34,6 @@ def init():
 @bot.event
 async def on_ready():
     print("Yeah!_bot_is_on_ready")
-    channel = bot.get_channel(int('762575939623452682'))
-    await channel.send("Yeah!_bot_is_on_ready")
     await bot.change_presence(activity=discord.Game(name="ピスタチオゲーム部", type=1))
     return
 
@@ -55,7 +53,6 @@ async def on_message(message):
 
 
 async def main():
-    print("async main")
     async with bot:
         await bot.load_extension("cogs.apex_tracker")
         await bot.load_extension("cogs.commandslist")
@@ -69,7 +66,6 @@ async def main():
         await bot.load_extension("cogs.trigger")
         await bot.load_extension("cogs.dice")
         await bot.load_extension("cogs.bath")
-        print("load extension")
 
         # Productionのみで読み込むcogs
         if PREFIX == '!!':
@@ -79,7 +75,6 @@ async def main():
             await bot.load_extension("cogs.save_image")
         
         await bot.start(TOKEN)
-        print("bot started!")
 
 init()
 asyncio.run(main())

@@ -17,7 +17,6 @@ logger = logging.getLogger(__name__)
 class ApexTracker(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot: commands.Bot = bot
-        print("init apex tracker")
     
     @commands.Cog.listener()
     async def on_ready(self):
