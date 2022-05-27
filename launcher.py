@@ -4,7 +4,6 @@ from pathlib import Path
 
 import discord
 from discord.ext import commands
-from dispander import dispand
 
 PREFIX = os.environ["PREFIX"]
 
@@ -53,9 +52,6 @@ async def playing(ctx, title):
 @bot.event
 async def on_message(message):
     print(message.content)
-    if message.author.bot:
-        return
-    await dispand(message)
 
 
 async def main():
