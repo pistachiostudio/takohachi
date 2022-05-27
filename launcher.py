@@ -50,7 +50,7 @@ async def playing(ctx, title):
 
 @bot.event
 async def on_message(message):
-    print(message)
+    print(message.content)
     if message.author.bot:
         return
     await dispand(message)
