@@ -8,7 +8,7 @@ from typing import Dict, List, Optional
 
 
 DIC_KEY = os.environ["DIC_KEY"]
-
+PREFIX = os.environ["PREFIX"]
 
 class Trigger(commands.Cog):
     def __init__(self, bot):
@@ -19,7 +19,7 @@ class Trigger(commands.Cog):
         if message.author == self.bot.user:
             return
 
-        if not message.content.startswith('!!'):
+        if not message.content.startswith(PREFIX):
             return
 
         # 2つのAPIを記述しないとリフレッシュトークンを3600秒毎に発行し続けなければならないです！
@@ -34,7 +34,7 @@ class Trigger(commands.Cog):
         # 共有設定したスプレッドシートのtriggerシートを開く
         worksheet = gc.open_by_key(DIC_KEY).worksheet('trigger')
 
-        trigger = message.content.lstrip('!!')
+        trigger = message.content.lstrip(PREFIX)
         trigger_cell = worksheet.find(str(trigger), in_column=1, case_sensitive=False)
 
         if trigger_cell is None:
