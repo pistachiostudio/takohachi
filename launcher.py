@@ -44,18 +44,14 @@ async def playing(ctx, title):
 
 init()
 
-bot.load_extension("dispander")
 bot.load_extension("cogs.apex_tracker")
 bot.load_extension("cogs.commandslist")
 bot.load_extension("cogs.spotify")
-bot.load_extension("cogs.vcwhite")
 bot.load_extension("cogs.marimo")
 bot.load_extension("cogs.what_today")
-bot.load_extension("cogs.save_image")
 bot.load_extension("cogs.addssl")
 bot.load_extension("cogs.message_count")
 bot.load_extension("cogs.happy_new_year")
-bot.load_extension("cogs.card_count")
 bot.load_extension("cogs.card_list")
 bot.load_extension("cogs.trigger")
 bot.load_extension("cogs.dice")
@@ -64,5 +60,9 @@ bot.load_extension("cogs.bath")
 # Productionのみで読み込むcogs
 if PREFIX == '!!':
     bot.load_extension("cogs.wt_task")
+    bot.load_extension("dispander")
+    bot.load_extension("cogs.vcwhite")
+    bot.load_extension("cogs.save_image")
+    bot.load_extension("cogs.card_count")
 
 bot.run(TOKEN)
