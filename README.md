@@ -43,4 +43,5 @@ https://github.com/pistachiostudio/takohachi/tree/master/cogs
 ## License
 
 Takohachi is released under the MIT license.  
-©2022 Pistachio Gaming & Pistachio Studio.
+©2022 Pistachio Gaming & Pistachio Studio.  
+
