@@ -59,10 +59,6 @@ async def on_message(message):
     await dispand(message)
 
 
-class Takohachi(commands.Bot):
-    async def setup_hook(self):
-        await self.load_extension('my_extension')
-
 async def main():
     async with bot:
         await bot.load_extension("cogs.apex_tracker")
