@@ -46,7 +46,6 @@ async def playing(ctx, title):
 
 async def main():
     async with bot:
-        await bot.load_extension('my_extension')
         await bot.load_extension("dispander")
         await bot.load_extension("cogs.apex_tracker")
         await bot.load_extension("cogs.commandslist")
