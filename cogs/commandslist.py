@@ -10,6 +10,7 @@ class Help(commands.Cog):
     @commands.command()
     async def help(self, ctx):
 
+        print("exec help")
         embed = discord.Embed()
         embed.set_thumbnail(url='https://raw.githubusercontent.com/pistachiostudio/takohachi/master/images/icon_tako_hachi_BG_less.png')
         embed.title = "takohachi commands help"
