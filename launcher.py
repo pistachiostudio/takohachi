@@ -4,7 +4,7 @@ from pathlib import Path
 
 import discord
 from discord.ext import commands
-from dispander import dispand, delete_dispand
+from dispander import dispand
 
 PREFIX = os.environ["PREFIX"]
 
@@ -50,11 +50,6 @@ async def on_message(message):
     if message.author.bot:
         return
     await dispand(message)
-
-
-@bot.event
-async def on_raw_reaction_add(payload):
-    await delete_dispand(bot, payload=payload)
 
 
 async def main():
