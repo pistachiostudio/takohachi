@@ -7,7 +7,7 @@ certifi==2021.5.30
 cffi==1.14.5
 chardet==3.0.4
 cryptography==3.4.7
-discord.py==1.6.0
+git+https://github.com/Rapptz/discord.py.git@master
 dispander==0.4.0
 google-api-core==2.7.1
 google-api-python-client==2.41.0
