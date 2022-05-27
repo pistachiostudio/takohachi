@@ -8,7 +8,7 @@ from dispander import dispand
 
 PREFIX = os.environ["PREFIX"]
 
-intents = discord.Intents.default()
+intents = discord.Intents.all()
 bot = commands.Bot(command_prefix=PREFIX, help_command=None, intents=intents)
 
 # 環境変数からトークンを読み込む
