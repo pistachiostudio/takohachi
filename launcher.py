@@ -4,6 +4,7 @@ from pathlib import Path
 
 import discord
 from discord.ext import commands
+from dispander import dispand, delete_dispand
 
 PREFIX = os.environ["PREFIX"]
 
@@ -44,20 +45,28 @@ async def playing(ctx, title):
     await client.change_presence(activity=game)
 
 
+@bot.event
+async def on_message(message):
+    if message.author.bot:
+        return
+    await dispand(message)
+
+
+@bot.event
+async def on_raw_reaction_add(payload):
+    await delete_dispand(bot, payload=payload)
+
+
 async def main():
     async with bot:
-        await bot.load_extension("dispander")
         await bot.load_extension("cogs.apex_tracker")
         await bot.load_extension("cogs.commandslist")
         await bot.load_extension("cogs.spotify")
-        await bot.load_extension("cogs.vcwhite")
         await bot.load_extension("cogs.marimo")
         await bot.load_extension("cogs.what_today")
-        await bot.load_extension("cogs.save_image")
         await bot.load_extension("cogs.addssl")
         await bot.load_extension("cogs.message_count")
         await bot.load_extension("cogs.happy_new_year")
-        await bot.load_extension("cogs.card_count")
         await bot.load_extension("cogs.card_list")
         await bot.load_extension("cogs.trigger")
         await bot.load_extension("cogs.dice")
@@ -66,6 +75,9 @@ async def main():
         # Productionのみで読み込むcogs
         if PREFIX == '!!':
             await bot.load_extension("cogs.wt_task")
+            await bot.load_extension("cogs.vcwhite")
+            await bot.load_extension("cogs.card_count")
+            await bot.load_extension("cogs.save_image")
         
         await bot.start(TOKEN)
 
