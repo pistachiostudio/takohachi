@@ -34,6 +34,8 @@ def init():
 @bot.event
 async def on_ready():
     print("Yeah!_bot_is_on_ready")
+    print("bot prefix")
+    print(bot.command_prefix)
     for cmd in bot.walk_commands():
         print(cmd)
 
