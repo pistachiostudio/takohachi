@@ -42,7 +42,7 @@
 ### dice.py
 
 - Valorantのマップをランダムに返すだけです。みんなでカスタムやるときのマップピック用に作りました。  
-- Valorant-APIを叩くのでマップが増えてもOK  
+- [Valorant-API](https://valorant-api.com/)を叩くのでマップが増えてもOK  
 ![image](https://user-images.githubusercontent.com/4445606/171447967-1c4885da-7db6-4797-835a-307d579b5b28.png)
 
 ### happy_new_year.py
