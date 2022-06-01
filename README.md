@@ -1,7 +1,6 @@
 # <img src="https://user-images.githubusercontent.com/4445606/136433333-96b165e0-447c-481a-9e91-50f02b5689d4.png" width="50px"> Discord Bot `タコ八` <img src="https://user-images.githubusercontent.com/4445606/136433333-96b165e0-447c-481a-9e91-50f02b5689d4.png" width="50px">
 
 
-
 [ピスタチオゲーム部親睦会](https://discord.gg/pistachiogaming)というDiscordサーバーのためにつくった Bot です。自由にお使いください。
 
 ## Cogs
