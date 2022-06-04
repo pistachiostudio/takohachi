@@ -26,6 +26,7 @@ play.py
 play2.py
 lantest.py
 dic.py
+create_database.py
 
 # 環境変数
 .env

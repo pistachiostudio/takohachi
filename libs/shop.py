@@ -3,8 +3,11 @@ import requests
 import re
 import socket
 import json
-
 from collections import OrderedDict
+
+'''
+Thanks! https://github.com/DarkPotatoKing/valostore-py
+'''
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -76,10 +79,29 @@ class Auth:
         session.close()
         return user_id, headers, {}
 
-
 def pretty_print(data):
     print(json.dumps(data, indent=4, sort_keys=True))
 
+def get_bundles(skins_data, bundles_data, weapons_data):
+    bundles = []
+
+    if skins_data["FeaturedBundle"]:
+        bundles = skins_data["FeaturedBundle"]["Bundles"]
+
+    for bundle in bundles:
+        bundle_id = bundle['DataAssetID']
+        info = [i for i in bundles_data if i['uuid'] == bundle_id][0]
+        bundle_price = sum([i['DiscountedPrice'] for i in bundle['Items']])
+
+        for item in bundle['Items']:
+            uuid = item["Item"]["ItemID"]
+            try:
+                item_name = [i for i in weapons_data if i['uuid'] == uuid][0]['displayName']
+                item_price: int = int(item["BasePrice"])
+                bundle_offer = f'{item_name} ({item_price:,})'
+            except:
+                continue
+    return bundle_offer
 
 def get_data(user_id, headers, region):
     skins_data = requests.get(f'https://pd.{region}.a.pvp.net/store/v2/storefront/{user_id}', headers=headers)
@@ -111,13 +133,10 @@ def get_skins(skins_data, weapons_data, offers_data):
         skin_name = skin['displayName']
         skin_price = int(prices[uuid])
         skin_image = skin['displayIcon']
-        shop_offer = f'{skin_name} ({skin_price:,})'
+        shop_offer = f'[{skin_name}]({skin_image}) ({skin_price:,})'
         result.append(shop_offer)
 
     return result
-
-
-
 
 def get_night_market(skins_data, weapons_data):
     if not skins_data['BonusStore']:
@@ -134,5 +153,6 @@ def get_night_market(skins_data, weapons_data):
         skin_image = skin['displayIcon']
         nm_offer = f'{skin_name} ({skin_price:,})'
         nm_result.append(nm_offer)
+
 
     return nm_result
