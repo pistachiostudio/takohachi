@@ -63,13 +63,13 @@ class Store(commands.Cog):
                 except KeyError:
                     embed = discord.Embed()
                     embed.color = discord.Color.red()
-                    embed.description = "<:p01_pepebrim:951023068275421235>:warning: 情報を取得できません。。\n\n<@813757574058213376>にDMで `$$register`と送信して再度登録してください。"
+                    embed.description = "<:p01_pepebrim:951023068275421235>:warning: 情報を取得できません。。\n\n<@813757574058213376>にDMで `!!register`と送信して再度登録してください。"
                     await ctx.reply(embed=embed)
 
             # dbに登録がない場合は登録無しのコメント送信でreturn
             else:
                 embed = discord.Embed()
-                embed.description = "<:p01_pepebrim:951023068275421235>:warning: データベースに登録がありません。\n\n<@813757574058213376>にDMで `$$register`と送信して登録してください。"
+                embed.description = "<:p01_pepebrim:951023068275421235>:warning: データベースに登録がありません。\n\n<@813757574058213376>にDMで `!!register`と送信して登録してください。"
                 await ctx.reply(embed=embed)
                 return
 
@@ -103,7 +103,7 @@ class Store(commands.Cog):
         # asyncio.TimeoutError が発生したらここに飛ぶ
         except asyncio.TimeoutError:
             embed = discord.Embed()
-            embed.description = f'<:p01_pepebrim:951023068275421235>:warning: タイムアウトしました。\n再度 `$$register` コマンドからやり直してください。'
+            embed.description = f'<:p01_pepebrim:951023068275421235>:warning: タイムアウトしました。\n再度 `!!register` コマンドからやり直してください。'
             await ctx.send(embed=embed)
             return
 
@@ -121,7 +121,7 @@ class Store(commands.Cog):
         # asyncio.TimeoutError が発生したらここに飛ぶ
         except asyncio.TimeoutError:
             embed = discord.Embed()
-            embed.description = f'<:p01_pepebrim:951023068275421235>:warning: タイムアウトしました。\n再度 `$$register` コマンドからやり直してください。'
+            embed.description = f'<:p01_pepebrim:951023068275421235>:warning: タイムアウトしました。\n再度 `!!register` コマンドからやり直してください。'
             await ctx.send(embed=embed)
             return
 
@@ -162,7 +162,7 @@ class Store(commands.Cog):
 
                 #登録したよメッセージを送信
                 embed = discord.Embed()
-                embed.description = "<:p01_pepebrim:951023068275421235>:ballot_box_with_check: 登録が完了しました。\n念のため今入力したIDとPassは削除してね。\n茂林塾チャンネルで `$$shop` もしくは `$$store` コマンドを打ってみよう！(ここでも反応するよ)"
+                embed.description = "<:p01_pepebrim:951023068275421235>:ballot_box_with_check: 登録が完了しました。\n念のため今入力したIDとPassは削除してね。\n茂林塾チャンネルで `!!shop` もしくは `!!store` コマンドを打ってみよう！(ここでも反応するよ)"
                 await ctx.send(embed=embed)
                 return
 
@@ -185,7 +185,7 @@ class Store(commands.Cog):
         # asyncio.TimeoutError が発生したらここに飛ぶ
         except asyncio.TimeoutError:
             embed = discord.Embed()
-            embed.description = f'<:p01_pepebrim:951023068275421235>:warning: タイムアウトしました。\n再度 `$$register` コマンドからやり直してください。'
+            embed.description = f'<:p01_pepebrim:951023068275421235>:warning: タイムアウトしました。\n再度 `!!register` コマンドからやり直してください。'
             await ctx.send(embed=embed)
             return
 
