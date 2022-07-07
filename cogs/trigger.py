@@ -82,6 +82,15 @@ class Trigger(commands.Cog):
                 await message.channel.send(embed=embed)
 
     def _get_index(self, target: List[str], value: str) -> Optional[int]:
+        """value が target の何番目かを取得する関数です。value が存在しない場合は None を返します。
+
+        Args:
+            target (List[str]): index を調べたい対象のリスト
+            value (str): index を取得する対象文字列
+
+        Returns:
+            Optional[int]: 存在すれば index(int) を返し、存在しなければ None を返します。
+        """        
         try:
             index = target.index(value)
             return index
