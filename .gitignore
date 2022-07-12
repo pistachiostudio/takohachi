@@ -18,15 +18,13 @@ tanaka.py
 yobro.py
 notify.py
 greet.py
-mp3/
 ffmpeg.exe
 ffplay.exe
 ffprobe.exe
-play.py
-play2.py
 lantest.py
 dic.py
 create_database.py
+db/vl_store.db
 
 # 環境変数
 .env
