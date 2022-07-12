@@ -4,7 +4,7 @@ from discord.ext import commands
 from datetime import datetime, timedelta, timezone
 import glob
 
-class Play2(commands.Cog):
+class Play(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -98,4 +98,4 @@ class Play2(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(Play2(bot))
+    bot.add_cog(Play(bot))
