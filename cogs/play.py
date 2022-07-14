@@ -9,6 +9,13 @@ class Play(commands.Cog):
         self.bot = bot
 
     @commands.command()
+    async def saisei(self, ctx, dict):
+        # mp3を再生する
+        source = discord.PCMVolumeTransformer(discord.FFmpegPCMAudio(dict), volume=0.2)
+        message.guild.voice_client.play(source)
+
+
+    @commands.command()
     async def play(self, ctx):
 
         # VCに入ってくる
@@ -45,6 +52,7 @@ class Play(commands.Cog):
             await message.add_reaction(emojis[idx])
         for bye_emoji in ['⏹', '👋']:
             await message.add_reaction(bye_emoji)
+
 
     # 再生のところ
     @commands.Cog.listener()
