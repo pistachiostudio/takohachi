@@ -9,7 +9,7 @@ https://github.com/pistachiostudio/takohachi/tree/master/cogs
 
 ## Deproyment note
 
-タコ八はHerokuのフリープラインで動いています。
+タコ八はHerokuのフリープランで動いています。
 
 ### フロー
 
