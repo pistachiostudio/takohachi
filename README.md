@@ -7,15 +7,32 @@
 
 https://github.com/pistachiostudio/takohachi/tree/master/cogs
 
-## Deproyment
+## Deproyment note
 
-**環境変数の設定**
+タコ八はHerokuのフリープラインで動いています。
+
+### フロー
+
+heroku の設定をしてある前提
+
+1. 開発用 branch の作成
+1. 実装
+1. branchにpush
+1. PRを作成
+    - PR作成によってレビュー用のappが作成される。
+    - レビュー用app用にもう一つDiscord botを用意している。
+1. レビュー用appは作成されるが起動はしないので、手動でDynosをオンにする。
+1. レビュー用のDiscord botが起動する。
+    - このappは「24時間経過」「PRをクローズ」「PRをマージ」のどれかで削除される。
+1. PRをマージすると自動的にProduction(本番環境タコ八)にビルドされる
+
+ステージングappは不要と判断したので使用していない。
+
+### 環境変数の設定
 
 - KEY = TOKEN
 - VALUE = 取得した Discord のトークン
-- 設定方法は公式ドキュメントを参考にする([設定と環境設定 - Heroku Dashboard を使用する](https://devcenter.heroku.com/ja/articles/config-vars#using-the-heroku-dashboard))
-	- その他参考
-		- [Qiita - 【Heroku】Herokuで環境変数を設定する方法](https://qiita.com/mzmz__02/items/64db94b8fc67ee0a9068)
+- レビューと本番でコマンドのPrefixを変えるため、一部環境変数の設定が違う。
 
 ## Icon
 | by [Go Inagaki](https://hodwn.com/go-inagaki/)                                                                                 | by [Imoya](https://twitter.com/arakudai2)                                                                                      | 
