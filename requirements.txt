@@ -9,7 +9,6 @@ cffi==1.14.5
 chardet==3.0.4
 cryptography==3.4.7
 discord.py==1.6.0
-dispander==0.5.0
 ffmpeg==1.4
 ffmpeg-python==0.2.0
 future==0.18.2
@@ -50,3 +49,4 @@ uritemplate==3.0.1
 urllib3==1.26.6
 valorant==0.5.1
 yarl==1.6.3
+-e git+https://github.com/DiscordBotPortalJP/dispander.git#egg=dispander
