@@ -61,8 +61,8 @@ bot.load_extension("cogs.play")
 
 # Productionのみで読み込むcogs
 if PREFIX == '!!':
-    bot.load_extension("cogs.wt_task")
     bot.load_extension("dispander")
+    bot.load_extension("cogs.wt_task")
     bot.load_extension("cogs.vcwhite")
     bot.load_extension("cogs.save_image")
     bot.load_extension("cogs.card_count")
