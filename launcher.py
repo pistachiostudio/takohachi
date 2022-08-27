@@ -57,7 +57,6 @@ bot.load_extension("cogs.dice")
 bot.load_extension("cogs.bath")
 bot.load_extension("cogs.ping")
 bot.load_extension("cogs.play")
-bot.load_extension("cogs.vc_role")
 
 # Productionのみで読み込むcogs
 if PREFIX == '!!':
@@ -66,5 +65,6 @@ if PREFIX == '!!':
     bot.load_extension("cogs.vcwhite")
     bot.load_extension("cogs.save_image")
     bot.load_extension("cogs.card_count")
+    bot.load_extension("cogs.vc_role")
 
 bot.run(TOKEN)
