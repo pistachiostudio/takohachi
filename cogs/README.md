@@ -80,6 +80,11 @@
   ![image](https://user-images.githubusercontent.com/4445606/166942996-7144755f-91ff-4c4c-bd3f-a60404794585.png)  
   ![image](https://user-images.githubusercontent.com/4445606/166943142-5c61051c-639b-4976-b116-5d13a452d346.png)
 
+### vc_role.py
+
+- 特定のVCに入った人に対して特定のロールを付与し、出たらそのロールを取る。VCにいる人だけが見えるテキストチャットのために使用。  
+![スクリーンショット 2022-08-27 151148](https://user-images.githubusercontent.com/4445606/187017574-373a4ff7-ae78-4119-a624-1c7cd69a4c13.png)
+
 ### vcwhite.py
 
 - 新しいVCがスタートしたら特定のテキストチャンネルへアラートを投稿  
