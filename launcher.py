@@ -41,7 +41,6 @@ async def playing(ctx, title):
     game = discord.Game(name=title)
     await client.change_presence(activity=game)
 
-
 init()
 
 bot.load_extension("cogs.apex_tracker")
@@ -58,6 +57,7 @@ bot.load_extension("cogs.dice")
 bot.load_extension("cogs.bath")
 bot.load_extension("cogs.ping")
 bot.load_extension("cogs.play")
+bot.load_extension("cogs.vc_role")
 
 # Productionのみで読み込むcogs
 if PREFIX == '!!':
