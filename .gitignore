@@ -25,6 +25,7 @@ lantest.py
 dic.py
 create_database.py
 db/vl_store.db
+app.json
 
 # 環境変数
 .env
