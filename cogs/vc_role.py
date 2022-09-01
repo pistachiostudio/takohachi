@@ -27,87 +27,67 @@ class VcRole(commands.Cog):
         if channel.id == INU_VC_ID:
             if before.channel is None and after.channel is not None:
                 role_inu = discord.utils.get(member.guild.roles, id=IN_INU_ROLE)
-                await member.add_roles(role_inu)
                 role_mood = discord.utils.get(member.guild.roles, id=IN_THE_MOOD_ROLE)
-                await member.add_roles(role_mood)
+                await member.add_roles(role_inu, role_mood)
 
             elif before.channel is not None and after.channel is None:
                 role_inu = discord.utils.get(member.guild.roles, id=IN_INU_ROLE)
-                await member.remove_roles(role_inu)
                 role_neko = discord.utils.get(member.guild.roles, id=IN_NEKO_ROLE)
-                await member.remove_roles(role_neko)
                 role_kame = discord.utils.get(member.guild.roles, id=IN_KAME_ROLE)
-                await member.remove_roles(role_kame)
                 role_kyoryu = discord.utils.get(member.guild.roles, id=IN_KYORYU_ROLE)
-                await member.remove_roles(role_kyoryu)
                 role_mood = discord.utils.get(member.guild.roles, id=IN_THE_MOOD_ROLE)
-                await member.remove_roles(role_mood)
+                await member.remove_roles(role_inu, role_neko, role_kame, role_kyoryu, role_mood)
                 return
 
         #猫VC
         elif channel.id == NEKO_VC_ID:
             if before.channel is None and after.channel is not None:
                 role_neko = discord.utils.get(member.guild.roles, id=IN_NEKO_ROLE)
-                await member.add_roles(role_neko)
                 role_mood = discord.utils.get(member.guild.roles, id=IN_THE_MOOD_ROLE)
-                await member.add_roles(role_mood)
+                await member.add_roles(role_neko, role_mood)
                 return
 
             elif before.channel is not None and after.channel is None:
                 role_inu = discord.utils.get(member.guild.roles, id=IN_INU_ROLE)
-                await member.remove_roles(role_inu)
                 role_neko = discord.utils.get(member.guild.roles, id=IN_NEKO_ROLE)
-                await member.remove_roles(role_neko)
                 role_kame = discord.utils.get(member.guild.roles, id=IN_KAME_ROLE)
-                await member.remove_roles(role_kame)
                 role_kyoryu = discord.utils.get(member.guild.roles, id=IN_KYORYU_ROLE)
-                await member.remove_roles(role_kyoryu)
                 role_mood = discord.utils.get(member.guild.roles, id=IN_THE_MOOD_ROLE)
-                await member.remove_roles(role_mood)
+                await member.remove_roles(role_inu, role_neko, role_kame, role_kyoryu, role_mood)
                 return
 
         #亀VC
         elif channel.id == KAME_VC_ID:
             if before.channel is None and after.channel is not None:
                 role_kame = discord.utils.get(member.guild.roles, id=IN_KAME_ROLE)
-                await member.add_roles(role_kame)
                 role_mood = discord.utils.get(member.guild.roles, id=IN_THE_MOOD_ROLE)
-                await member.add_roles(role_mood)
+                await member.add_roles(role_kame, role_mood)
                 return
 
             elif before.channel is not None and after.channel is None:
                 role_inu = discord.utils.get(member.guild.roles, id=IN_INU_ROLE)
-                await member.remove_roles(role_inu)
                 role_neko = discord.utils.get(member.guild.roles, id=IN_NEKO_ROLE)
-                await member.remove_roles(role_neko)
                 role_kame = discord.utils.get(member.guild.roles, id=IN_KAME_ROLE)
-                await member.remove_roles(role_kame)
                 role_kyoryu = discord.utils.get(member.guild.roles, id=IN_KYORYU_ROLE)
-                await member.remove_roles(role_kyoryu)
                 role_mood = discord.utils.get(member.guild.roles, id=IN_THE_MOOD_ROLE)
-                await member.remove_roles(role_mood)
+                await member.remove_roles(role_inu, role_neko, role_kame, role_kyoryu, role_mood)
                 return
 
         #恐竜VC
         elif channel.id == KYORYU_VC_ID:
             if before.channel is None and after.channel is not None:
                 role_kyoryu = discord.utils.get(member.guild.roles, id=IN_KYORYU_ROLE)
-                await member.add_roles(role_kyoryu)
                 role_mood = discord.utils.get(member.guild.roles, id=IN_THE_MOOD_ROLE)
-                await member.add_roles(role_mood)
+                await member.add_roles(role_kyoryu, role_mood)
                 return
 
             elif before.channel is not None and after.channel is None:
                 role_inu = discord.utils.get(member.guild.roles, id=IN_INU_ROLE)
-                await member.remove_roles(role_inu)
                 role_neko = discord.utils.get(member.guild.roles, id=IN_NEKO_ROLE)
-                await member.remove_roles(role_neko)
                 role_kame = discord.utils.get(member.guild.roles, id=IN_KAME_ROLE)
-                await member.remove_roles(role_kame)
                 role_kyoryu = discord.utils.get(member.guild.roles, id=IN_KYORYU_ROLE)
-                await member.remove_roles(role_kyoryu)
                 role_mood = discord.utils.get(member.guild.roles, id=IN_THE_MOOD_ROLE)
-                await member.remove_roles(role_mood)
+                await member.remove_roles(role_inu, role_neko, role_kame, role_kyoryu, role_mood)
                 return
 
         else:
