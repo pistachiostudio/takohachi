@@ -1,0 +1,72 @@
+{
+    "name": "takohachi",
+    "scripts": {},
+    "env": {
+        "CARDCOUNT_KEY": {
+            "required": true
+        },
+        "CLIENT_SECRET": {
+            "required": true
+        },
+        "DATABASE_URL": {
+            "required": true
+        },
+        "DIC_KEY": {
+            "required": true
+        },
+        "DISCORD_BOT_TOKEN": {
+            "required": true
+        },
+        "DRIVE_FOLDER_ID": {
+            "required": true
+        },
+        "GOOGLE_APPLICATION_CREDENTIALS": {
+            "required": true
+        },
+        "HEROKU_APP_NAME": {
+            "required": true
+        },
+        "HEROKU_BRANCH": {
+            "required": true
+        },
+        "HEROKU_PR_NUMBER": {
+            "required": true
+        },
+        "LOG_TEXT_CHANNEL_ID": {
+            "required": true
+        },
+        "PREFIX": {
+            "required": true
+        },
+        "SPOTIFY_CLIENT_ID": {
+            "required": true
+        },
+        "SPOTIFY_CLIENT_SECRET": {
+            "required": true
+        },
+        "SSLADD_KEY": {
+            "required": true
+        },
+        "TAKOHACHI_JSON": {
+            "required": true
+        },
+        "TOKEN": {
+            "required": true
+        },
+        "TRN_API_KEY": {
+            "required": true
+        }
+    },
+    "formation": {
+        "bot": {
+            "quantity": 1
+        }
+    },
+    "addons": [],
+    "buildpacks": [
+        {
+            "url": "heroku/python"
+        }
+    ],
+    "stack": "heroku-18"
+}
