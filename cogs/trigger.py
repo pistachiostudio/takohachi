@@ -13,6 +13,7 @@ PREFIX = os.environ["PREFIX"]
 class Trigger(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.worksheet = None
 
     @commands.Cog.listener()
     async def on_message(self, message):
@@ -32,19 +33,19 @@ class Trigger(commands.Cog):
         gc = gspread.authorize(credentials)
 
         # 共有設定したスプレッドシートのtriggerシートを開く
-        worksheet = gc.open_by_key(DIC_KEY).worksheet('trigger')
+        self.worksheet = gc.open_by_key(DIC_KEY).worksheet('trigger')
 
-        trigger = message.content.lstrip(PREFIX)
-        trigger_cell = worksheet.find(str(trigger), in_column=1, case_sensitive=False)
+        # ヘッダー行をスプレッドシートから取得
+        header_list: List[str] = self.worksheet.row_values(2)
 
-        if trigger_cell is None:
+        trigger: str = message.content.lstrip(PREFIX)
+        row_num = self._find_trigger_row_number(trigger, header_list)
+
+        if not row_num:
             return
         else:
-            # ヘッダー行データをスプレッドシートから取得
-            header_list: List[str] = worksheet.row_values(2)
-
             # トリガー行データをスプレッドシートから取得
-            trigger_value_list: List[str] = worksheet.row_values(trigger_cell.row)
+            trigger_value_list: List[str] = self.worksheet.row_values(row_num)
 
             pad_len = len(header_list) - len(trigger_value_list)
             pad_list = ["" for _ in range(pad_len)]
@@ -82,11 +83,46 @@ class Trigger(commands.Cog):
                 await message.channel.send(embed=embed)
 
     def _get_index(self, target: List[str], value: str) -> Optional[int]:
+        """value が target の何番目かを取得する関数です。value が存在しない場合は None を返します。
+
+        Args:
+            target (List[str]): index を調べたい対象のリスト
+            value (str): index を取得する対象文字列
+
+        Returns:
+            Optional[int]: 存在すれば index(int) を返し、存在しなければ None を返します。
+        """        
         try:
             index = target.index(value)
             return index
         except ValueError:
             return None
+    
+    def _find_trigger_row_number(self, trigger: str, header_list: List[str]) -> Optional[int]:
+        """triggerが含まれている行番号を返します
+
+        Args:
+            trigger (str): trigger
+            header_list (List[str]): trigger db のヘッダーリスト
+
+        Returns:
+            Optional[int]: trigger が含まれている行番号
+        """        
+        trigger_columns = ["trigger", "alias01", "alias01"]
+        for trigger_column in trigger_columns:
+            index = self._get_index(header_list, trigger_column)
+            if not index:
+                # header_list に trigger_column が存在しない場合
+                continue
+            else:
+                trigger_cell = self.worksheet.find(trigger, in_column=index, case_sensitive=False)
+                if not trigger_cell:
+                    # trigger column に trigger が存在しない場合
+                    continue
+                else:
+                    return trigger_cell.row
+        
+        return None
 
 
 def setup(bot):
