@@ -57,6 +57,7 @@ bot.load_extension("cogs.dice")
 bot.load_extension("cogs.bath")
 bot.load_extension("cogs.ping")
 bot.load_extension("cogs.play")
+bot.load_extension("cogs.valorant_api")
 
 # Productionのみで読み込むcogs
 if PREFIX == '!!':
