@@ -80,6 +80,13 @@
   ![image](https://user-images.githubusercontent.com/4445606/166942996-7144755f-91ff-4c4c-bd3f-a60404794585.png)  
   ![image](https://user-images.githubusercontent.com/4445606/166943142-5c61051c-639b-4976-b116-5d13a452d346.png)
 
+### valorant_api.py
+
+- コマンド `!!vr` でValorantのユーザーの現在のランクやELOを取得します。
+- コマンド `!!vnews` でValorantの最新のニュースやパッチ情報を取得します。  
+  ![image](https://user-images.githubusercontent.com/4445606/191848416-7a326d24-16a8-4bc0-942a-f82463b4c191.png)  
+  ![image](https://user-images.githubusercontent.com/4445606/191848446-38033a30-5666-498c-bf08-ba3c4a29699a.png)
+
 ### vc_role.py
 
 - 特定のVCに入った人に対して特定のロールを付与し、出たらそのロールを取る。VCにいる人だけが見えるテキストチャットのために使用。  
