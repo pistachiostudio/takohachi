@@ -83,9 +83,11 @@ class Valo(commands.Cog):
                 rank_image_url = json['data']['current_data']['images']['large']
                 ranking_in_tier = json['data']['current_data']['ranking_in_tier']
                 elo = json['data']['current_data']['elo']
-                season_games = json['data']['by_season'][current_season]['number_of_games']
-                season_wins = json['data']['by_season'][current_season]['wins']
-                season_lose = int(season_games) - int(season_wins)
+
+                current_season_data = json['data']['by_season'][current_season]
+                season_games = current_season_data.get('number_of_games', 0)
+                season_wins = current_season_data.get('wins', 0)
+                season_lose = season_games - season_wins
 
                 account_url = f"https://api.henrikdev.xyz/valorant/v1/account/{username}/{tagline}"
                 res = requests.get(account_url)
