@@ -1,5 +1,3 @@
-import asyncio
-
 import discord
 from discord.ext import commands
 import requests
@@ -10,67 +8,38 @@ class Valo(commands.Cog):
         self.bot = bot
 
     @commands.command()
-    async def vr(self, ctx):
+    async def vr(self, ctx, *, user):
+
+        print(user)
 
         current_season = "e5a2"
-        channel = ctx.channel
-        takohachi_id = '813757574058213376'
 
         season_txt = (current_season.replace("e", "Episode ").replace("a", " Act "))
 
-        # Usernameを取得
-        embed = discord.Embed()
-        embed.color = discord.Color.gold()
-        embed.title = "<:p01_pepebrim:951023068275421235> ENTER YOUR VALORANT NAME WITHOUT TAGLINE..."
-        embed.description = "ex): 植 物、快楽亭ブラック、ミスターポーゴ"
-        username_msg = await ctx.send(embed=embed, delete_after=60)
-
-        try:
-            def check(m):
-                return m.channel == channel and m.author.id != takohachi_id
-
-            username_waiter = await self.bot.wait_for('message', check=check, timeout=60)
-            username = username_waiter.content
-            await username_waiter.delete()
-            await username_msg.delete()
-
-        # asyncio.TimeoutError が発生したらここに飛ぶ
-        except asyncio.TimeoutError:
+        # user name & tagline の入力を検証
+        if '#' not in user:
             embed = discord.Embed()
             embed.color = discord.Color.red()
-            embed.title = "<:p01_pepebrim:951023068275421235>:warning: Timeout..."
-            embed.description = f'`!!valo` command again'
+            embed.title = "<:p01_pepebrim:951023068275421235>:warning: Enter NAME and tagline separated by #!"
+            embed.description = 'ex): 植 物#help、快楽亭ブラック#三代目、ミスターポーゴ#imoya'
             await ctx.send(embed=embed, delete_after=10)
             message = ctx.message
             await message.delete()
             return
 
-        # taglineを取得
-        embed = discord.Embed()
-        embed.color = discord.Color.blue()
-        embed.title = "<:p01_pepeyoru:951023518068387880> ENTER YOUR TAGLINE WITHOUT #"
-        embed.description = "ex) help、三代目、imoya"
-        tagline_msg = await ctx.send(embed=embed, delete_after=60)
-
-        try:
-            def check(m):
-                return m.channel == channel and m.author.id != takohachi_id
-
-            tagline_waiter = await self.bot.wait_for('message', check=check, timeout=60)
-            tagline = tagline_waiter.content
-            tagline = tagline.replace("#", "")
-            await tagline_waiter.delete()
-            await tagline_msg.delete()
-
-        # asyncio.TimeoutError が発生したらここに飛ぶ
-        except asyncio.TimeoutError:
+        contents = user.split('#')
+        if len(contents) != 2:
             embed = discord.Embed()
             embed.color = discord.Color.red()
-            embed.title = "<:p01_pepebrim:951023068275421235>:warning: Timeout..."
-            embed.description = f'`!!valo` command again'
+            embed.title = "<:p01_pepebrim:951023068275421235>:warning: Invalid input value"
+            embed.description = 'ex): 植 物#help、快楽亭ブラック#三代目、ミスターポーゴ#imoya'
             await ctx.send(embed=embed, delete_after=10)
+            message = ctx.message
             await message.delete()
             return
+
+        username = contents[0]
+        tagline = contents[1]
 
         # API request
         async with ctx.typing():
