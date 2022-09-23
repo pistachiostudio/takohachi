@@ -8,7 +8,7 @@ class Valo(commands.Cog):
         self.bot = bot
 
     @commands.command()
-    async def vr(self, ctx, *user):
+    async def vr(self, ctx, *, user):
 
         print(user)
 
