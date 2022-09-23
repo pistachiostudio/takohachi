@@ -62,6 +62,9 @@ class Valo(commands.Cog):
                 res = requests.get(account_url)
                 account_json = res.json()
 
+
+                real_name = account_json['data']['name']
+                real_tagline = account_json['data']['tag']
                 account_level = account_json['data']['account_level']
                 card_image_url = account_json['data']['card']['wide']
 
@@ -73,18 +76,19 @@ class Valo(commands.Cog):
                 await ctx.send(embed=embed, delete_after=10)
                 return
 
-            # Embed
-            embed = discord.Embed()
-            embed.title = f"{username} `#{tagline}`"
-            embed.color = discord.Color.magenta()
-            embed.description = f"{season_txt} competitive results"
-            embed.set_thumbnail(url=rank_image_url)
-            embed.add_field(name="W/L", value=f"```{season_wins}W/{season_lose}L```")
-            embed.add_field(name="Current rank", value=f"```{current_rank} (+{ranking_in_tier} RR)```")
-            embed.add_field(name="ELO", value=f"```{elo}```")
-            embed.add_field(name="Account Level", value=f"```{account_level}```")
-            embed.set_image(url=card_image_url)
-            await ctx.send(embed=embed)
+        # Embed
+        embed = discord.Embed()
+        embed.title = f"{real_name} `#{real_tagline}`"
+        embed.color = discord.Color.magenta()
+        embed.description = f"{season_txt} competitive results"
+        embed.set_thumbnail(url=rank_image_url)
+        embed.add_field(name="W/L", value=f"```{season_wins}W/{season_lose}L```")
+        embed.add_field(name="Current rank", value=f"```{current_rank} (+{ranking_in_tier} RR)```")
+        embed.add_field(name="ELO", value=f"```{elo}```")
+        embed.add_field(name="Account Level", value=f"```{account_level}```")
+        embed.set_image(url=card_image_url)
+        await ctx.send(embed=embed)
+        return
 
 
     # Valorantの最新ニュースを取ってくるコマンド
