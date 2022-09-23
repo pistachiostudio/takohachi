@@ -10,63 +10,36 @@ class Valo(commands.Cog):
         self.bot = bot
 
     @commands.command()
-    async def vr(self, ctx):
+    async def vr(self, ctx, user):
 
         current_season = "e5a2"
-        channel = ctx.channel
-        takohachi_id = '813757574058213376'
 
         season_txt = (current_season.replace("e", "Episode ").replace("a", " Act "))
 
-        # Usernameを取得
-        embed = discord.Embed()
-        embed.color = discord.Color.gold()
-        embed.title = "<:p01_pepebrim:951023068275421235> ENTER YOUR VALORANT NAME & TAGLINE SEPARATED BY # ..."
-        embed.description = "ex): 植 物#help、快楽亭ブラック#三代目、ミスターポーゴ#imoya"
-        user_msg = await ctx.send(embed=embed, delete_after=60)
-
-        try:
-            def check(m):
-                return m.channel == channel and m.author.id != takohachi_id
-
-            user_waiter = await self.bot.wait_for('message', check=check, timeout=60)
-            if '#' not in user_waiter.content:
-                embed = discord.Embed()
-                embed.color = discord.Color.red()
-                embed.title = "<:p01_pepebrim:951023068275421235>:warning: Enter NAME and tagline separated by #!"
-                embed.description = f'`!!valo` command again'
-                await ctx.send(embed=embed, delete_after=10)
-                message = ctx.message
-                await message.delete()
-                return
-
-            contents = user_waiter.content.split('#')
-            if len(contents) != 2:
-                embed = discord.Embed()
-                embed.color = discord.Color.red()
-                embed.title = "<:p01_pepebrim:951023068275421235>:warning: Invalid input value"
-                embed.description = f'`!!valo` command again'
-                await ctx.send(embed=embed, delete_after=10)
-                message = ctx.message
-                await message.delete()
-                return
-
-            username = contents[0]
-            tagline = contents[1]
-
-            await user_waiter.delete()
-            await user_msg.delete()
-
-        # asyncio.TimeoutError が発生したらここに飛ぶ
-        except asyncio.TimeoutError:
+        # user name & tagline の入力を検証
+        if '#' not in user:
             embed = discord.Embed()
             embed.color = discord.Color.red()
-            embed.title = "<:p01_pepebrim:951023068275421235>:warning: Timeout..."
-            embed.description = f'`!!valo` command again'
+            embed.title = "<:p01_pepebrim:951023068275421235>:warning: Enter NAME and tagline separated by #!"
+            embed.description = 'ex): 植 物#help、快楽亭ブラック#三代目、ミスターポーゴ#imoya'
             await ctx.send(embed=embed, delete_after=10)
             message = ctx.message
             await message.delete()
             return
+
+        contents = user.split('#')
+        if len(contents) != 2:
+            embed = discord.Embed()
+            embed.color = discord.Color.red()
+            embed.title = "<:p01_pepebrim:951023068275421235>:warning: Invalid input value"
+            embed.description = 'ex): 植 物#help、快楽亭ブラック#三代目、ミスターポーゴ#imoya'
+            await ctx.send(embed=embed, delete_after=10)
+            message = ctx.message
+            await message.delete()
+            return
+
+        username = contents[0]
+        tagline = contents[1]
 
         # API request
         async with ctx.typing():
