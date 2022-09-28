@@ -7,7 +7,7 @@
 
 https://github.com/pistachiostudio/takohachi/tree/master/cogs
 
-## Deproyment note
+## Deployment note
 
 タコ八はHerokuのフリープランで動いています。
 
