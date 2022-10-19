@@ -12,7 +12,7 @@ class Valo(commands.Cog):
 
         print(user)
 
-        current_season = "e5a2"
+        current_season = "e5a3"
 
         season_txt = (current_season.replace("e", "Episode ").replace("a", " Act "))
 
