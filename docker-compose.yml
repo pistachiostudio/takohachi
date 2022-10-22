@@ -8,3 +8,6 @@ services:
     tty: true
     env_file:
       - .env
+    volumes:
+      - .:/app
+    command: python3 launcher.py
