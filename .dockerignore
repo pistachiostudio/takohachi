@@ -1,0 +1,12 @@
+/__pycache__
+/.venv
+ffmpeg.exe
+ffplay.exe
+ffprobe.exe
+memo.txt
+addssl_client_secrets.json
+client_secrets.json
+create_database.py
+/mp3
+/db
+.cache
