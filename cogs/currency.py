@@ -1,7 +1,8 @@
+import os
 import sqlite3
 from datetime import datetime, timedelta, timezone
+
 import discord
-import os
 from discord.ext import commands
 
 DB_DIRECTORY = os.environ["DB_DIRECTORY"]

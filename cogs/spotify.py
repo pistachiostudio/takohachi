@@ -1,10 +1,11 @@
 import os
-import discord
-from discord.ext import commands
 from datetime import datetime, timedelta, timezone
 from typing import Any
-from spotipy.oauth2 import SpotifyClientCredentials
+
+import discord
 import spotipy
+from discord.ext import commands
+from spotipy.oauth2 import SpotifyClientCredentials
 
 
 class Spotify(commands.Cog):
