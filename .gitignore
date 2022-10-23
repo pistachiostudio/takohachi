@@ -5,14 +5,12 @@ __pycache__/
 memo.txt
 credentials.json
 client_secrets.json
-spotify_artist.py
-spotify_track.py
 .cache
-gototop.py
 secret_json
 addssl_client_secrets.json
 policehan.py
 policezen.py
+gototop.py
 react.py
 tanaka.py
 yobro.py
@@ -22,9 +20,9 @@ ffmpeg.exe
 ffplay.exe
 ffprobe.exe
 lantest.py
-dic.py
+mp3/
 create_database.py
-db/vl_store.db
+db/
 app.json
 
 # 環境変数

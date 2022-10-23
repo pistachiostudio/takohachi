@@ -1,0 +1,13 @@
+version: "3"
+services:
+  python-service:
+    restart: always
+    build: .
+    container_name: "takohachi-bot"
+    working_dir: "/app"
+    tty: true
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    command: python3 launcher.py

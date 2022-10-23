@@ -1,9 +1,10 @@
-import urllib3
-import requests
+import json
 import re
 import socket
-import json
 from collections import OrderedDict
+
+import requests
+import urllib3
 
 '''
 Thanks! https://github.com/DarkPotatoKing/valostore-py

@@ -1,9 +1,8 @@
 from datetime import datetime, timedelta, timezone
 
-from libs.utils import get_what_today
-
 import discord
 from discord.ext import commands
+from libs.utils import get_what_today
 
 
 class WhatToday(commands.Cog):

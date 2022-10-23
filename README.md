@@ -59,4 +59,4 @@ heroku の設定をしてある前提
 ## License
 
 Takohachi is released under the MIT license.  
-©2022 Pistachio Gaming & Pistachio Studio.  
+©2022 Pistachio Gaming & Pistachio Studio.

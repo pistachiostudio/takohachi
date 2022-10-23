@@ -1,7 +1,9 @@
 from datetime import datetime, timedelta, timezone
-from libs.utils import get_what_today, get_weather
-from discord.ext import commands, tasks
+
 import discord
+from discord.ext import commands, tasks
+from libs.utils import get_weather, get_what_today
+
 
 class WTTasks(commands.Cog):
     def __init__(self, bot):
