@@ -2,7 +2,7 @@
 
 ### addssl.py
 
-- コマンド `!!addssl <URL>` ピスタチオゲーム部が監視を続ける周辺のSSL未対応のHPのチェッカー [SSL Checker](https://ssl-checker.vercel.app/) のデータベースへのURL登録。  
+- コマンド `!!addssl <URL>` ピスタチオゲーム部が監視を続ける周辺のSSL未対応のHPのチェッカー [SSL Checker](https://github.com/pistachiostudio/main/blob/main/docs/sslchecker.md) のデータベースへのURL登録。  
   ![image](https://user-images.githubusercontent.com/4445606/136697259-b696b6d8-5162-40ef-a3ff-fbf6c12239b0.png)
 
 ### apex_tracker.py
