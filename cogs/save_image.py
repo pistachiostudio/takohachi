@@ -85,7 +85,7 @@ class SavaImage(commands.Cog):
         folder_id = os.environ["DRIVE_FOLDER_ID"]
 
         f = drive.CreateFile(
-            {'title': upload_filename, 'mimeType': 'image/jpeg', 'parents': [{'kind': 'drive#fileLink', 'id': folder_id}]})
+            {'title': upload_filename, 'parents': [{'kind': 'drive#fileLink', 'id': folder_id}]})
         f.SetContentFile(filename)
         f.Upload()
 
