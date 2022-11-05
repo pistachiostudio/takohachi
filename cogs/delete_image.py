@@ -9,7 +9,7 @@ class DeleteImage(commands.Cog):
     """画像を削除するやつですが、動作しないので調整中です
     """
 
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
 
     @commands.Cog.listener()
@@ -51,5 +51,5 @@ class DeleteImage(commands.Cog):
             f.Trash()
 
 
-def setup(bot):
-    bot.add_cog(DeleteImage(bot))
+async def setup(bot: commands.Bot):
+    await bot.add_cog(DeleteImage(bot))

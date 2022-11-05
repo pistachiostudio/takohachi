@@ -14,7 +14,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 
 
 class SSLAdd(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
 
     @commands.command()
@@ -88,5 +88,5 @@ class SSLAdd(commands.Cog):
                 embed.description = f"**「{plain_title}」** を監視いたします。\n\n[SSL Checker](https://ssl-checker.vercel.app/) | [SSLC Database](https://docs.google.com/spreadsheets/d/1c25pvMyjQ89OBCvB9whCQQLM_BPXKyY7umsj5wmpP2k/edit?usp=sharing)"
                 await ctx.send(embed=embed)
 
-def setup(bot):
-    bot.add_cog(SSLAdd(bot))
+async def setup(bot: commands.Bot):
+    await bot.add_cog(SSLAdd(bot))

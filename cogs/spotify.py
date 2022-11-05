@@ -9,7 +9,7 @@ from spotipy.oauth2 import SpotifyClientCredentials
 
 
 class Spotify(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
 
     @commands.command()
@@ -151,5 +151,5 @@ class Spotify(commands.Cog):
 
 
 
-def setup(bot):
-    bot.add_cog(Spotify(bot))
+async def setup(bot: commands.Bot):
+    await bot.add_cog(Spotify(bot))

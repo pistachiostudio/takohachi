@@ -13,7 +13,7 @@ Thanks! https://github.com/DarkPotatoKing/valostore-py
 '''
 
 class Store(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
 
 
@@ -215,5 +215,5 @@ class Store(commands.Cog):
 
 
 
-def setup(bot):
-    bot.add_cog(Store(bot))
+async def setup(bot: commands.Bot):
+    await bot.add_cog(Store(bot))

@@ -2,11 +2,12 @@ from datetime import datetime, timedelta, timezone
 
 import discord
 from discord.ext import commands, tasks
+
 from libs.utils import get_weather, get_what_today
 
 
 class WTTasks(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.index = 0
         self.bot = bot
         self.printer.start()
@@ -50,5 +51,5 @@ class WTTasks(commands.Cog):
         await self.bot.wait_until_ready()
 
 
-def setup(bot):
-    bot.add_cog(WTTasks(bot))
+async def setup(bot: commands.Bot):
+    await bot.add_cog(WTTasks(bot))

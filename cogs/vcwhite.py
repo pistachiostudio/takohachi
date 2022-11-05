@@ -5,7 +5,7 @@ from discord.ext import commands
 
 
 class Vcwhite(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
 
     @commands.Cog.listener()
@@ -29,5 +29,5 @@ class Vcwhite(commands.Cog):
         else:
             pass
 
-def setup(bot):
-    bot.add_cog(Vcwhite(bot))
+async def setup(bot: commands.Bot):
+    await bot.add_cog(Vcwhite(bot))

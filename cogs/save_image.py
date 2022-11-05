@@ -10,7 +10,7 @@ from pydrive2.drive import GoogleDrive
 
 
 class SavaImage(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
 
     @commands.Cog.listener()
@@ -100,5 +100,5 @@ class SavaImage(commands.Cog):
         return count
 
 
-def setup(bot):
-    bot.add_cog(SavaImage(bot))
+async def setup(bot: commands.Bot):
+    await bot.add_cog(SavaImage(bot))
