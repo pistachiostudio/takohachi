@@ -1,3 +1,5 @@
+<samp>
+
 # 🐙 Discord Bot `タコ八` 🐙
 
 
@@ -86,3 +88,5 @@ $ docker compose up -d
 
 Takohachi is released under the MIT license.  
 ©2022 Pistachio Gaming & Pistachio Studio.
+
+</samp>
