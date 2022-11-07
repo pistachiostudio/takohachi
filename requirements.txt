@@ -6,7 +6,8 @@ cachetools==4.2.2
 certifi==2021.5.30
 chardet==3.0.4
 cryptography==3.4.7
-discord.py==1.6.0
+#discord.py==1.6.0
+discord.py==2.0.1
 google-api-core==2.7.1
 google-api-python-client==2.41.0
 google-auth==2.6.0
@@ -33,7 +34,7 @@ spotipy==2.19.0
 typing-extensions==3.7.4.3
 uritemplate==3.0.1
 urllib3==1.26.6
-yarl==1.6.3
+yarl==1.8.1
 
 #---NOT USING for build & deploy---
 #autopep8==1.6.0

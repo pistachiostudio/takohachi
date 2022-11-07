@@ -7,7 +7,7 @@ from discord.ext import commands
 
 
 class Play(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
 
     @commands.command()
@@ -99,5 +99,5 @@ class Play(commands.Cog):
             await voice_state.disconnect()
 
 
-def setup(bot):
-    bot.add_cog(Play(bot))
+async def setup(bot: commands.Bot):
+    await bot.add_cog(Play(bot))

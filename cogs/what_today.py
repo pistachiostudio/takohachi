@@ -6,7 +6,7 @@ from libs.utils import get_what_today
 
 
 class WhatToday(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
 
     @commands.command()
@@ -29,5 +29,5 @@ class WhatToday(commands.Cog):
         await ctx.send(embed=embed)
 
 
-def setup(bot):
-    bot.add_cog(WhatToday(bot))
+async def setup(bot: commands.Bot):
+    await bot.add_cog(WhatToday(bot))
