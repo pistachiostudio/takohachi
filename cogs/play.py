@@ -77,7 +77,7 @@ class Play(commands.Cog):
                 play_idx = emojis.index(react_emoji)
                 play_mp3_name = mp3_name_list[play_idx]
                 # mp3を再生する
-                source = discord.PCMVolumeTransformer(discord.FFmpegPCMAudio(f"mp3/{play_mp3_name}"), volume=0.2)
+                source = discord.PCMVolumeTransformer(discord.FFmpegPCMAudio(f"{play_mp3_name}"), volume=0.2)
                 message.guild.voice_client.play(source)
                 await message.remove_reaction(react_emoji, payload.member)
 

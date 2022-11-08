@@ -6,7 +6,7 @@ cachetools==4.2.2
 certifi==2021.5.30
 chardet==3.0.4
 cryptography==3.4.7
-discord.py==2.0.1
+discord.py[voice]==2.0.1
 google-api-core==2.7.1
 google-api-python-client==2.41.0
 google-auth==2.6.0
