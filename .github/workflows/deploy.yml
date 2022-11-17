@@ -22,4 +22,4 @@ jobs:
               key: ${{ secrets.DEPLOY_KEY }}
               script: |
                 cd ${{ secrets.DEPLOY_DIR }}
-                sudo git pull origin main
+                sudo git pull origin master
