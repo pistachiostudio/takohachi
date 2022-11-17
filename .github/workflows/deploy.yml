@@ -23,5 +23,5 @@ jobs:
               script: |
                 cd ${{ secrets.DEPLOY_DIR }}
                 sudo git pull origin master
-                docker compose up -d
+                sudo docker compose up -d
 
