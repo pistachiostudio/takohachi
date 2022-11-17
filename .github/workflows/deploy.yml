@@ -13,8 +13,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-          - name: Deploy
-            uses: appleboy/ssh-action@master
+          - name: SSH Remote Commands
+            uses: appleboy/ssh-action@v0.1.5
             with:
               host: ${{ secrets.DEPLOY_HOST }}
               username: ${{ secrets.DEPLOY_USER }}
