@@ -26,6 +26,9 @@ class Play(commands.Cog):
         emojis = ['🇦', '🇧', '🇨', '🇩', '🇪', '🇫', '🇬', '🇭', '🇮', '🇯', '🇰', '🇱',
                    '🇲', '🇳', '🇴', '🇵', '🇶', '🇷', '🇸', '🇹', '🇺', '🇻', '🇼', '🇽', '🇾', '🇿']
 
+        # コマンド自体を削除
+        await ctx.message.delete()
+
         # mp3フォルダ内のmp3をすべて取得して投稿
         mp3list = glob.glob('mp3/*')
         length = len(mp3list)
@@ -87,6 +90,7 @@ class Play(commands.Cog):
     async def bye(self, ctx):
         await ctx.guild.voice_client.disconnect()
         await message.delete()
+        await ctx.message.delete()
 
     # VC内の最後の一人が抜けたらBotも一緒に抜ける
     @commands.Cog.listener()
