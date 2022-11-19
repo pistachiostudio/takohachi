@@ -23,6 +23,16 @@ https://github.com/pistachiostudio/takohachi/tree/master/cogs
 - docker-compose.yml
 - requirements.txt
 
+#### Auto deploy by GitHub Actions
+
+- [.github/workflows/deploy.yml](https://github.com/pistachiostudio/takohachi/blob/master/.github/workflows/deploy.yml)
+- Required secrets:
+  - Server IP
+  - Server Port
+  - Server User
+  - Sever SSH Key
+  - Directory to deploy
+
 ## 🐳 Docker
 
 ### 1. Clone this repository
@@ -60,7 +70,7 @@ TRN_API_KEY=''
 $ docker compose up -d
 ```
 
-🔫 Yeah bot is on ready!!
+🔫 Yeah_bot_is_on_ready!!
 
 ## 🎨 Icon
 | by [Go Inagaki](https://hodwn.com/go-inagaki/)                                                                                 | by [Imoya](https://twitter.com/arakudai2)                                                                                      | 
