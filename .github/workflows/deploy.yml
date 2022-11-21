@@ -23,4 +23,4 @@ jobs:
                 cd ${{ secrets.DEPLOY_DIR }}
                 sudo git pull origin master
                 sudo docker compose up -d --build --force-recreate
-                sudo docker image prune -f
+                sudo docker image prune -a -f
