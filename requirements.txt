@@ -3,7 +3,7 @@ async-timeout==3.0.1
 attrs==20.3.0
 beautifulsoup4==4.10.0
 cachetools==4.2.2
-certifi==2021.5.30
+certifi==2022.12.7
 chardet==3.0.4
 cryptography==3.4.7
 discord.py[voice]==2.0.1
