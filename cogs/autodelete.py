@@ -14,7 +14,7 @@ class AutoDelete(commands.Cog):
     def cog_unload(self):
         self.printer.cancel()
 
-    @tasks.loop(seconds=10.0)
+    @tasks.loop(seconds=600.0)
     async def printer(self):
 
         # チャンネルIDと削除する時間(秒)を指定。例えば1時間ごとに削除する場合は3600。
