@@ -36,7 +36,7 @@ class Play(commands.Cog):
         global mp3_name_list
         mp3_name_list = []
         for i in range(length):
-            remove_prefix = mp3list[i].removeprefix('mp3\\')
+            remove_prefix = mp3list[i].removeprefix('mp3/')
             true_list.append(emojis[i] + ' ' + remove_prefix)
             mp3_name_list.append(remove_prefix)
         result = '\n'.join(true_list)
