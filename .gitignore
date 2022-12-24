@@ -20,7 +20,6 @@ ffmpeg.exe
 ffplay.exe
 ffprobe.exe
 lantest.py
-mp3/
 create_database.py
 db/
 app.json
