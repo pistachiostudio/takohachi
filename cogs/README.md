@@ -10,6 +10,10 @@
 - コマンド `!!apedxtracker <PLATFORM> <ID>` でApex LegendsのランクポイントをトラッカーサイトのAPIを叩いて返す。  
   ![image](https://user-images.githubusercontent.com/4445606/137535053-bf274d66-5387-4ddf-a0fb-788c208efd60.png)
 
+### autodelete.py
+
+- 指定したチャンネルで指定した時間経過したテキストチャットを順次削除していきます。チャンネルIDと秒数を辞書型で記述します。
+
 ### bath.py
 
 - コマンド `!!b` で自分のニックネームの前に🛀マークをつけます。AFKですよーという意味で使っています。もう一度同じコマンドで外します。  
@@ -63,6 +67,10 @@
 - `!!countall` で特定の汎用チャンネル4つの合計のメッセージ数を返す。  
   ![image](https://user-images.githubusercontent.com/4445606/166941142-f2f3a5ad-3f9a-4cdf-997e-6997cb101bd6.png)
 
+### ping.py
+
+- コマンド `!!ping` でping値を測定します。
+
 ### save_image.py
 
 - 画像付きのチャットへ特定の絵文字でリアクションをするとその画像や動画を指定のGoogle Driveフォルダへアップロードする。12時間でメッセージが削除されるため、かわいいペットの画像など、記録したい画像などはリアクションで保存している。  
@@ -107,13 +115,8 @@
 - 上記 what_today.py を `@tasks.loop` で毎朝7時にも「今日はなんの日?」を投稿しています。  
   ![image](https://user-images.githubusercontent.com/4445606/166943894-4f8d7bd1-58fe-4765-a331-360d2f88c192.png)
 
-***
 
 # others
-
-- チャットのパーマリンクが投稿された場合に内容を展開する。[dispander](https://github.com/DiscordBotPortalJP/dispander)をそのままお借りしています。  
-  ![image](https://user-images.githubusercontent.com/4445606/125954215-2ff8b9b1-8e5e-4c9c-a45c-0a79409e8fd3.png)  
-  dispanerがdiscord.py 1.x系のPyPIアップをしなくなったので[Issue #73](https://github.com/pistachiostudio/takohachi/issues/73)の対応をしました。
 
 - 半角カタカナが使用されたらリアクションで知らせる（通称:半角警察）、全角英数字が使用されたらリアクションで知らせる（全角警察）ウザかったので現在は停止中。  
   ![image](https://user-images.githubusercontent.com/4445606/125954408-8d8b9f38-c5ff-4d0f-b524-82aeb938b2da.png)
