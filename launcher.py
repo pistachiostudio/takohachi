@@ -69,6 +69,7 @@ async def main():
 
         # Productionのみで読み込むcogs
         if PREFIX == '!!':
+            await bot.load_extension("cogs.autodelete")
             await bot.load_extension("cogs.wt_task")
             await bot.load_extension("cogs.vcwhite")
             await bot.load_extension("cogs.save_image")
