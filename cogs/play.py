@@ -30,7 +30,7 @@ class Play(commands.Cog):
         await ctx.message.delete()
 
         # mp3フォルダ内のmp3をすべて取得して投稿
-        mp3list = glob.glob('mp3/*')
+        mp3list = sorted(glob.glob('mp3/*'))
         length = len(mp3list)
         true_list = []
         global mp3_name_list
