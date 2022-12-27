@@ -7,9 +7,9 @@ from discord.ext import commands
 class HappyNewYear(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-    
+
     @commands.command()
-    async def happy_new_year(self, ctx):
+    async def hny(self, ctx):
         #おみくじ！
         omikuji_list = ['大吉🎯', '中吉🐬', '小吉🍓', '末吉🍦', '吉🍨', '凶👾', '大凶💀']
         omikuji = random.choice(omikuji_list)
@@ -40,11 +40,12 @@ class HappyNewYear(commands.Cog):
 
         #embed
         embed = discord.Embed()
+        embed.title = "🐰ピスタチオおみくじ 2023🐰"
+        embed.description = f"おめでとうございます！\n{ctx.author.mention} さんの2023年の運勢は **{omikuji}** です👍"
         embed.color = discord.Color.dark_green()
-        embed.set_footer(text=f"おみくじ: {omikuji}")
-        # embed.set_thumbnail(url=image_url)
+        embed.set_footer(text=f"Happy New Year 2023! Love from Pistachio Studio & Gaming❤")
+        embed.set_image(url=image_url)
         await ctx.send(embed=embed)
-        await ctx.send(image_url)
 
 
 async def setup(bot: commands.Bot):
