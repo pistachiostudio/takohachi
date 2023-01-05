@@ -1,4 +1,3 @@
-import os
 from datetime import datetime, timedelta, timezone
 
 import discord
@@ -18,7 +17,7 @@ class WTTasks(commands.Cog):
 
     @tasks.loop(seconds=600.0)
     async def printer(self):
-        channel = self.bot.get_channel(int(os.environ["INU_VC_ID"]))
+        channel = self.bot.get_channel(int('762575939623452682'))
 
         # タイムゾーンの生成
         JST = timezone(timedelta(hours=+9), 'JST')
