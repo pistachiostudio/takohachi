@@ -1,10 +1,12 @@
-from typing import Optional
+from typing import Any, Optional
 
 import discord
 from discord.ext import commands
 
 
-def get_channels(ctx: commands.Context, names: list[str], channel_type: Optional[discord.ChannelType] = None) -> Optional[list[discord.abc.GuildChannel]]:
+def get_channels(
+    ctx: commands.Context[Any], names: list[str], channel_type: Optional[discord.ChannelType] = None
+) -> Optional[list[discord.abc.GuildChannel]]:
     guild = ctx.guild
     if guild is None:
         return None
@@ -20,11 +22,11 @@ def get_channels(ctx: commands.Context, names: list[str], channel_type: Optional
     if len(channels) == 0:
         return None
 
-    res :list[discord.abc.GuildChannel] = []
+    res: list[discord.abc.GuildChannel] = []
     for ch in channels:
         if ch.name in names:
-            res.append[ch]
-    
+            res.append(ch)
+
     if len(res) == 0:
         return None
 
