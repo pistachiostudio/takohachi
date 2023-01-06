@@ -7,7 +7,21 @@
 
 ## ⚙ Cogs
 
-https://github.com/pistachiostudio/takohachi/tree/master/cogs
+https://github.com/pistachiostudio/takohachi/tree/master/src/cogs
+
+## 🪂 Package install
+
+### Using Poetry
+
+```bash
+$ poetry install
+```
+
+### Using pip
+
+```bash
+$ pip install -r requirements.txt
+```
 
 ## 🏭 Deployment note
 
@@ -15,13 +29,12 @@ https://github.com/pistachiostudio/takohachi/tree/master/cogs
 
 - heroku.yml
 - Procfile
-- requirements.txt
+- runtime.txt
 
 ### on VPS service
 
 - Dockerfile
 - docker-compose.yml
-- requirements.txt
 
 #### Auto deploy by GitHub Actions
 
@@ -72,7 +85,7 @@ $ docker compose up -d
 
 🔫 Yeah_bot_is_on_ready!!
 
-## 🎨 Icon
+## 🎨 Icons
 | by [Go Inagaki](https://hodwn.com/go-inagaki/)                                                                                 | by [Imoya](https://twitter.com/arakudai2)                                                                                      | 
 | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ | 
 | <img src="https://user-images.githubusercontent.com/4445606/136433333-96b165e0-447c-481a-9e91-50f02b5689d4.png" width="500px"> | <img src="https://user-images.githubusercontent.com/4445606/136697820-c7526860-2b48-4a34-b32a-06b38fbb76a1.png" width="500px"> | 
@@ -97,6 +110,6 @@ $ docker compose up -d
 ## 🤝 License
 
 Takohachi is released under the MIT license.  
-©2022 Pistachio Gaming & Pistachio Studio.
+©2023 Pistachio Gaming & Pistachio Studio.
 
 </samp>

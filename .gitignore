@@ -22,6 +22,7 @@ ffprobe.exe
 lantest.py
 create_database.py
 app.json
+cogs
 
 # db file dir
 data

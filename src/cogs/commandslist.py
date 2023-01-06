@@ -13,38 +13,33 @@ class Help(commands.Cog):
 
         embed = discord.Embed()
         embed.set_thumbnail(url='https://raw.githubusercontent.com/pistachiostudio/takohachi/master/images/icon_tako_hachi_BG_less.png')
-        embed.title = "takohachi commands help"
+        embed.title = "Takohachi commands help"
         embed.color = discord.Color.blue()
         embed.description = """
-Prefix は `!!` です。
-[View more info on GitHub](https://github.com/pistachiostudio/takohachi/blob/master/mannual.md)
 
-**!!mt**
-```まりもたいむ！```
-**!!whatToday**
-```今日はなんの日？```
-**!!apexrank <A> <B>**
-```APEXのランクポイントを表示します。
-A = origin or psn or xbl
-B = YourID```
-**!!sp <SEARCH WORDS>**
-```Spotifyの曲情報をゲットします。```
-**!!spartist <ARTIST WORDS>**
-```Spotifyのアーティスト情報をゲットします。```
-**!!count**
-```コマンドを書き込んだチャンネルの現在のメッセージの総件数を返します。```
-**!!countall**
-```犬～恐竜の4チャンネルの現在のメッセージの合計を返します。```
-**!!card**
-```イエローカードやレッドカードの集計結果のベスト5を返します。```
-**!!cardall**
-```イエローカードやレッドカードのすべての集計結果を返します。```
-**!!addssl <URL>**
-```SSL Checkerのデータベースに新しい監視URLを登録します。```
-**!!d**
-```Valorantのマップをランダムで返します。diceのdです。```
-**!!b**
-```自分のニックネームの頭に🛀をつけます。もう一度同じコマンドで🛀をはずします。bathのbです。```
+**Main Commands**
+!!addssl [URL]
+!!apedxrank [PLATFORM] [YOUR ID]
+!!b
+!!card
+!!cardall
+!!count
+!!countall
+!!d
+!!help
+!!mt
+!!ping
+!!play
+!!sp [SEARCH WORDS]
+!!spartist [ARTIST WORDS]
+!!top
+!!vr [VALORANT NAME]#[TAGLINE]
+!!vrnews
+!!whatToday
+[More info](https://github.com/pistachiostudio/takohachi/blob/master/src/cogs/README.md)
+
+**User Create Commands**
+[See here](https://docs.google.com/spreadsheets/d/15QCsHsmtZAs1FtiCplLmybU80WyxWw4C7G6ESf2b9f4/edit#gid=1264027664&range=A1)
 """
 
         await ctx.send(embed=embed)

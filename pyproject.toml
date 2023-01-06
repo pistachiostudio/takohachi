@@ -1,10 +1,12 @@
 [tool.poetry]
 name = "takohachi"
-version = "0.1.0"
+version = "1.0.0"
 description = "Gangsta Discord bot"
-authors = ["Pistachio dev"]
-license = "MIT"
+authors = ["Pistachio dev",]
+maintainers = ["Koyama", "Tsuruta",]
 readme = "README.md"
+license = "MIT"
+repository = "https://github.com/pistachiostudio/takohachi"
 
 [tool.poetry.dependencies]
 python = "^3.11"
