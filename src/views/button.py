@@ -8,6 +8,6 @@ class LinkButton(discord.ui.View):
             discord.ui.Button(
                 label=label_text,
                 url=url,
-                style=discord.ButtonStyle.link,
             )
         )
+
