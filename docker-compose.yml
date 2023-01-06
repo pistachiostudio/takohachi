@@ -8,5 +8,4 @@ services:
     env_file:
       - .env
     volumes:
-      - "/data"
-
+      - ./data/:/data/
