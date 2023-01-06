@@ -21,8 +21,10 @@ ffplay.exe
 ffprobe.exe
 lantest.py
 create_database.py
-db/
 app.json
+
+# db file dir
+data
 
 # 環境変数
 .env
