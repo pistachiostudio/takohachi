@@ -1,6 +1,5 @@
-import asyncio
+import os
 
-import discord
 from discord.ext import commands
 
 
@@ -12,13 +11,13 @@ class Vcwhite(commands.Cog):
     async def on_voice_state_update(self, member, before, after):
 
         #通知の対象としたいチャンネルidを入力
-        allow_01 = self.bot.get_channel(762575797327757322) #犬
-        allow_02 = self.bot.get_channel(762576631810228256) #猫
-        allow_03 = self.bot.get_channel(780611246155497482) #亀
-        allow_04 = self.bot.get_channel(812312211112198144) #恐竜
+        INU_VC_ID = self.bot.get_channel(int(os.environ["INU_VC_ID"])) #犬
+        NEKO_VC_ID = self.bot.get_channel(int(os.environ["NEKO_VC_ID"])) #猫
+        KAME_VC_ID = self.bot.get_channel(int(os.environ["KAME_VC_ID"])) #亀
+        KYORYU_VC_ID = self.bot.get_channel(int(os.environ["KYORYU_VC_ID"])) #恐竜
 
         #対象チャンネルかつlengthが1の場合メッセージを送る。
-        if after.channel in [allow_01, allow_02, allow_03, allow_04]:
+        if after.channel in [INU_VC_ID, NEKO_VC_ID, KAME_VC_ID, KYORYU_VC_ID]:
             if before.channel is None and after.channel and len(after.channel.members) == 1:
 
                 #メッセージを送るテキストチャンネルID
