@@ -23,5 +23,8 @@ lantest.py
 create_database.py
 app.json
 
+# db file dir
+data
+
 # 環境変数
 .env
