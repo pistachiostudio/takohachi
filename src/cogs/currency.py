@@ -5,7 +5,7 @@ from datetime import datetime, timedelta, timezone
 import discord
 from discord.ext import commands
 
-DB_DIRECTORY = os.environ["DB_DIRECTORY"]
+DB_DIRECTORY = "/data/takohachi.db"
 BONUS_VALUE = 3000
 OWENER_USER_ID = '538992968254619649' #一部の管理者専用のコマンドで使用
 
@@ -520,7 +520,7 @@ class Currency(commands.Cog):
             return
 
 
-# !!setmoney <amount> <bonus_flag> <@user_mention>se
+# !!setmoney <amount> <bonus_flag> <@user_mention>
 # 管理者がコマンドで与えることもできるようにする
 
     @commands.command()

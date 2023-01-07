@@ -115,6 +115,10 @@
 - 上記 what_today.py を `@tasks.loop` で毎朝7時にも「今日はなんの日?」を投稿しています。  
   ![image](https://user-images.githubusercontent.com/4445606/166943894-4f8d7bd1-58fe-4765-a331-360d2f88c192.png)
 
+### text_channel.py
+
+- テキストチャンネル関連の処理を実装しています。
+    - TODO: このファイルが作られる前にあったTC関連処理をこのファイルに移動する
 
 # others
 
