@@ -9,6 +9,20 @@
 
 https://github.com/pistachiostudio/takohachi/tree/master/cogs
 
+## 🔧 Development note
+
+setup:
+```shell
+poetry install
+
+poetry run pre-commit install
+```
+
+run test:
+```shell
+poetry run tox
+```
+
 ## 🏭 Deployment note
 
 ### on Heroku dyno
@@ -73,9 +87,9 @@ $ docker compose up -d
 🔫 Yeah_bot_is_on_ready!!
 
 ## 🎨 Icon
-| by [Go Inagaki](https://hodwn.com/go-inagaki/)                                                                                 | by [Imoya](https://twitter.com/arakudai2)                                                                                      | 
-| ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ | 
-| <img src="https://user-images.githubusercontent.com/4445606/136433333-96b165e0-447c-481a-9e91-50f02b5689d4.png" width="500px"> | <img src="https://user-images.githubusercontent.com/4445606/136697820-c7526860-2b48-4a34-b32a-06b38fbb76a1.png" width="500px"> | 
+| by [Go Inagaki](https://hodwn.com/go-inagaki/)                                                                                 | by [Imoya](https://twitter.com/arakudai2)                                                                                      |
+| ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
+| <img src="https://user-images.githubusercontent.com/4445606/136433333-96b165e0-447c-481a-9e91-50f02b5689d4.png" width="500px"> | <img src="https://user-images.githubusercontent.com/4445606/136697820-c7526860-2b48-4a34-b32a-06b38fbb76a1.png" width="500px"> |
 
 
 ## 🐕 Pistachio Studio
@@ -96,7 +110,7 @@ $ docker compose up -d
 
 ## 🤝 License
 
-Takohachi is released under the MIT license.  
+Takohachi is released under the MIT license.
 ©2022 Pistachio Gaming & Pistachio Studio.
 
 </samp>
