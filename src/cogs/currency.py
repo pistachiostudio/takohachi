@@ -1,4 +1,3 @@
-import os
 import sqlite3
 from datetime import datetime, timedelta, timezone
 
@@ -13,106 +12,79 @@ class Currency(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.Cog.listener()
-    async def on_raw_reaction_add(self, payload):
-        # botのリアクションは無視する
-        if payload.member.bot:
-            return
+#ボーナスをもらうためのコマンド
 
-# リアクションで初期費用のボーナスBONUS_VALUE pisを与える
-# ここでは重複配布を防ぐためbonusカラムの0 or 1で配布済かどうかを判定します。
+    @commands.command()
+    async def bonus(self, ctx):
 
-        # リアクションを許可するテキストチャットのID
-        true_text_id = str('943501656283291662')
-        # リアクションをする絵文字
-        true_emoji = '<:p03_koya_kids:745597071033368666>'
+        sender_id = str(ctx.author.id)
+        tuple_id = (sender_id,)
+        sender_user_name = str(ctx.author.name)
+        channel = ctx.channel
 
-        msg_id = str(payload.message_id)
-        react_emoji = str(payload.emoji)
+        # user_idカラムからuser_idを探す
+        db = sqlite3.connect(DB_DIRECTORY)
+        c = db.cursor()
+        query = 'select * from currency where user_id = ? limit 1'
+        c.execute(query,tuple_id)
+        istrue = c.fetchall()
 
-        #特定のチャットへ特定のリアクションでのみ発火
-        if true_text_id == msg_id and true_emoji == react_emoji:
+        # user_idカラムにuser_idがない場合dbに新規登録はbonus 1でBONUS_VALUEpisをもらい新規登録
+        if len(istrue) == 0:
+            sql = 'insert into currency (user_id,user_name,bonus,money) values(?,?,?,?)'
+            data = (sender_id, sender_user_name, '1', BONUS_VALUE)
+            c.execute(sql, data)
+            db.commit()
 
-            guild = self.bot.get_guild(payload.guild_id)
-            member = guild.get_member(payload.user_id)
-            channel = self.bot.get_channel(payload.channel_id)
-            msg = await channel.fetch_message(payload.message_id)
-            #リアクションした人のID
-            react_user_id = str(payload.user_id)
-            tuple_id = (react_user_id,)
-            #リアクションした人のuser name
-            react_user_name = str(payload.member)
+            #ボーナス獲得メッセージを5秒間表示
+            embed = discord.Embed()
+            JST = timezone(timedelta(hours=+9), "JST")
+            embed.timestamp = datetime.now(JST)
+            embed.color = discord.Color.green()
+            embed.description = f":moneybag:<@{sender_id}>はボーナスを獲得しました。"
+            await channel.send(embed=embed)
 
-            # user_idカラムからuser_idを探す
-            db = sqlite3.connect(DB_DIRECTORY)
-            c = db.cursor()
-            query = 'select * from currency where user_id = ? limit 1'
-            c.execute(query,tuple_id)
-            istrue = c.fetchall()
+        else:
+            # user_idがある場合はbonusカラムをチェックする
+            query = 'select bonus from currency where user_id = ?'
+            c.execute(query, tuple_id)
+            bonus_flag = c.fetchall()
+            bonus_flag = bonus_flag[0][0]
+            # bonusが1の場合はすでに獲得済みのエラーメッセージを5秒間
+            if bonus_flag == '1':
+                embed = discord.Embed()
+                JST = timezone(timedelta(hours=+9), "JST")
+                embed.timestamp = datetime.now(JST)
+                embed.color = discord.Color.red()
+                embed.description = f":warning:<@{sender_id}>はすでにボーナスを獲得しています。ボーナスは一度しかもらえません。"
+                await channel.send(embed=embed)
+                return
 
-            # user_idカラムにuser_idがない場合dbに新規登録はbonus 1でBONUS_VALUEpisをもらい新規登録
-            if len(istrue) == 0:
-                sql = 'insert into currency (user_id,user_name,bonus,money) values(?,?,?,?)'
-                data = (react_user_id, react_user_name, '1', BONUS_VALUE)
-                c.execute(sql, data)
+            # bonusが0の場合はmoneyの値にBONUS_VALUEを足して更新する
+            else:
+                query = 'select money from currency where user_id = ?'
+                c.execute(query, tuple_id)
+                user_money = c.fetchall()
+                user_money = user_money[0][0]
+                update_user_money = user_money + BONUS_VALUE
+                tupled = (update_user_money, sender_id)
+                # user_idのmoneyをupdate_user_moneyに更新する
+                sql = 'update currency set money = ? where user_id = ?'
+                c.execute(sql, tupled)
                 db.commit()
-
+                # bonusをつかったので0から1に更新する
+                sql = 'update currency set bonus = "1" where user_id = ?'
+                c.execute(sql, tuple_id)
+                db.commit()
                 #ボーナス獲得メッセージを5秒間表示
+                update_user_money_t = '{:,}'.format(update_user_money)
                 embed = discord.Embed()
                 JST = timezone(timedelta(hours=+9), "JST")
                 embed.timestamp = datetime.now(JST)
                 embed.color = discord.Color.green()
-                embed.description = f":moneybag:<@{react_user_id}>はボーナスを獲得しました。"
-                await channel.send(embed=embed, delete_after = 5.0)
-
-            else:
-                # user_idがある場合はbonusカラムをチェックする
-                query = 'select bonus from currency where user_id = ?'
-                c.execute(query, tuple_id)
-                bonus_flag = c.fetchall()
-                bonus_flag = bonus_flag[0][0]
-
-                # bonusが1の場合はすでに獲得済みのエラーメッセージを5秒間
-                if bonus_flag == '1':
-                    embed = discord.Embed()
-                    JST = timezone(timedelta(hours=+9), "JST")
-                    embed.timestamp = datetime.now(JST)
-                    embed.color = discord.Color.red()
-                    embed.description = f":warning:<@{react_user_id}>はすでにボーナスを獲得しています。ボーナスは一度しかもらえません。"
-                    await channel.send(embed=embed, delete_after = 5.0)
-                    return
-
-                # bonusが0の場合はmoneyの値にBONUS_VALUEを足して更新する
-                else:
-                    query = 'select money from currency where user_id = ?'
-                    c.execute(query, tuple_id)
-                    user_money = c.fetchall()
-                    user_money = user_money[0][0]
-                    update_user_money = user_money + BONUS_VALUE
-                    tupled = (update_user_money, react_user_id)
-
-                    # user_idのmoneyをupdate_user_moneyに更新する
-                    sql = 'update currency set money = ? where user_id = ?'
-                    c.execute(sql, tupled)
-                    db.commit()
-
-                    # bonusをつかったので0から1に更新する
-                    sql = 'update currency set bonus = "1" where user_id = ?'
-                    c.execute(sql, tuple_id)
-                    db.commit()
-
-                    #ボーナス獲得メッセージを5秒間表示
-                    update_user_money_t = '{:,}'.format(update_user_money)
-                    embed = discord.Embed()
-                    JST = timezone(timedelta(hours=+9), "JST")
-                    embed.timestamp = datetime.now(JST)
-                    embed.color = discord.Color.green()
-                    embed.description = f":moneybag:<@{react_user_id}>はボーナスを獲得し、所持金の合計が {update_user_money_t} PISになりました。"
-                    await channel.send(embed=embed, delete_after = 5.0)
-
-        else:
-            return
-
+                embed.description = f":moneybag:<@{sender_id}>はボーナスを獲得し、所持金の合計が {update_user_money_t} pisになりました。"
+                await channel.send(embed=embed)
+                return
 
 # !!wallet !!wallet <mention> コマンド
 # ここでは自分、もしくはサーバー内のユーザーの所持金を返します。
@@ -133,14 +105,14 @@ class Currency(commands.Cog):
             cmd_user_money = '{:,}'.format(cmd_user_money)
             embed = discord.Embed()
             embed.color = discord.Color.dark_green()
-            embed.description = f"<@{cmd_user_id}> の所持金は {cmd_user_money} PISです。"
+            embed.description = f"<@{cmd_user_id}> の所持金は {cmd_user_money} pisです。"
             await ctx.send(embed=embed)
             return
 
         #引数がある場合の条件分岐
         else:
             #引数をメンションのユーザー指定にしていない場合はエラーを返す
-            is_mention = user.startswith('<@!')
+            is_mention = user.startswith('<@')
             if is_mention == False:
                 embed = discord.Embed()
                 embed.color = discord.Color.dark_green()
@@ -150,7 +122,7 @@ class Currency(commands.Cog):
 
             #引数がしっかりメンションになっている場合の条件分岐
             else:
-                user = user.lstrip('<@!')
+                user = user.lstrip('<@')
                 user = user.rstrip('>')
                 tuple_user_mention = (user,)
                 db = sqlite3.connect(DB_DIRECTORY)
@@ -163,7 +135,7 @@ class Currency(commands.Cog):
                 if len(cmd_user_money) == 0:
                     embed = discord.Embed()
                     embed.color = discord.Color.dark_green()
-                    embed.description = f"<@{user}> の所持金は 0 PISです。"
+                    embed.description = f"<@{user}> の所持金は 0 pisです。"
                     await ctx.send(embed=embed)
                     return
 
@@ -173,7 +145,7 @@ class Currency(commands.Cog):
                     cmd_user_money = '{:,}'.format(cmd_user_money)
                     embed = discord.Embed()
                     embed.color = discord.Color.dark_green()
-                    embed.description = f"<@{user}> の所持金は {cmd_user_money} PISです。"
+                    embed.description = f"<@{user}> の所持金は {cmd_user_money} pisです。"
                     await ctx.send(embed=embed)
                     return
 
@@ -198,7 +170,7 @@ class Currency(commands.Cog):
         update_sender_money = int(sender_money) - int(amount)
 
         # その前に自分自身に送金している場合はエラーを返す。
-        if str(command_sender_id) == str(command_sender_id):
+        if str(command_sender_id) == str(give_user.id):
             embed = discord.Embed()
             embed.color = discord.Color.dark_green()
             embed.description = f":warning:自分に送金することはできません。"
@@ -211,7 +183,7 @@ class Currency(commands.Cog):
                 sender_money_t = '{:,}'.format(sender_money)
                 embed = discord.Embed()
                 embed.color = discord.Color.dark_green()
-                embed.description = f"所持金が足りません。\n<@{command_sender_id}> の所持金は {sender_money_t} PISです。"
+                embed.description = f"所持金が足りません。\n<@{command_sender_id}> の所持金は {sender_money_t} pisです。"
                 await ctx.send(embed=embed)
                 return
 
@@ -243,7 +215,7 @@ class Currency(commands.Cog):
                     amount_t = '{:,}'.format(amount)
                     embed = discord.Embed()
                     embed.color = discord.Color.dark_green()
-                    embed.description = f"<@{command_sender_id}> から <@{give_user_id}> へ {amount_t} PIS を送金しました。"
+                    embed.description = f"<@{command_sender_id}> から <@{give_user_id}> へ {amount_t} pis を送金しました。"
                     await ctx.send(embed=embed)
                     return
 
@@ -272,7 +244,7 @@ class Currency(commands.Cog):
                     amount_t = '{:,}'.format(amount)
                     embed = discord.Embed()
                     embed.color = discord.Color.dark_green()
-                    embed.description = f"<@{command_sender_id}> から <@{give_user_id}> へ {amount_t} PIS を送金しました。"
+                    embed.description = f"<@{command_sender_id}> から <@{give_user_id}> へ {amount_t} pis を送金しました。"
                     await ctx.send(embed=embed)
                     return
 
@@ -290,15 +262,11 @@ class Currency(commands.Cog):
         c.execute(query)
         richest_list = c.fetchall()
         rich_text = f'''
-                    :one: <@{richest_list[0][0]}> {richest_list[0][3]:,} PIS
-
-                    :two: <@{richest_list[1][0]}> {richest_list[1][3]:,} PIS
-
-                    :three: <@{richest_list[2][0]}> {richest_list[2][3]:,} PIS
-
-                    :four: <@{richest_list[3][0]}> {richest_list[3][3]:,} PIS
-
-                    :five: <@{richest_list[4][0]}> {richest_list[4][3]:,} PIS
+                    :one: <@{richest_list[0][0]}> {richest_list[0][3]:,} pis
+                    :two: <@{richest_list[1][0]}> {richest_list[1][3]:,} pis
+                    :three: <@{richest_list[2][0]}> {richest_list[2][3]:,} pis
+                    :four: <@{richest_list[3][0]}> {richest_list[3][3]:,} pis
+                    :five: <@{richest_list[4][0]}> {richest_list[4][3]:,} pis
                     '''
 
         embed = discord.Embed()
@@ -307,7 +275,7 @@ class Currency(commands.Cog):
         await ctx.send(embed=embed)
         return
 
-
+    """
 # !!shop
 # shopテーブルに登録されている商品の一覧を返します。
 
@@ -322,13 +290,13 @@ class Currency(commands.Cog):
         item_list = c.fetchall()
         item_text = f'''
                     商品名: {item_list[0][0]}
-                    ```値段: {item_list[0][2]:,} PIS | 残り{item_list[0][3]:,}個
+                    ```値段: {item_list[0][2]:,} pis | 残り{item_list[0][3]:,}個
 {item_list[0][1]}```
                     商品名: {item_list[1][0]}
-                    ```値段: {item_list[1][2]:,} PIS | 残り{item_list[1][3]:,}個
+                    ```値段: {item_list[1][2]:,} pis | 残り{item_list[1][3]:,}個
 {item_list[1][1]}```
                     商品名: {item_list[2][0]}
-                    ```値段: {item_list[2][2]:,} PIS | 残り{item_list[2][3]:,}個
+                    ```値段: {item_list[2][2]:,} pis | 残り{item_list[2][3]:,}個
 {item_list[2][1]}```
                     '''
 
@@ -401,7 +369,7 @@ class Currency(commands.Cog):
                     item_price_t = '{:,}'.format(item_price)
                     embed = discord.Embed()
                     embed.color = discord.Color.dark_green()
-                    embed.description = f"所持金が足りません。\n**{buy_item}**は{item_price_t} PISです。\n<@{command_sender_id}> の所持金は {sender_money_t} PISです。"
+                    embed.description = f"所持金が足りません。\n**{buy_item}**は{item_price_t} pisです。\n<@{command_sender_id}> の所持金は {sender_money_t} pisです。"
                     await ctx.send(embed=embed)
                     return
 
@@ -432,10 +400,10 @@ class Currency(commands.Cog):
                     update_customer_money_t = '{:,}'.format(update_customer_money)
                     embed = discord.Embed()
                     embed.color = discord.Color.dark_green()
-                    embed.description = f"<@{command_sender_id}> は {buy_item}({item_price_t} PIS) を購入しました。\n残りの所持金は {update_customer_money_t} PISです。\nご利用ありがとうございます。"
+                    embed.description = f"<@{command_sender_id}> は {buy_item}({item_price_t} pis) を購入しました。\n残りの所持金は {update_customer_money_t} pisです。\nご利用ありがとうございます。"
                     await ctx.send(embed=embed)
                     return
-
+    """
 
     '''
     ////////////////////////////
@@ -478,7 +446,7 @@ class Currency(commands.Cog):
     @commands.command()
     async def givebonus(self, ctx, bonus_give_user: discord.Member):
 
-        #俺だけが使えるコマンド
+        #管理者だけが使えるコマンド
         command_sender_id = str(ctx.author.id)
         if command_sender_id == OWENER_USER_ID:
 
@@ -501,7 +469,7 @@ class Currency(commands.Cog):
                 BONUS_VALUE_t = '{:,}'.format(BONUS_VALUE)
                 embed = discord.Embed()
                 embed.color = discord.Color.dark_green()
-                embed.description = f"<@{give_user_id}> に{BONUS_VALUE_t} PIS ボーナスを配布しました。"
+                embed.description = f"<@{give_user_id}> に{BONUS_VALUE_t} pis ボーナスを配布しました。"
                 await ctx.send(embed=embed)
                 return
 
@@ -551,7 +519,7 @@ class Currency(commands.Cog):
                     amount_t = '{:,}'.format(amount)
                     embed = discord.Embed()
                     embed.color = discord.Color.dark_green()
-                    embed.description = f"<@{set_user_id}> に{amount_t} PIS セットしました。bonus_flagは{bonus}です。"
+                    embed.description = f"<@{set_user_id}> に{amount_t} pis セットしました。bonus_flagは{bonus}です。"
                     await ctx.send(embed=embed)
                     return
 
@@ -565,7 +533,7 @@ class Currency(commands.Cog):
                     amount_t = '{:,}'.format(amount)
                     embed = discord.Embed()
                     embed.color = discord.Color.dark_green()
-                    embed.description = f"<@{set_user_id}> の所持金{amount_t} PISにを更新しました。bonus_flagは{bonus}です。"
+                    embed.description = f"<@{set_user_id}> の所持金{amount_t} pisにを更新しました。bonus_flagは{bonus}です。"
                     await ctx.send(embed=embed)
                     return
 
