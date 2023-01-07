@@ -21,6 +21,6 @@ jobs:
               key: ${{ secrets.DEPLOY_KEY }}
               script: |
                 cd ${{ secrets.DEPLOY_DIR }}
-                sudo git pull origin master
+                sudo git pull origin main
                 sudo docker compose up -d --build --force-recreate
                 sudo docker image prune -a -f
