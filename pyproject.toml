@@ -3,7 +3,10 @@ name = "takohachi"
 version = "1.0.0"
 description = "Gangsta Discord bot"
 authors = ["Pistachio dev",]
-maintainers = ["Koyama", "Tsuruta",]
+maintainers = [
+    "Yuki Koyama <email>",
+    "zztkm <email>",
+]
 readme = "README.md"
 license = "MIT"
 repository = "https://github.com/pistachiostudio/takohachi"
