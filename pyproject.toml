@@ -13,7 +13,7 @@ repository = "https://github.com/pistachiostudio/takohachi"
 
 [tool.poetry.dependencies]
 python = "^3.11"
-discord-py = {version = "2.0.1", extras = ["voice"]}
+discord-py = {version = "2.1.0", extras = ["voice"]}
 typing-extensions = "3.7.4.3"
 gspread = "5.2.0"
 requests = "2.25.1"

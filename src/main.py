@@ -40,7 +40,9 @@ class MyBot(commands.Bot):
         self.initial_extensions = [
             "cogs.slash",
             "cogs.ping",
-            "cogs.marimo"
+            "cogs.marimo",
+            "cogs.addssl",
+            "cogs.bath"
         ]
 
     async def setup_hook(self):
