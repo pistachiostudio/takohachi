@@ -37,18 +37,26 @@ class MyBot(commands.Bot):
             help_command=None,
         )
 
+        self.initial_extensions = [
+            "cogs.slash",
+            "cogs.ping",
+            "cogs.marimo"
+        ]
+
     async def setup_hook(self):
-        await self.load_extension("cogs.slash")
-        await self.load_extension("cogs.ping")
-        await self.load_extension("cogs.marimo")
+        for extension in self.initial_extensions:
+            await self.load_extension(extension)
 
         await bot.tree.sync(guild=discord.Object(id=guild_id))
+
+    async def close(self):
+        await super().close()
+        await self.session.close()
 
     async def on_ready(self):
         print("Connected!")
         await bot.change_presence(activity=discord.Game(name="ピスタチオゲーム部", type=1))
         return
-
 
 bot = MyBot()
 bot.run(TOKEN)
