@@ -1,11 +1,10 @@
 import asyncio
-import os
 import logging
+import os
 from pathlib import Path
 
 import discord
 from discord.ext import commands
-
 
 logging.basicConfig(level=logging.INFO)
 
