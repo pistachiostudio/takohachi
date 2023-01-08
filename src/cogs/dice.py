@@ -2,6 +2,7 @@ import random
 
 import discord
 import requests
+from discord import app_commands
 from discord.ext import commands
 
 
@@ -9,8 +10,15 @@ class Dice(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.command()
-    async def d(self, ctx):
+    @app_commands.command(
+        name="d",
+        description="Valorantのマップをランダムに返します。"
+    )
+
+    async def d(
+        self,
+        interaction: discord.Interaction
+    ):
 
         url = 'https://valorant-api.com/v1/maps'
 
@@ -38,7 +46,10 @@ class Dice(commands.Cog):
         embed.set_image(url=listViewIcon)
         # embed.set_thumbnail(url=displayIcon)
         embed.color = discord.Color.dark_blue()
-        await ctx.send(embed=embed)
+        await interaction.response.send_message(embed=embed)
 
 async def setup(bot: commands.Bot):
-    await bot.add_cog(Dice(bot))
+    await bot.add_cog(
+        Dice(bot),
+        guilds = [discord.Object(id=731366036649279518)]
+    )

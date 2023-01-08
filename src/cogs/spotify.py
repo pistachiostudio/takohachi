@@ -4,6 +4,7 @@ from typing import Any
 
 import discord
 import spotipy
+from discord import app_commands
 from discord.ext import commands
 from spotipy.oauth2 import SpotifyClientCredentials
 
@@ -12,9 +13,18 @@ class Spotify(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.command()
-    async def sp(self, ctx, *args):
-        arguments = ' '.join(args)
+    @app_commands.command(
+        name="sp",
+        description="Spotifyの曲情報を検索します。",
+    )
+
+    async def sp(
+        self,
+        interaction: discord.Interaction,
+        search: str
+    ):
+        #arguments = ' '.join(search)
+        arguments = search
 
         # 起動
         client_id = os.environ["SPOTIFY_CLIENT_ID"]
@@ -91,11 +101,21 @@ class Spotify(commands.Cog):
         embed.add_field(name="Liveness", value=f"```{liveness}%```")
         embed.add_field(name="Instrumentalness", value=f"```{inst}%```")
 
-        await ctx.send(embed=embed)
+        await interaction.response.send_message(embed=embed)
 
-    @commands.command()
-    async def spartist(self, ctx, *args):
-        arguments = ' '.join(args)
+    @app_commands.command(
+        name="spartist",
+        description="Spotifyのアーティスト情報を検索します。",
+    )
+
+    async def spartist(
+        self,
+        interaction: discord.Interaction,
+        artist: str
+    ):
+
+        # arguments = ' '.join(args)
+        arguments = artist
 
         # 起動
         client_id = os.environ["SPOTIFY_CLIENT_ID"]
@@ -147,9 +167,12 @@ class Spotify(commands.Cog):
 
 
 
-        await ctx.send(embed=embed)
+        await interaction.response.send_message(embed=embed)
 
 
 
 async def setup(bot: commands.Bot):
-    await bot.add_cog(Spotify(bot))
+    await bot.add_cog(
+        Spotify(bot),
+        guilds = [discord.Object(id=731366036649279518)]
+    )

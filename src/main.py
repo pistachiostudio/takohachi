@@ -38,17 +38,40 @@ class MyBot(commands.Bot):
         )
 
         self.initial_extensions = [
-            "cogs.slash",
             "cogs.ping",
             "cogs.marimo",
             "cogs.addssl",
-            "cogs.bath"
+            "cogs.bath",
+            "cogs.card_list",
+            "cogs.dice",
+            "cogs.message_count",
+            "cogs.spotify",
+            "cogs.text_channel",
+            "cogs.valorant_api",
+            "cogs.what_today"
+        ]
+
+        self.initial_extensions_only_production = [
+            "cogs.autodelete",
+            "cogs.card_count",
+            "cogs.save_image",
+            "cogs.vc_role",
+            "cogs.vcwhite",
+            "cogs.wt_task"
         ]
 
     async def setup_hook(self):
+
+        # コマンド系のいつも読み込むcogs
         for extension in self.initial_extensions:
             await self.load_extension(extension)
 
+        # コマンド系じゃないdevで読み込むとややこしいcogs
+        if PREFIX == '!!':
+            for production_extension in self.initial_extensions_only_production:
+                await self.load_extension(production_extension)
+
+        # インタラクションをシンクする。ギルドコマンドなので即時反映。
         await bot.tree.sync(guild=discord.Object(id=guild_id))
 
     async def close(self):

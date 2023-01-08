@@ -5,6 +5,7 @@ from typing import List
 
 import discord
 import gspread
+from discord import app_commands
 from discord.ext import commands
 #ServiceAccountCredentials：Googleの各サービスへアクセスできるservice変数を生成。
 from oauth2client.service_account import ServiceAccountCredentials
@@ -14,8 +15,15 @@ class CardList(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.command()
-    async def card(self, ctx):
+    @app_commands.command(
+        name="card",
+        description="警告カードの上位5名を表示します。"
+    )
+
+    async def card(
+        self,
+        interaction: discord.Interaction,
+    ):
 
         yellow_card = "<:p05_card_yellow:934125477424140308>"
         red_card = "<:p05_card_red:934125543111131187>"
@@ -57,7 +65,7 @@ class CardList(commands.Cog):
         embed.timestamp = datetime.now(JST)
         embed.color = discord.Color.dark_orange()
         embed.description = f"{first}\n\n{second}\n\n{third}\n\n{forth}\n\n{fifth}\n\n{database_url}"
-        await ctx.send(embed=embed)
+        await interaction.response.send_message(embed=embed)
 
 
     @commands.command()
@@ -106,4 +114,7 @@ class CardList(commands.Cog):
         await ctx.send(embed=embed)
 
 async def setup(bot: commands.Bot):
-    await bot.add_cog(CardList(bot))
+    await bot.add_cog(
+        CardList(bot),
+        guilds = [discord.Object(id=731366036649279518)]
+    )

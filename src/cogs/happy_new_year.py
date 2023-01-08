@@ -1,6 +1,7 @@
 import random
 
 import discord
+from discord import app_commands
 from discord.ext import commands
 
 
@@ -8,8 +9,15 @@ class HappyNewYear(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.command()
-    async def hny(self, ctx):
+    @app_commands.command(
+        name="hny",
+        description="あけましておめでとうございます！おみくじを引きます。"
+    )
+
+    async def hny(
+        self,
+        interaction: discord.Interaction
+    ):
         #おみくじ！
         omikuji_list = ['大吉🎯', '中吉🐬', '小吉🍓', '末吉🍦', '吉🍨', '凶👾', '大凶💀']
         omikuji = random.choice(omikuji_list)
@@ -41,12 +49,15 @@ class HappyNewYear(commands.Cog):
         #embed
         embed = discord.Embed()
         embed.title = "🐰ピスタチオおみくじ 2023🐰"
-        embed.description = f"おめでとうございます！\n{ctx.author.mention} さんの2023年の運勢は **{omikuji}** です👍"
+        embed.description = f"おめでとうございます！\n{interaction.user.mention} さんの2023年の運勢は **{omikuji}** です👍"
         embed.color = discord.Color.dark_green()
         embed.set_footer(text=f"Happy New Year 2023! Love from Pistachio Studio & Gaming❤")
         embed.set_image(url=image_url)
-        await ctx.send(embed=embed)
+        await interaction.response.send_message(embed=embed)
 
 
 async def setup(bot: commands.Bot):
-    await bot.add_cog(HappyNewYear(bot))
+    await bot.add_cog(
+        HappyNewYear(bot),
+        guilds = [discord.Object(id=731366036649279518)]
+    )

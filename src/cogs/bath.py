@@ -8,7 +8,7 @@ class Bath(commands.Cog):
         self.bot = bot
 
     @app_commands.command(
-        name="bath",
+        name="b",
         description="名前の先頭に🛀をつけます。"
     )
 
