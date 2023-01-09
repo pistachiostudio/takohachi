@@ -38,21 +38,21 @@ class MyBot(commands.Bot):
         )
 
         self.initial_extensions = [
-            "cogs.ping",
-            "cogs.marimo",
             "cogs.addssl",
+            "cogs.apex_tracker",
             "cogs.bath",
             "cogs.card_list",
+            "cogs.currency",
             "cogs.dice",
+            "cogs.marimo",
             "cogs.message_count",
+            "cogs.ping",
+            "cogs.play",
             "cogs.spotify",
             "cogs.text_channel",
+            "cogs.trigger",
             "cogs.valorant_api",
-            "cogs.what_today",
-            "cogs.currency",
-            "cogs.play",
-            "cogs.apex_tracker",
-            "cogs.trigger"
+            "cogs.what_today"
         ]
 
         self.initial_extensions_only_production = [
