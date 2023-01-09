@@ -48,7 +48,10 @@ class MyBot(commands.Bot):
             "cogs.spotify",
             "cogs.text_channel",
             "cogs.valorant_api",
-            "cogs.what_today"
+            "cogs.what_today",
+            "cogs.currency",
+            "cogs.play",
+            "cogs.apex_tracker"
         ]
 
         self.initial_extensions_only_production = [

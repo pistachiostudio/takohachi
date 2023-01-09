@@ -23,6 +23,8 @@ class SSLAdd(commands.Cog):
         description="怠けたNot SSLを監視しましょう。"
     )
 
+    @app_commands.describe(add_url="監視DBに登録したいURLを記載してください。")
+
     async def addssl(
         self,
         interaction: discord.Interaction,

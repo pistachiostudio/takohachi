@@ -2,6 +2,7 @@ import sqlite3
 from datetime import datetime, timedelta, timezone
 
 import discord
+from discord import app_commands
 from discord.ext import commands
 
 DB_DIRECTORY = "/data/takohachi.db"
@@ -12,15 +13,22 @@ class Currency(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-#ボーナスをもらうためのコマンド
+#/bonus ボーナスをもらうためのコマンド
 
-    @commands.command()
-    async def bonus(self, ctx):
+    @app_commands.command(
+        name="getbonus",
+        description="初期ボーナス3,000pisをもらうためのコマンドです。"
+    )
 
-        sender_id = str(ctx.author.id)
+    async def bonus(
+        self,
+        interaction: discord.Interaction
+    ):
+
+        sender_id = str(interaction.user.id)
         tuple_id = (sender_id,)
-        sender_user_name = str(ctx.author.name)
-        channel = ctx.channel
+        sender_user_name = str(interaction.user.name)
+        channel = interaction.channel
 
         # user_idカラムからuser_idを探す
         db = sqlite3.connect(DB_DIRECTORY)
@@ -42,7 +50,7 @@ class Currency(commands.Cog):
             embed.timestamp = datetime.now(JST)
             embed.color = discord.Color.green()
             embed.description = f":moneybag:<@{sender_id}>はボーナスを獲得しました。"
-            await channel.send(embed=embed)
+            await interaction.response.send_message(embed=embed)
 
         else:
             # user_idがある場合はbonusカラムをチェックする
@@ -57,7 +65,7 @@ class Currency(commands.Cog):
                 embed.timestamp = datetime.now(JST)
                 embed.color = discord.Color.red()
                 embed.description = f":warning:<@{sender_id}>はすでにボーナスを獲得しています。ボーナスは一度しかもらえません。"
-                await channel.send(embed=embed)
+                await interaction.response.send_message(embed=embed)
                 return
 
             # bonusが0の場合はmoneyの値にBONUS_VALUEを足して更新する
@@ -83,18 +91,30 @@ class Currency(commands.Cog):
                 embed.timestamp = datetime.now(JST)
                 embed.color = discord.Color.green()
                 embed.description = f":moneybag:<@{sender_id}>はボーナスを獲得し、所持金の合計が {update_user_money_t} pisになりました。"
-                await channel.send(embed=embed)
+                await interaction.response.send_message(embed=embed)
                 return
 
-# !!wallet !!wallet <mention> コマンド
+# /wallet
 # ここでは自分、もしくはサーバー内のユーザーの所持金を返します。
 
-    @commands.command()
-    async def wallet(self, ctx,  *, user = 'default'):
+    @app_commands.command(
+        name="wallet",
+        description="自分、もしくはサーバー内のユーザーの所持金を返します。"
+    )
 
-        #引数がない場合はコマンド送信者の情報をレスポンス
-        if user == 'default':
-            cmd_user_id = str(ctx.author.id)
+    @app_commands.describe(
+        user="ユーザーを指定してください。入力しない場合は自分の所持金を返します。"
+    )
+
+    async def wallet(
+        self,
+        interaction: discord.Interaction,
+        user: discord.Member = None
+    ):
+
+        #userオプションが空欄の場合はコマンド送信者の情報をレスポンス
+        if user == None:
+            cmd_user_id = str(interaction.user.id)
             tuple_user_id = (cmd_user_id,)
             db = sqlite3.connect(DB_DIRECTORY)
             c = db.cursor()
@@ -106,58 +126,56 @@ class Currency(commands.Cog):
             embed = discord.Embed()
             embed.color = discord.Color.dark_green()
             embed.description = f"<@{cmd_user_id}> の所持金は {cmd_user_money} pisです。"
-            await ctx.send(embed=embed)
+            await interaction.response.send_message(embed=embed)
             return
 
-        #引数がある場合の条件分岐
         else:
-            #引数をメンションのユーザー指定にしていない場合はエラーを返す
-            is_mention = user.startswith('<@')
-            if is_mention == False:
+            user = user.id
+            tuple_user_mention = (user,)
+            db = sqlite3.connect(DB_DIRECTORY)
+            c = db.cursor()
+            query = 'select money from currency where user_id = ?'
+            c.execute(query, tuple_user_mention)
+            cmd_user_money = c.fetchall()
+            # データベースの検索結果がない場合は所持金0を返す
+            if len(cmd_user_money) == 0:
                 embed = discord.Embed()
                 embed.color = discord.Color.dark_green()
-                embed.description = f"userをmentionで指定してください"
-                await ctx.send(embed=embed)
+                embed.description = f"<@{user}> の所持金は 0 pisです。"
+                await interaction.response.send_message(embed=embed)
+                return
+            # データベースの検索結果がある場合はそのメンションのuser_idのmoneyを返す。
+            else:
+                cmd_user_money = cmd_user_money[0][0]
+                cmd_user_money = '{:,}'.format(cmd_user_money)
+                embed = discord.Embed()
+                embed.color = discord.Color.dark_green()
+                embed.description = f"<@{user}> の所持金は {cmd_user_money} pisです。"
+                await interaction.response.send_message(embed=embed)
                 return
 
-            #引数がしっかりメンションになっている場合の条件分岐
-            else:
-                user = user.lstrip('<@')
-                user = user.rstrip('>')
-                tuple_user_mention = (user,)
-                db = sqlite3.connect(DB_DIRECTORY)
-                c = db.cursor()
-                query = 'select money from currency where user_id = ?'
-                c.execute(query, tuple_user_mention)
-                cmd_user_money = c.fetchall()
+# /pay <amount> <mention>
+# お金を送金する処理です。
 
-                # データベースの検索結果がない場合は所持金0を返す
-                if len(cmd_user_money) == 0:
-                    embed = discord.Embed()
-                    embed.color = discord.Color.dark_green()
-                    embed.description = f"<@{user}> の所持金は 0 pisです。"
-                    await ctx.send(embed=embed)
-                    return
+    @app_commands.command(
+        name="pay",
+        description="ユーザーに送金します。"
+    )
 
-                # データベースの検索結果がある場合はそのメンションのuser_idのmoneyを返す。
-                else:
-                    cmd_user_money = cmd_user_money[0][0]
-                    cmd_user_money = '{:,}'.format(cmd_user_money)
-                    embed = discord.Embed()
-                    embed.color = discord.Color.dark_green()
-                    embed.description = f"<@{user}> の所持金は {cmd_user_money} pisです。"
-                    await ctx.send(embed=embed)
-                    return
+    @app_commands.describe(
+        amount="送金する金額を入力してください。",
+        give_user="送金する相手を指定してください。"
+    )
 
-
-# !!pay <amount> <mention> コマンド
-# ここではお金を送金する処理です。
-
-    @commands.command()
-    async def pay(self, ctx, amount: int, give_user: discord.Member):
+    async def pay(
+        self,
+        interaction: discord.Interaction,
+        amount: int,
+        give_user: discord.Member
+    ):
 
         # コマンド送信者のID
-        command_sender_id = str(ctx.author.id)
+        command_sender_id = str(interaction.user.id)
         tuple_command_sender_id = (command_sender_id,)
 
         # コマンド送信者のお金が足りてるか確認する
@@ -174,7 +192,7 @@ class Currency(commands.Cog):
             embed = discord.Embed()
             embed.color = discord.Color.dark_green()
             embed.description = f":warning:自分に送金することはできません。"
-            await ctx.send(embed=embed)
+            await interaction.response.send_message(embed=embed)
             return
 
         else:
@@ -184,7 +202,7 @@ class Currency(commands.Cog):
                 embed = discord.Embed()
                 embed.color = discord.Color.dark_green()
                 embed.description = f"所持金が足りません。\n<@{command_sender_id}> の所持金は {sender_money_t} pisです。"
-                await ctx.send(embed=embed)
+                await interaction.response.send_message(embed=embed)
                 return
 
             #お金が足りる場合
@@ -216,7 +234,7 @@ class Currency(commands.Cog):
                     embed = discord.Embed()
                     embed.color = discord.Color.dark_green()
                     embed.description = f"<@{command_sender_id}> から <@{give_user_id}> へ {amount_t} pis を送金しました。"
-                    await ctx.send(embed=embed)
+                    await interaction.response.send_message(embed=embed)
                     return
 
                 # give_userがすでにデータベースに登録がある人の場合
@@ -245,15 +263,21 @@ class Currency(commands.Cog):
                     embed = discord.Embed()
                     embed.color = discord.Color.dark_green()
                     embed.description = f"<@{command_sender_id}> から <@{give_user_id}> へ {amount_t} pis を送金しました。"
-                    await ctx.send(embed=embed)
+                    await interaction.response.send_message(embed=embed)
                     return
 
-# !!rich コマンド お金持ちランキング
+# /rich
 # ここでは金持ちランキングを表示します。
 # 現状はデータベースの登録が5ユーザーに満たない場合はエラーになってしまう。
 
-    @commands.command()
-    async def rich(self, ctx):
+    @app_commands.command(
+        name='rich',
+        description='お金持ちランキングを表示します。'
+    )
+    async def rich(
+        self,
+        interaction: discord.Interaction
+    ):
 
         # money上位5件を上限に返す。
         db = sqlite3.connect(DB_DIRECTORY)
@@ -272,15 +296,21 @@ class Currency(commands.Cog):
         embed = discord.Embed()
         embed.color = discord.Color.dark_green()
         embed.description = rich_text
-        await ctx.send(embed=embed)
+        await interaction.response.send_message(embed=embed)
         return
 
     """
 # !!shop
 # shopテーブルに登録されている商品の一覧を返します。
 
-    @commands.command()
-    async def shop(self, ctx):
+    @app_commands.command(
+        name='shop',
+        description='お店の商品一覧を表示します。'
+    )
+    async def shop(
+        self,
+        interaction: discord.Interaction
+    ):
 
         # リストすべてを返す
         db = sqlite3.connect(DB_DIRECTORY)
@@ -304,23 +334,22 @@ class Currency(commands.Cog):
         embed.color = discord.Color.dark_green()
         embed.title = 'ピスタチオ商店'
         embed.description = item_text
-        await ctx.send(embed=embed)
+        await interaction.response.send_message(embed=embed)
         return
 
 
 # !!buy <item_name>
 # shopからアイテムを買うことができます
 
-    @commands.command()
-    async def buy(self, ctx, buy_item:str = 'default'):
+    @app_commands.command(
+        name='buy',
+        description='商品を購入します。'
+    )
 
-        #引数の指定がない場合はメッセージ
-        if buy_item == 'default':
-            embed = discord.Embed()
-            embed.color = discord.Color.dark_green()
-            embed.description = ':warning:買いたい商品を指定してください。\n!!buy <商品名> です。商品一覧は!!shopコマンドを使用してください。'
-            await ctx.send(embed=embed)
-            return
+    async def buy(self,
+    interaction: discord.Interaction,
+    buy_item: str
+    ):
 
         else:
             # 引数buy_itemがdbのitem_nameと一致するか確認
@@ -335,13 +364,13 @@ class Currency(commands.Cog):
                 embed = discord.Embed()
                 embed.color = discord.Color.dark_green()
                 embed.description = f":warning:その商品は現在販売されていないようです。!!shopコマンドで販売中の商品を確認してください。"
-                await ctx.send(embed=embed)
+                await interaction.response.send_message(embed=embed)
                 return
 
             # 商品名が問題ない場合は次に進む
             else:
                 # コマンド送信者のお金が足りてるか確認する
-                command_sender_id = str(ctx.author.id)
+                command_sender_id = str(interaction.user.id)
                 tuple_command_sender_id = (command_sender_id,)
 
                 # コマンド送信者の所持金
@@ -370,7 +399,7 @@ class Currency(commands.Cog):
                     embed = discord.Embed()
                     embed.color = discord.Color.dark_green()
                     embed.description = f"所持金が足りません。\n**{buy_item}**は{item_price_t} pisです。\n<@{command_sender_id}> の所持金は {sender_money_t} pisです。"
-                    await ctx.send(embed=embed)
+                    await interaction.response.send_message(embed=embed)
                     return
 
                 #お金が足りる場合は購入処理に進む。
@@ -401,26 +430,38 @@ class Currency(commands.Cog):
                     embed = discord.Embed()
                     embed.color = discord.Color.dark_green()
                     embed.description = f"<@{command_sender_id}> は {buy_item}({item_price_t} pis) を購入しました。\n残りの所持金は {update_customer_money_t} pisです。\nご利用ありがとうございます。"
-                    await ctx.send(embed=embed)
+                    await interaction.response.send_message(embed=embed)
                     return
     """
 
     '''
     ////////////////////////////
     ここからは管理者のみのコマンド
+    Productionでは
+    @app_commands.default_permissions(administrator=True)
+    をつけて管理者(@carataker)のみが表示されつかえるようなコマンドにする予定。
+    変数のOWENER_USER_IDも最終削除する。
     ////////////////////////////
     '''
 
-
-# !!resetcurrency
+# /resetcurrency
 # currencyテーブルのすべてのレコードを削除します。
 
-    @commands.command()
-    async def resetcurrency(self, ctx):
+    @app_commands.command(
+        name="resetcurrency",
+        description="[admin]currencyテーブルのすべてのレコードを削除します。"
+    )
+    @app_commands.default_permissions(administrator=True)
+
+    async def resetcurrency(
+        self,
+        interaction: discord.Interaction
+    ):
 
         #俺だけが使えるコマンド
-        command_sender_id = str(ctx.author.id)
+        command_sender_id = str(interaction.user.id)
         if command_sender_id == OWENER_USER_ID:
+
             db = sqlite3.connect(DB_DIRECTORY)
             c = db.cursor()
             query = 'delete from currency'
@@ -429,25 +470,39 @@ class Currency(commands.Cog):
             embed = discord.Embed()
             embed.color = discord.Color.dark_green()
             embed.description = f"データベースのテーブル currency のデータをすべて削除しました。"
-            await ctx.send(embed=embed)
+            await interaction.response.send_message(embed=embed)
             return
 
         else:
             embed = discord.Embed()
             embed.color = discord.Color.dark_green()
             embed.description = 'そのコマンドは許可されていません。'
-            await ctx.send(embed=embed)
+            await interaction.response.send_message(embed=embed)
             return
 
 
-# !!givebonus <@user_mention>
+# /givebonus <@user_mention>
 # 管理者がコマンドで与えることもできるようにする
 
-    @commands.command()
-    async def givebonus(self, ctx, bonus_give_user: discord.Member):
+    @app_commands.command(
+        name="givebonus",
+        description="[admin]指定したユーザーにボーナスを与えます。"
+    )
+
+    @app_commands.default_permissions(administrator=True)
+
+    @app_commands.describe(
+        bonus_give_user="Bonusを与えるユーザーを指定。"
+    )
+
+    async def givebonus(
+        self,
+        interaction: discord.Interaction,
+        bonus_give_user: discord.Member
+    ):
 
         #管理者だけが使えるコマンド
-        command_sender_id = str(ctx.author.id)
+        command_sender_id = str(interaction.user.id)
         if command_sender_id == OWENER_USER_ID:
 
             # user_idカラムからuser_idを探す
@@ -470,32 +525,57 @@ class Currency(commands.Cog):
                 embed = discord.Embed()
                 embed.color = discord.Color.dark_green()
                 embed.description = f"<@{give_user_id}> に{BONUS_VALUE_t} pis ボーナスを配布しました。"
-                await ctx.send(embed=embed)
+                await interaction.response.send_message(embed=embed)
                 return
 
             else:
                 embed = discord.Embed()
                 embed.color = discord.Color.dark_green()
                 embed.description = f"<@{give_user_id}> はすでにボーナスを受け取っています。"
-                await ctx.send(embed=embed)
+                await interaction.response.send_message(embed=embed)
                 return
 
         else:
             embed = discord.Embed()
             embed.color = discord.Color.dark_green()
             embed.description = 'そのコマンドは許可されていません。'
-            await ctx.send(embed=embed)
+            await interaction.response.send_message(embed=embed)
             return
 
 
 # !!setmoney <amount> <bonus_flag> <@user_mention>
 # 管理者がコマンドで与えることもできるようにする
 
-    @commands.command()
-    async def setmoney(self, ctx, amount: int, bonus: str, set_user: discord.Member):
+    @app_commands.command(
+        name="setmoney",
+        description="[admin]指定したユーザーのmoneyを変更します。"
+    )
+
+    @app_commands.default_permissions(administrator=True)
+
+    @app_commands.describe(
+        amount="セットする金額を指定。",
+        bonus="ボーナスフラグを1 or 0で選択",
+        set_user="セットするユーザーを指定"
+    )
+
+    @app_commands.choices(
+        bonus=[
+            discord.app_commands.Choice(name="0",value="0"),
+            discord.app_commands.Choice(name="1",value="1")
+        ]
+    )
+
+    async def setmoney(
+        self,
+        interaction: discord.Interaction,
+        amount: int,
+        bonus: str,
+        set_user: discord.Member
+    ):
 
         #俺だけが使えるコマンド
-        command_sender_id = str(ctx.author.id)
+        command_sender_id = str(interaction.user.id)
         if command_sender_id == OWENER_USER_ID:
 
             #bonusは0か1しかセットできない
@@ -520,7 +600,7 @@ class Currency(commands.Cog):
                     embed = discord.Embed()
                     embed.color = discord.Color.dark_green()
                     embed.description = f"<@{set_user_id}> に{amount_t} pis セットしました。bonus_flagは{bonus}です。"
-                    await ctx.send(embed=embed)
+                    await interaction.response.send_message(embed=embed)
                     return
 
                 # 新規登録ではない場合も更新する
@@ -534,23 +614,26 @@ class Currency(commands.Cog):
                     embed = discord.Embed()
                     embed.color = discord.Color.dark_green()
                     embed.description = f"<@{set_user_id}> の所持金{amount_t} pisにを更新しました。bonus_flagは{bonus}です。"
-                    await ctx.send(embed=embed)
+                    await interaction.response.send_message(embed=embed)
                     return
 
             else:
                 embed = discord.Embed()
                 embed.color = discord.Color.dark_green()
                 embed.description = f"bonus_flagは0か1以外設定できません。"
-                await ctx.send(embed=embed)
+                await interaction.response.send_message(embed=embed)
                 return
 
         else:
             embed = discord.Embed()
             embed.color = discord.Color.dark_green()
             embed.description = 'そのコマンドは許可されていません。'
-            await ctx.send(embed=embed)
+            await interaction.response.send_message(embed=embed)
             return
 
 
 async def setup(bot: commands.Bot):
-    await bot.add_cog(Currency(bot))
+    await bot.add_cog(
+        Currency(bot),
+        guilds = [discord.Object(id=731366036649279518)]
+    )

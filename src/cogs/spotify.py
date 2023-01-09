@@ -18,6 +18,8 @@ class Spotify(commands.Cog):
         description="Spotifyの曲情報を検索します。",
     )
 
+    @app_commands.describe(search="曲情報を表示します。アーティスト名や曲名で絞り込んでください。スペース区切りOK。")
+
     async def sp(
         self,
         interaction: discord.Interaction,
@@ -108,6 +110,8 @@ class Spotify(commands.Cog):
         description="Spotifyのアーティスト情報を検索します。",
     )
 
+    @app_commands.describe(artist="アーティスト情報を返します。アーティスト名を入力してください。")
+
     async def spartist(
         self,
         interaction: discord.Interaction,
@@ -152,24 +156,16 @@ class Spotify(commands.Cog):
         # artist url
         artisturl = artistinfo['external_urls']['spotify']
 
-
         # artist embed
         embed = discord.Embed()
         JST = timezone(timedelta(hours=+9), "JST")
         embed.timestamp = datetime.now(JST)
         embed.title = f"{artistname}'s Profile"
-
         embed.color = discord.Color.green()
-
         embed.description = f"**Popularity:** {artistpopularity}\n**Followers:** {follower}\n**Genre:** {argenre}\n[Listen this artist!]({artisturl})"
-
         embed.set_image(url=imgurl)
 
-
-
         await interaction.response.send_message(embed=embed)
-
-
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(

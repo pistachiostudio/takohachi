@@ -26,5 +26,5 @@ COPY src /app
 WORKDIR /app
 
 ENTRYPOINT ["./.venv/bin/python"]
-CMD ["launcher.py"]
+CMD ["main.py"]
 

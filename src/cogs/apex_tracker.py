@@ -1,10 +1,14 @@
+import asyncio
 import logging
 import os
 from datetime import datetime, timedelta, timezone
 
 import discord
 import requests
+from discord import app_commands
+from discord.app_commands import Choice
 from discord.ext import commands
+
 from libs.logging import DiscordBotHandler
 
 LOG_TEXT_CHANNEL_ID = os.environ["LOG_TEXT_CHANNEL_ID"]
@@ -42,8 +46,34 @@ class ApexTracker(commands.Cog):
         elif rank_zone == "Apex Predator":
             return 255, 0, 0
 
-    @commands.command()
-    async def apexrank(self, ctx, platform, user_id):
+    @app_commands.command(
+        name= "apexrank",
+        description= "Apex Legendsのランクを取得します。"
+    )
+
+    @app_commands.describe(
+        platform="プラットフォームを選択してください",
+        user_id="ユーザーIDを入力してください"
+    )
+
+    @app_commands.choices(
+        platform=[
+            discord.app_commands.Choice(name="Origin & Steam(PC)",value="origin"),
+            discord.app_commands.Choice(name="Xbox",value="xbl"),
+            discord.app_commands.Choice(name="Play Station",value="psn")
+        ]
+    )
+
+    async def apexrank(
+        self,
+        interaction: discord.Interaction,
+        platform: str,
+        user_id: str
+    ):
+        # interactionは3秒以内にレスポンスしないといけないとエラーになるのでこの処理で15秒は待たせる。
+        await interaction.response.defer()
+        asyncio.sleep(15)
+
         url = f"https://public-api.tracker.gg/v2/apex/standard/profile/{platform}/{user_id}"
         trn_api_key = os.environ["TRN_API_KEY"]
         headers = {"TRN-Api-Key": trn_api_key}
@@ -52,7 +82,7 @@ class ApexTracker(commands.Cog):
 
         if res.status_code != 200:
             logger.error(res.json())
-            await ctx.send(f"ランクポイントの取得に失敗しました...")
+            await interaction.response.send_message(f"ランクポイントの取得に失敗しました...")
             return
 
         data = res.json()
@@ -86,8 +116,13 @@ class ApexTracker(commands.Cog):
         embed.description = f"{user_id} の現在のランクポイントを表示します."
         embed.add_field(name="ランクポイント",
                         value=f"{rank_point} point ({rank_name})")
-        await ctx.send(embed=embed)
+
+        # interaction.response.deferを使ったのでここはfollowup.sendが必要
+        await interaction.followup.send(embed=embed)
 
 
 async def setup(bot: commands.Bot):
-    await bot.add_cog(ApexTracker(bot))
+    await bot.add_cog(
+        ApexTracker(bot),
+        guilds = [discord.Object(id=731366036649279518)]
+    )
