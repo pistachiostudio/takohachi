@@ -1,4 +1,3 @@
-import asyncio
 import logging
 import os
 from datetime import datetime, timedelta, timezone
@@ -6,7 +5,6 @@ from datetime import datetime, timedelta, timezone
 import discord
 import requests
 from discord import app_commands
-from discord.app_commands import Choice
 from discord.ext import commands
 
 from libs.logging import DiscordBotHandler
@@ -14,7 +12,6 @@ from libs.logging import DiscordBotHandler
 LOG_TEXT_CHANNEL_ID = os.environ["LOG_TEXT_CHANNEL_ID"]
 
 logger = logging.getLogger(__name__)
-
 
 class ApexTracker(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -70,9 +67,8 @@ class ApexTracker(commands.Cog):
         platform: str,
         user_id: str
     ):
-        # interactionは3秒以内にレスポンスしないといけないとエラーになるのでこの処理で15秒は待たせる。
+        # interactionは3秒以内にレスポンスしないといけないとエラーになるのでこの処理を入れる。
         await interaction.response.defer()
-        asyncio.sleep(15)
 
         url = f"https://public-api.tracker.gg/v2/apex/standard/profile/{platform}/{user_id}"
         trn_api_key = os.environ["TRN_API_KEY"]

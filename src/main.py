@@ -51,7 +51,8 @@ class MyBot(commands.Bot):
             "cogs.what_today",
             "cogs.currency",
             "cogs.play",
-            "cogs.apex_tracker"
+            "cogs.apex_tracker",
+            "cogs.trigger"
         ]
 
         self.initial_extensions_only_production = [

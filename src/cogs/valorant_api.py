@@ -1,5 +1,3 @@
-import asyncio
-
 import discord
 import requests
 from discord import app_commands
@@ -26,71 +24,66 @@ class Valo(commands.Cog):
         name: str,
         tagline: str
     ):
-
+        print("start")
         current_season = "e5a3"
 
         season_txt = (current_season.replace("e", "Episode ").replace("a", " Act "))
 
-        # interactionは3秒以内にレスポンスしないといけないとエラーになるのでこの処理で15秒は待たせる。
+        # interactionは3秒以内にレスポンスしないといけないとエラーになるのでこの処理を入れる。
         await interaction.response.defer()
-        asyncio.sleep(15)
 
         # API request
-        try:
-            rank_url = f"https://api.henrikdev.xyz/valorant/v2/mmr/ap/{name}/{tagline}"
-            res = requests.get(rank_url)
-            json = res.json()
+        rank_url = f"https://api.henrikdev.xyz/valorant/v2/mmr/ap/{name}/{tagline}"
+        res = requests.get(rank_url)
+        json = res.json()
+        print("json")
 
+        # statusが200以外の場合はエラーを返す。
+        if json['status'] != 200:
+            print("error")
+            embed = discord.Embed()
+            embed.color = discord.Color.red()
+            embed.title = f"<:p01_pepebrim:951023068275421235>:warning: 何かが間違えているかもしれません。\nあなたの入力: **{name}#{tagline}**"
+            embed.description = f'もう一度試してみてください。:pray: '
+            await interaction.followup.send(embed=embed)
+            return
+
+        else:
             current_rank = json['data']['current_data']['currenttierpatched']
             rank_image_url = json['data']['current_data']['images']['large']
             ranking_in_tier = json['data']['current_data']['ranking_in_tier']
             elo = json['data']['current_data']['elo']
-
+            print("rank")
             current_season_data = json['data']['by_season'][current_season]
             season_games = current_season_data.get('number_of_games', 0)
             season_wins = current_season_data.get('wins', 0)
             season_lose = season_games - season_wins
-
+            print("wins")
             account_url = f"https://api.henrikdev.xyz/valorant/v1/account/{name}/{tagline}"
             res = requests.get(account_url)
             account_json = res.json()
-
-
+            print("accounturl")
             real_name = account_json['data']['name']
             real_tagline = account_json['data']['tag']
             account_level = account_json['data']['account_level']
             card_image_url = account_json['data']['card']['wide']
+            print("Done")
 
-        except KeyError:
             embed = discord.Embed()
-            embed.color = discord.Color.red()
-            embed.title = "<:p01_pepebrim:951023068275421235>:warning: 何かが間違えているかもしれません。"
-            embed.description = f'もう一度試してみてください。:pray: '
-            await interaction.response.defer()
-            await asyncio.sleep(15)
-            await interaction.followup.send(
-                embed=embed,
-                ephemeral=True,
-                delete_after=5
-            )
+            embed.title = f"{real_name} `#{real_tagline}`"
+            embed.color = discord.Color.magenta()
+            embed.description = f"{season_txt} competitive results"
+            embed.set_thumbnail(url=rank_image_url)
+            embed.add_field(name="W/L", value=f"```{season_wins}W/{season_lose}L```")
+            embed.add_field(name="Current rank", value=f"```{current_rank} (+{ranking_in_tier} RR)```")
+            embed.add_field(name="ELO", value=f"```{elo}```")
+            embed.add_field(name="Account Level", value=f"```{account_level}```")
+            embed.set_image(url=card_image_url)
+            print("embed")
+
+            # interaction.response.deferを使ったのでここはfollowup.sendが必要
+            await interaction.followup.send(embed=embed)
             return
-
-        # Embed
-        embed = discord.Embed()
-        embed.title = f"{real_name} `#{real_tagline}`"
-        embed.color = discord.Color.magenta()
-        embed.description = f"{season_txt} competitive results"
-        embed.set_thumbnail(url=rank_image_url)
-        embed.add_field(name="W/L", value=f"```{season_wins}W/{season_lose}L```")
-        embed.add_field(name="Current rank", value=f"```{current_rank} (+{ranking_in_tier} RR)```")
-        embed.add_field(name="ELO", value=f"```{elo}```")
-        embed.add_field(name="Account Level", value=f"```{account_level}```")
-        embed.set_image(url=card_image_url)
-
-        # interaction.response.deferを使ったのでここはfollowup.sendが必要
-        await interaction.followup.send(embed=embed)
-        return
-
 
     # Valorantの最新ニュースを取ってくるコマンド
     @app_commands.command(
@@ -102,9 +95,8 @@ class Valo(commands.Cog):
         self,
         interaction: discord.Interaction
     ):
-        # interactionは3秒以内にレスポンスしないといけないとエラーになるのでこの処理で15秒は待たせる。
+        # interactionは3秒以内にレスポンスしないといけないとエラーになるのでこの処理で待たせる。
         await interaction.response.defer()
-        asyncio.sleep(15)
 
         news_url = "https://api.henrikdev.xyz/valorant/v1/website/ja-jp"
         res = requests.get(news_url)

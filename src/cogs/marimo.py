@@ -1,6 +1,5 @@
 import datetime
 import random
-from datetime import timedelta
 
 import discord
 from discord import app_commands

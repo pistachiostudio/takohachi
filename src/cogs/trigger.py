@@ -4,6 +4,7 @@ from typing import Dict, List, Optional
 
 import discord
 import gspread
+from discord import app_commands
 from discord.ext import commands
 from oauth2client.service_account import ServiceAccountCredentials
 
@@ -15,13 +16,21 @@ class Trigger(commands.Cog):
         self.bot = bot
         self.worksheet = None
 
-    @commands.Cog.listener()
-    async def on_message(self, message):
-        if message.author == self.bot.user:
-            return
+    @app_commands.command(
+        name="dic",
+        description="Trigger Commands"
+    )
 
-        if not message.content.startswith(PREFIX):
-            return
+    @app_commands.describe(keyword="キーワードを入力してください。例) genkai, 徳井病, gomi など")
+
+    async def trigger(
+        self,
+        interaction: discord.Interaction,
+        keyword: str
+    ):
+
+        # interactionは3秒以内にレスポンスしないといけないとエラーになるのでこの処理で15秒は待たせる。
+        await interaction.response.defer()
 
         # 2つのAPIを記述しないとリフレッシュトークンを3600秒毎に発行し続けなければならないです！
         scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
@@ -38,11 +47,15 @@ class Trigger(commands.Cog):
         # ヘッダー行をスプレッドシートから取得
         header_list: List[str] = self.worksheet.row_values(2)
 
-        trigger: str = message.content.lstrip(PREFIX)
+        trigger: str = keyword
         row_num = self._find_trigger_row_number(trigger, header_list)
-        print(row_num)
 
         if not row_num:
+            await interaction.followup.send(
+                f":warning: キーワード **{keyword}** は登録されていません！",
+                ephemeral=True
+            )
+
             return
         else:
             # トリガー行データをスプレッドシートから取得
@@ -67,11 +80,13 @@ class Trigger(commands.Cog):
                 embed_dict[col_name] = value
 
             if embed_dict["response"]:
-                await message.channel.send(f'{embed_dict["response"]}')
+                await interaction.followup.send(
+                    f'{embed_dict["response"]}')
             else:
                 embed = discord.Embed()
                 JST = timezone(timedelta(hours=+9), "JST")
                 embed.timestamp = datetime.now(JST)
+                embed.set_footer(text=f"keyword: {keyword}")
                 if embed_dict["title"]:
                     embed.title = f'{embed_dict["title"]}'
                 if embed_dict["description"]:
@@ -81,7 +96,7 @@ class Trigger(commands.Cog):
                 if embed_dict["big_image_URL"]:
                     embed.set_image(url=f'{embed_dict["big_image_URL"]}')
                 embed.color = discord.Color.dark_blue()
-                await message.channel.send(embed=embed)
+                await interaction.followup.send(embed=embed)
 
     def _get_index(self, target: List[str], value: str) -> Optional[int]:
         """value が target の何番目かを取得する関数です。value が存在しない場合は None を返します。
@@ -121,6 +136,8 @@ class Trigger(commands.Cog):
 
         return None
 
-
 async def setup(bot: commands.Bot):
-    await bot.add_cog(Trigger(bot))
+    await bot.add_cog(
+        Trigger(bot),
+        guilds = [discord.Object(id=731366036649279518)]
+    )

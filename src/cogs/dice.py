@@ -11,7 +11,7 @@ class Dice(commands.Cog):
         self.bot = bot
 
     @app_commands.command(
-        name="d",
+        name="dice",
         description="Valorantのマップをランダムに返します。"
     )
 

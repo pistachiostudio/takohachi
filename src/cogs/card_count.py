@@ -1,6 +1,5 @@
 import os
 from datetime import datetime, timedelta, timezone
-from typing import Any
 
 import gspread
 from discord.ext import commands
