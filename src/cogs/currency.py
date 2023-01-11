@@ -19,7 +19,6 @@ class Currency(commands.Cog):
         name="getbonus",
         description="初期ボーナス3,000pisをもらうためのコマンドです。"
     )
-
     async def bonus(
         self,
         interaction: discord.Interaction

@@ -18,7 +18,6 @@ class CardList(commands.Cog):
         name="card",
         description="警告カードの上位5名を表示します。"
     )
-
     async def card(
         self,
         interaction: discord.Interaction,

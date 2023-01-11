@@ -14,7 +14,6 @@ class Marimo(commands.Cog):
         name="mt",
         description="まりもたいむ"
     )
-
     async def mt(
         self,
         interaction: discord.Interaction

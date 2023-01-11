@@ -13,7 +13,6 @@ class MessageCount(commands.Cog):
         name="count",
         description="このチャンネルの現在のメッセージ数を数えます。"
     )
-
     async def count(
         self,
         interaction: discord.Interaction,

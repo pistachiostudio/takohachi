@@ -15,7 +15,6 @@ class WhatToday(commands.Cog):
         name='wt',
         description='今日はなんの日？'
     )
-
     async def whatToday(
         self,
         interaction: discord.Interaction
