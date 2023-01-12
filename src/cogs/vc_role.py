@@ -22,77 +22,55 @@ class VcRole(commands.Cog):
         IN_KAME_ROLE = 811803298155200562
         IN_KYORYU_ROLE = 812313393020010496
 
-        channel = before.channel or after.channel
+        role_mood = discord.utils.get(member.guild.roles, id=IN_THE_MOOD_ROLE)
+        role_inu = discord.utils.get(member.guild.roles, id=IN_INU_ROLE)
+        role_neko = discord.utils.get(member.guild.roles, id=IN_NEKO_ROLE)
+        role_kame = discord.utils.get(member.guild.roles, id=IN_KAME_ROLE)
+        role_kyoryu = discord.utils.get(member.guild.roles, id=IN_KYORYU_ROLE)
 
-        #犬VC
-        if channel.id == INU_VC_ID:
-            if before.channel is None and after.channel is not None:
-                role_inu = discord.utils.get(member.guild.roles, id=IN_INU_ROLE)
-                role_mood = discord.utils.get(member.guild.roles, id=IN_THE_MOOD_ROLE)
+        # どこにも入ってない状態からVCに入った場合
+
+        if before.channel == None and after.channel != None:
+            # 犬VCに入った場合
+            if after.channel.id == INU_VC_ID:
                 await member.add_roles(role_inu, role_mood)
-
-            elif before.channel is not None and after.channel is None:
-                role_inu = discord.utils.get(member.guild.roles, id=IN_INU_ROLE)
-                role_neko = discord.utils.get(member.guild.roles, id=IN_NEKO_ROLE)
-                role_kame = discord.utils.get(member.guild.roles, id=IN_KAME_ROLE)
-                role_kyoryu = discord.utils.get(member.guild.roles, id=IN_KYORYU_ROLE)
-                role_mood = discord.utils.get(member.guild.roles, id=IN_THE_MOOD_ROLE)
-                await member.remove_roles(role_inu, role_neko, role_kame, role_kyoryu, role_mood)
-                return
-
-        #猫VC
-        elif channel.id == NEKO_VC_ID:
-            if before.channel is None and after.channel is not None:
-                role_neko = discord.utils.get(member.guild.roles, id=IN_NEKO_ROLE)
-                role_mood = discord.utils.get(member.guild.roles, id=IN_THE_MOOD_ROLE)
+            # 猫VCに入った場合
+            elif after.channel.id == NEKO_VC_ID:
                 await member.add_roles(role_neko, role_mood)
-                return
-
-            elif before.channel is not None and after.channel is None:
-                role_inu = discord.utils.get(member.guild.roles, id=IN_INU_ROLE)
-                role_neko = discord.utils.get(member.guild.roles, id=IN_NEKO_ROLE)
-                role_kame = discord.utils.get(member.guild.roles, id=IN_KAME_ROLE)
-                role_kyoryu = discord.utils.get(member.guild.roles, id=IN_KYORYU_ROLE)
-                role_mood = discord.utils.get(member.guild.roles, id=IN_THE_MOOD_ROLE)
-                await member.remove_roles(role_inu, role_neko, role_kame, role_kyoryu, role_mood)
-                return
-
-        #亀VC
-        elif channel.id == KAME_VC_ID:
-            if before.channel is None and after.channel is not None:
-                role_kame = discord.utils.get(member.guild.roles, id=IN_KAME_ROLE)
-                role_mood = discord.utils.get(member.guild.roles, id=IN_THE_MOOD_ROLE)
+            # 亀VCに入った場合
+            elif after.channel.id == KAME_VC_ID:
                 await member.add_roles(role_kame, role_mood)
-                return
-
-            elif before.channel is not None and after.channel is None:
-                role_inu = discord.utils.get(member.guild.roles, id=IN_INU_ROLE)
-                role_neko = discord.utils.get(member.guild.roles, id=IN_NEKO_ROLE)
-                role_kame = discord.utils.get(member.guild.roles, id=IN_KAME_ROLE)
-                role_kyoryu = discord.utils.get(member.guild.roles, id=IN_KYORYU_ROLE)
-                role_mood = discord.utils.get(member.guild.roles, id=IN_THE_MOOD_ROLE)
-                await member.remove_roles(role_inu, role_neko, role_kame, role_kyoryu, role_mood)
-                return
-
-        #恐竜VC
-        elif channel.id == KYORYU_VC_ID:
-            if before.channel is None and after.channel is not None:
-                role_kyoryu = discord.utils.get(member.guild.roles, id=IN_KYORYU_ROLE)
-                role_mood = discord.utils.get(member.guild.roles, id=IN_THE_MOOD_ROLE)
+            # 恐竜VCに入った場合
+            elif after.channel.id == KYORYU_VC_ID:
                 await member.add_roles(role_kyoryu, role_mood)
-                return
 
-            elif before.channel is not None and after.channel is None:
-                role_inu = discord.utils.get(member.guild.roles, id=IN_INU_ROLE)
-                role_neko = discord.utils.get(member.guild.roles, id=IN_NEKO_ROLE)
-                role_kame = discord.utils.get(member.guild.roles, id=IN_KAME_ROLE)
-                role_kyoryu = discord.utils.get(member.guild.roles, id=IN_KYORYU_ROLE)
-                role_mood = discord.utils.get(member.guild.roles, id=IN_THE_MOOD_ROLE)
-                await member.remove_roles(role_inu, role_neko, role_kame, role_kyoryu, role_mood)
-                return
+        # VCからVCへ移動した場合 (IN_THE_MOOD_ROLEはそのままにする)
+        if before.channel != None and after.channel != None:
+            # 移動先が犬VCの場合
+            if  after.channel.id == INU_VC_ID:
+                # まず絵文字を一旦取ってからロールをつける
+                await member.remove_roles(role_inu, role_neko, role_kame, role_kyoryu)
+                await member.add_roles(role_inu)
+            # 移動先が猫VCの場合
+            elif after.channel.id == NEKO_VC_ID:
+                # まず絵文字を一旦取ってからロールをつける
+                await member.remove_roles(role_inu, role_neko, role_kame, role_kyoryu)
+                await member.add_roles(role_neko)
+            # 移動先が亀VCの場合
+            elif after.channel.id == KAME_VC_ID:
+                # まず絵文字を一旦取ってからロールをつける
+                await member.remove_roles(role_inu, role_neko, role_kame, role_kyoryu)
+                await member.add_roles(role_kame)
+            # 移動先が恐竜VCの場合
+            elif after.channel.id == KYORYU_VC_ID:
+                # まず絵文字を一旦取ってからロールをつける
+                await member.remove_roles(role_inu, role_neko, role_kame, role_kyoryu)
+                await member.add_roles(role_kyoryu)
 
-        else:
-            pass
+        # VCから出た場合
+        if before.channel != None and after.channel == None:
+            # とにかくロールを外して終わり
+            await member.remove_roles(role_inu, role_neko, role_kame, role_kyoryu, role_mood)
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(VcRole(bot))
