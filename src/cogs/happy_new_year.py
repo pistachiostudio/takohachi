@@ -13,7 +13,6 @@ class HappyNewYear(commands.Cog):
         name="hny",
         description="あけましておめでとうございます！おみくじを引きます。"
     )
-
     async def hny(
         self,
         interaction: discord.Interaction

@@ -15,9 +15,9 @@ class Spotify(commands.Cog):
         name="sp",
         description="Spotifyの曲情報を検索します。",
     )
-
-    @app_commands.describe(search="曲情報を表示します。アーティスト名や曲名で絞り込んでください。スペース区切りOK。")
-
+    @app_commands.describe(
+        search="曲情報を表示します。アーティスト名や曲名で絞り込んでください。スペース区切りOK。"
+    )
     async def sp(
         self,
         interaction: discord.Interaction,

@@ -12,12 +12,10 @@ class Valo(commands.Cog):
         name="vr",
         description="Valorantのランクなどを表示します。"
     )
-
     @app_commands.describe(
         name="Valorantのプレイヤー名を入れてください。ex) 植 物、ウィングマン太郎、The Manなど",
         tagline="#以降のタグを入れてください。#は不要です。"
     )
-
     async def vr(
         self,
         interaction: discord.Interaction,

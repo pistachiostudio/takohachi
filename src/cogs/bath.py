@@ -11,7 +11,6 @@ class Bath(commands.Cog):
         name="bath",
         description="名前の先頭に🛀をつけます。"
     )
-
     async def b(
         self,
         interaction: discord.Interaction

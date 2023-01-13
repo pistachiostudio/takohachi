@@ -14,7 +14,6 @@ class Dice(commands.Cog):
         name="dice",
         description="Valorantのマップをランダムに返します。"
     )
-
     async def d(
         self,
         interaction: discord.Interaction

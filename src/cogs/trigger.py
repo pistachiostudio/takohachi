@@ -20,9 +20,9 @@ class Trigger(commands.Cog):
         name="dic",
         description="Trigger Commands"
     )
-
-    @app_commands.describe(keyword="キーワードを入力してください。例) genkai, 徳井病, gomi など")
-
+    @app_commands.describe(
+        keyword="キーワードを入力してください。例) genkai, 徳井病, gomi など"
+    )
     async def trigger(
         self,
         interaction: discord.Interaction,

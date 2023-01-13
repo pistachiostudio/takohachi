@@ -22,17 +22,16 @@ class SSLAdd(commands.Cog):
         name="addssl",
         description="怠けたNot SSLを監視しましょう。"
     )
-
-    @app_commands.describe(add_url="監視DBに登録したいURLを記載してください。")
-
+    @app_commands.describe(
+        add_url="監視DBに登録したいURLを記載してください。"
+    )
     async def addssl(
         self,
         interaction: discord.Interaction,
         add_url: str
     ):
-
         #最初にaddssl引数がURLかを判断し、URL出ない場合はエラーを返す
-        if not f"{add_url}".startswith('http'):
+        if not {add_url}.startswith('http'):
             await interaction.response.send_message(
                 f":warning: URLを指定してください！",
                 ephemeral=True
@@ -40,10 +39,9 @@ class SSLAdd(commands.Cog):
 
         #httpから始まる文字列の場合は処理をすすめる
         else:
-            url = f"{add_url}"
             session = requests.Session()
             session.trust_env = False
-            response = requests.get(f"{add_url}")
+            response = requests.get(add_url)
             soup = BeautifulSoup(response.content, 'html.parser')
             #タイトルをゲットし、前後の空白や改行をすべて取る（ナオトインティライミのHPは前後に空白が16個ずつも入っていた！ふざけるな！）
             title = soup.find('title').text.strip()

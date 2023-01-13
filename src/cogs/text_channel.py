@@ -17,7 +17,6 @@ class TextChannel(commands.Cog):
         name="top",
         description="チャンネルの一番上にジャンプするボタンを表示します。"
     )
-
     async def top(
         self,
         interaction: discord.Interaction

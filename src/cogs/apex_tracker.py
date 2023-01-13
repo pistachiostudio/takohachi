@@ -47,12 +47,10 @@ class ApexTracker(commands.Cog):
         name= "apexrank",
         description= "Apex Legendsのランクを取得します。"
     )
-
     @app_commands.describe(
         platform="プラットフォームを選択してください",
         user_id="ユーザーIDを入力してください"
     )
-
     @app_commands.choices(
         platform=[
             discord.app_commands.Choice(name="Origin & Steam(PC)",value="origin"),
@@ -60,7 +58,6 @@ class ApexTracker(commands.Cog):
             discord.app_commands.Choice(name="Play Station",value="psn")
         ]
     )
-
     async def apexrank(
         self,
         interaction: discord.Interaction,

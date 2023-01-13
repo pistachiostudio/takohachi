@@ -11,7 +11,6 @@ class Ping(commands.Cog):
         name="ping",
         description="Catch the ping of the bot!"
     )
-
     async def ping(
         self,
         interaction: discord.Interaction
