@@ -31,7 +31,7 @@ class SSLAdd(commands.Cog):
         add_url: str
     ):
         #最初にaddssl引数がURLかを判断し、URL出ない場合はエラーを返す
-        if not {add_url}.startswith('http'):
+        if not add_url.startswith('http'):
             await interaction.response.send_message(
                 f":warning: URLを指定してください！",
                 ephemeral=True
