@@ -43,6 +43,8 @@ class VcRole(commands.Cog):
             # 恐竜VCに入った場合
             elif after.channel.id == KYORYU_VC_ID:
                 await member.add_roles(role_kyoryu, role_mood)
+            else:
+                pass
 
         # VCからVCへ移動した場合 (IN_THE_MOOD_ROLEはそのままにする)
         if before.channel != None and after.channel != None:
@@ -66,6 +68,8 @@ class VcRole(commands.Cog):
                 # まず絵文字を一旦取ってからロールをつける
                 await member.remove_roles(role_inu, role_neko, role_kame, role_kyoryu)
                 await member.add_roles(role_kyoryu)
+            else:
+                pass
 
         # VCから出た場合
         if before.channel != None and after.channel == None:
