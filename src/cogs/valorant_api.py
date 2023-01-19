@@ -23,7 +23,7 @@ class Valo(commands.Cog):
         tagline: str
     ):
         print("start")
-        current_season = "e5a3"
+        current_season = "e6a1"
 
         season_txt = (current_season.replace("e", "Episode ").replace("a", " Act "))
 

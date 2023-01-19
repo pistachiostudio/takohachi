@@ -7,7 +7,7 @@ from discord.ext import commands
 
 DB_DIRECTORY = "/data/takohachi.db"
 BONUS_VALUE = 3000
-OWENER_USER_ID = '538992968254619649' #一部の管理者専用のコマンドで使用
+OWENER_USER_ID = '811842047841140766' #一部の管理者専用のコマンドで使用
 
 class Currency(commands.Cog):
     def __init__(self, bot: commands.Bot):

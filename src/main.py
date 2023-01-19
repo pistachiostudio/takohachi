@@ -34,9 +34,10 @@ class MyBot(commands.Bot):
         super().__init__(
             command_prefix=PREFIX,
             intents=discord.Intents.all(),
-            help_command=None,
+            help_command=None
         )
 
+        # コマンド系のいつも読み込むcogs
         self.initial_extensions = [
             "cogs.addssl",
             "cogs.apex_tracker",
@@ -55,6 +56,7 @@ class MyBot(commands.Bot):
             "cogs.what_today"
         ]
 
+        # コマンド系じゃないdevで読み込むと競合してややこしいcogs
         self.initial_extensions_only_production = [
             "cogs.autodelete",
             "cogs.card_count",
@@ -66,11 +68,9 @@ class MyBot(commands.Bot):
 
     async def setup_hook(self):
 
-        # コマンド系のいつも読み込むcogs
         for extension in self.initial_extensions:
             await self.load_extension(extension)
 
-        # コマンド系じゃないdevで読み込むとややこしいcogs
         if PREFIX == '!!':
             for production_extension in self.initial_extensions_only_production:
                 await self.load_extension(production_extension)
