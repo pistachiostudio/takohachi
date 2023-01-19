@@ -61,3 +61,16 @@ def get_weather(citycode: int):
     result = f"{district}: {weather}\n☔ 朝: {chanceOfRain_morning} | 昼: {chanceOfRain_evening} | 晩: {chanceOfRain_night}"
 
     return result
+
+def get_exchange_rate():
+
+    # demoに制限が出てくれば、無料のAPIキーを取得する。
+    url = "https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=USD&to_currency=JPY&apikey=demo"
+
+    result = requests.get(url)
+    json = result.json()
+
+    usd_jpy = float(json['Realtime Currency Exchange Rate']['5. Exchange Rate'])
+    round_usd_jpy = round(usd_jpy, 2)
+
+    return round_usd_jpy

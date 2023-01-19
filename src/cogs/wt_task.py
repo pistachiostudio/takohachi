@@ -3,7 +3,7 @@ from datetime import datetime, timedelta, timezone
 import discord
 from discord.ext import commands, tasks
 
-from libs.utils import get_weather, get_what_today
+from libs.utils import get_exchange_rate, get_weather, get_what_today
 
 
 class WTTasks(commands.Cog):
@@ -36,8 +36,7 @@ class WTTasks(commands.Cog):
             weather = get_weather(citycode)
 
             embed = discord.Embed()
-            embed.set_footer(text=weather)
-            embed.timestamp = datetime.now(JST)
+            embed.set_footer(text=f"{weather}\n💵USD/JPY = {get_exchange_rate()}")
             embed.color = discord.Color.green()
             embed.title = f'7時です。今日はなんの日？'
             embed.description = f"{this_month}月{this_day}日\n{result}"
