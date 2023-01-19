@@ -18,6 +18,9 @@ class SavaImage(commands.Cog):
         # botのリアクションは無視する
         if payload.member.bot:
             return
+        # 該当の絵文字以外は無視
+        if str(payload.emoji) != "<:p01_neko:863117588757872730>":
+            return
         channel = self.bot.get_channel(payload.channel_id)
         message = await channel.fetch_message(payload.message_id)
 
@@ -30,15 +33,14 @@ class SavaImage(commands.Cog):
         if neko_count > 1:
             return
 
-        if str(payload.emoji) == "<:p01_neko:863117588757872730>":
-            attachment = message.attachments[0]
+        for attachment in message.attachments:
             embed = discord.Embed()
             # タイムゾーンの生成
             JST = timezone(timedelta(hours=+9), "JST")
             embed.timestamp = datetime.now(JST)
+            filename = attachment.filename
+            upload_filename = filename
             try:
-                filename = attachment.filename
-                upload_filename = filename
                 await attachment.save(fp=filename)
 
                 # filename が デフォルトファイル名の場合はファイル名を変更する
@@ -94,6 +96,7 @@ class SavaImage(commands.Cog):
         return filename
 
     def _get_neko_emoji_count(self, reactions) -> int:
+        count = 0
         for reaction in reactions:
             if str(reaction.emoji) == "<:p01_neko:863117588757872730>":
                 count = reaction.count
