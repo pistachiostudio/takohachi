@@ -13,7 +13,6 @@ PREFIX = os.environ["PREFIX"]
 class Trigger(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-        self.worksheet = None
         self.trigger_repo = get_trigger_repository()
 
     @commands.Cog.listener()

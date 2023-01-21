@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime, timedelta, timezone
 
 import discord
@@ -5,25 +6,27 @@ from discord.ext import commands
 
 from .api import get_trigger_repository
 
+logger = logging.getLogger(__name__)
+
+
 class Gakigo(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
         self.trigger_repo = get_trigger_repository()
 
     @commands.Cog.listener()
-    async def on_raw_reaction_add(self, payload):
-        # botのリアクションは無視する
-        if payload.member.bot:
+    async def on_ready(self):
+        logger.info("on ready gakigo!")
+
+    @commands.Cog.listener()
+    async def on_message(self, message):
+        if message.author == self.bot.user:
             return
-        # 該当の絵文字以外は無視
-        if str(payload.emoji) != "<:p01_neko:863117588757872730>":
+
+        if message.content != "<:p01_neko:863117588757872730>":
             return
-        channel = self.bot.get_channel(payload.channel_id)
-        if not channel:
-            return
-        message = await channel.fetch_message(payload.message_id)
-        trigger = "dendou" # 固定値失礼します
-        data = self.trigger_repo.select(trigger)
+
+        data = self.trigger_repo.select("dendou")
 
         if not data:
             return
