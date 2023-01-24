@@ -1,5 +1,5 @@
 import os
-from typing import Dict, List, Optional
+import sqlite3
 
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
@@ -22,9 +22,9 @@ class TriggerRepository:
         self.worksheet = self.gc.open_by_key(DIC_KEY).worksheet('trigger')
 
         # ヘッダー行をスプレッドシートから取得
-        self.header_list: List[str] = self.worksheet.row_values(2)
+        self.header_list: list[str] = self.worksheet.row_values(2)
 
-    def select(self, trigger: str) -> Optional[Dict[str, str]]:
+    def select(self, trigger: str) -> dict[str, str] | None:
         # trigger 文字列が含まれる列番号を取得
         row_num = self._find_trigger_row_number(trigger, self.header_list)
 
@@ -32,7 +32,7 @@ class TriggerRepository:
             return None
         else:
             # トリガー行データをスプレッドシートから取得
-            trigger_value_list: List[str] = self.worksheet.row_values(row_num)
+            trigger_value_list: list[str] = self.worksheet.row_values(row_num)
             pad_len = len(self.header_list) - len(trigger_value_list)
             pad_list = ["" for _ in range(pad_len)]
             trigger_value_list.extend(pad_list)
@@ -41,7 +41,7 @@ class TriggerRepository:
             colomn_names = ["response", "title", "description", "right_small_image_URL", "big_image_URL"]
 
             # 返却値を格納する辞書
-            embed_dict: Dict[str, str] = {}
+            embed_dict: dict[str, str] = {}
 
             for col_name in colomn_names:
                 col_index = self._get_index(self.header_list, col_name)
@@ -53,13 +53,16 @@ class TriggerRepository:
 
             return embed_dict
 
-    def _get_index(self, target: List[str], value: str) -> Optional[int]:
+    def select_all(self) -> list[list[str]]:
+        return self.worksheet.get_all_values()
+
+    def _get_index(self, target: list[str], value: str) -> int | None:
         """value が target の何番目かを取得する関数です。value が存在しない場合は None を返します。
         Args:
-            target (List[str]): index を調べたい対象のリスト
+            target (list[str]): index を調べたい対象のリスト
             value (str): index を取得する対象文字列
         Returns:
-            Optional[int]: 存在すれば index(int) を返し、存在しなければ None を返します。
+            int | None: 存在すれば index(int) を返し、存在しなければ None を返します。
         """
         try:
             index = target.index(value)
@@ -67,13 +70,13 @@ class TriggerRepository:
         except ValueError:
             return None
 
-    def _find_trigger_row_number(self, trigger: str, header_list: List[str]) -> Optional[int]:
+    def _find_trigger_row_number(self, trigger: str, header_list: list[str]) -> int | None:
         """triggerが含まれている行番号を返します
         Args:
             trigger (str): trigger
-            header_list (List[str]): trigger db のヘッダーリスト
+            header_list (list[str]): trigger db のヘッダーリスト
         Returns:
-            Optional[int]: trigger が含まれている行番号
+            int | None: trigger が含まれている行番号
         """
         trigger_columns = ["trigger", "alias01", "alias02"]
         for trigger_column in trigger_columns:
@@ -88,3 +91,10 @@ class TriggerRepository:
                     continue
                 else:
                     return trigger_cell.row
+
+
+class CachedTriggerRepository:
+
+    def __init__(self, conn: sqlite3.Connection):
+        self.conn = conn
+
