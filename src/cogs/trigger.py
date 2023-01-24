@@ -1,5 +1,4 @@
 import os
-from datetime import datetime, timedelta, timezone
 
 import discord
 from discord import app_commands
@@ -43,8 +42,7 @@ class Trigger(commands.Cog):
                 await interaction.followup.send(f'{data["response"]}')
             else:
                 embed = discord.Embed()
-                JST = timezone(timedelta(hours=+9), "JST")
-                embed.timestamp = datetime.now(JST)
+                embed.set_footer(text=f"Keyword: {keyword}")
                 if data["title"]:
                     embed.title = f'{data["title"]}'
                 if data["description"]:
