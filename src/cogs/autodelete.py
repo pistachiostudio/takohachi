@@ -1,23 +1,8 @@
 import logging
 import time
-from datetime import datetime, timedelta, timezone
-from logging.handlers import TimedRotatingFileHandler
 
 from discord.ext import commands, tasks
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s %(levelname)s %(name)s %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-    handlers=[
-        TimedRotatingFileHandler(
-            "/logs/autodelete-log-{:%Y-%m-%d}.log".format(datetime.now()),
-            when="D",
-            interval=1,
-            backupCount=7
-        )
-    ]
-)
 
 class AutoDelete(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -68,7 +53,7 @@ class AutoDelete(commands.Cog):
                 # 現在時間からメッセージの投稿時間を引いて、指定した時間よりも古いかどうかを確認
                 if now - message_time > channel_list[channel_id]:
                     await message.delete()
-                    logging.info(f'{channel.name} / "{message.content}" is deleted')
+                    logging.info(f'{channel.name} / "**********" is deleted')
 
         logging.info(f"Message auto delete task is finished.")
 
