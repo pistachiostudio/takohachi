@@ -22,7 +22,7 @@ ffprobe.exe
 lantest.py
 create_database.py
 app.json
-autodelete.log
+autodelete-log-*
 
 # db file dir
 data
