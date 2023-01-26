@@ -1,12 +1,26 @@
 import asyncio
 import logging
 import os
+from datetime import datetime, timedelta, timezone
+from logging.handlers import TimedRotatingFileHandler
 from pathlib import Path
 
 import discord
 from discord.ext import commands
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(name)s %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+    handlers=[
+        TimedRotatingFileHandler(
+            "/logs/autodelete-log-{:%Y-%m-%d}.log".format(datetime.now()),
+            when="D",
+            interval=1,
+            backupCount=7,
+        )
+    ]
+)
 
 PREFIX = os.environ["PREFIX"]
 
