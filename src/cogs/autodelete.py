@@ -1,7 +1,23 @@
+import logging
 import time
+from datetime import datetime, timedelta, timezone
+from logging.handlers import TimedRotatingFileHandler
 
 from discord.ext import commands, tasks
 
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(name)s %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+    handlers=[
+        TimedRotatingFileHandler(
+            "/logs/autodelete-log-{:%Y-%m-%d}.log".format(datetime.now()),
+            when="D",
+            interval=1,
+            backupCount=7
+        )
+    ]
+)
 
 class AutoDelete(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -15,17 +31,20 @@ class AutoDelete(commands.Cog):
     @tasks.loop(seconds=600.0)
     async def printer(self):
 
+        logging.info(f"Message auto delete task is running.")
+
         # チャンネルIDと削除する時間(秒)を指定。例えば1時間ごとに削除する場合は3600。
         channel_list = {
-            762575939623452682: 43200, # 犬
-            762576579507126273: 43200, # 猫
-            780611197350576200: 43200, # 亀
-            812312154371784704: 43200, # 恐竜
-            811819005987913790: 600, # 沈黙の犬
-            811810485929639976: 600, # 沈黙の猫
-            811804248299143209: 600, # 沈黙の亀
-            1033285774503841862: 600, # 沈黙の恐竜
-            924924594706583562: 86400 # 茂林塾
+            762575939623452682: 43200,  # 犬
+            762576579507126273: 43200,  # 猫
+            780611197350576200: 43200,  # 亀
+            812312154371784704: 43200,  # 恐竜
+            811819005987913790: 600,  # 沈黙の犬
+            811810485929639976: 600,  # 沈黙の猫
+            811804248299143209: 600,  # 沈黙の亀
+            1033285774503841862: 600,  # 沈黙の恐竜
+            924924594706583562: 86400,  # 茂林塾
+            1068066102208372746: 1,  # テスト用
         }
 
         # UNIX時間の現在時刻を取得
@@ -48,13 +67,17 @@ class AutoDelete(commands.Cog):
 
                 # 現在時間からメッセージの投稿時間を引いて、指定した時間よりも古いかどうかを確認
                 if now - message_time > channel_list[channel_id]:
-                        await message.delete()
+                    await message.delete()
+                    logging.info(f'{channel.name} / "{message.content}" is deleted')
+
+        logging.info(f"Message auto delete task is finished.")
 
     # デプロイ後Botが完全に起動してからタスクを回す
     @printer.before_loop
     async def before_printer(self):
         print("waiting until bot booting")
         await self.bot.wait_until_ready()
+
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(AutoDelete(bot))
