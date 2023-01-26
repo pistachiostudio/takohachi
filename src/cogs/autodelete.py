@@ -22,11 +22,6 @@ class AutoDelete(commands.Cog):
     @tasks.loop(seconds=600.0)
     async def printer(self):
 
-        logger = logging.getLogger(__name__)
-
-        sh = logging.StreamHandler()
-        logger.addHandler(sh)
-
         # チャンネルIDと削除する時間(秒)を指定。例えば1時間ごとに削除する場合は3600。
         channel_list = {
             762575939623452682: 43200, # 犬
