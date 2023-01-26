@@ -9,3 +9,4 @@ services:
       - .env
     volumes:
       - ./data/:/data/
+      - ./logs/:/logs/
