@@ -1,7 +1,14 @@
+import logging
 import time
 
 from discord.ext import commands, tasks
 
+logging.basicConfig(
+    filename='autodelete.log',
+    level=logging.INFO,
+    format='%(asctime)s %(levelname)s %(name)s %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
 
 class AutoDelete(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -15,6 +22,11 @@ class AutoDelete(commands.Cog):
     @tasks.loop(seconds=600.0)
     async def printer(self):
 
+        logger = logging.getLogger(__name__)
+
+        sh = logging.StreamHandler()
+        logger.addHandler(sh)
+
         # チャンネルIDと削除する時間(秒)を指定。例えば1時間ごとに削除する場合は3600。
         channel_list = {
             762575939623452682: 43200, # 犬
@@ -25,7 +37,8 @@ class AutoDelete(commands.Cog):
             811810485929639976: 600, # 沈黙の猫
             811804248299143209: 600, # 沈黙の亀
             1033285774503841862: 600, # 沈黙の恐竜
-            924924594706583562: 86400 # 茂林塾
+            924924594706583562: 86400, # 茂林塾
+            1068066102208372746: 1, # テスト用
         }
 
         # UNIX時間の現在時刻を取得
@@ -49,6 +62,7 @@ class AutoDelete(commands.Cog):
                 # 現在時間からメッセージの投稿時間を引いて、指定した時間よりも古いかどうかを確認
                 if now - message_time > channel_list[channel_id]:
                         await message.delete()
+                        logging.info(f"{channel.name} / \"{message.content}\" is deleted")
 
     # デプロイ後Botが完全に起動してからタスクを回す
     @printer.before_loop
