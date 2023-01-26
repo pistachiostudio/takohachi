@@ -47,6 +47,7 @@ class MyBot(commands.Bot):
             "cogs.dice",
             "cogs.marimo",
             "cogs.message_count",
+            "cogs.openai",
             "cogs.ping",
             "cogs.play",
             "cogs.spotify",
