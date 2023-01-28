@@ -5,7 +5,7 @@ from .settings import Base
 
 class Trigger(Base):
 
-    __tablenema__ = "trigger"
+    __tablename__ = "trigger"
 
     id = Column(Integer, primary_key=True)
     trigger = Column(String)
@@ -19,7 +19,7 @@ class Trigger(Base):
 
 class Currency(Base):
 
-    __tablenema__ = "currency"
+    __tablename__ = "currency"
 
     id = Column(Integer, primary_key=True)
     user_id = Column(String)
@@ -30,7 +30,7 @@ class Currency(Base):
 
 class Shop(Base):
 
-    __tablenema__ = "shop"
+    __tablename__ = "shop"
 
     id = Column(Integer, primary_key=True)
     item_name = Column(String)
