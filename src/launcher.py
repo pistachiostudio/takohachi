@@ -1,7 +1,6 @@
 import asyncio
 import logging
 import os
-from datetime import datetime, timedelta, timezone
 from logging.handlers import TimedRotatingFileHandler
 from pathlib import Path
 
@@ -14,7 +13,7 @@ logging.basicConfig(
     datefmt="%Y-%m-%d %H:%M:%S",
     handlers=[
         TimedRotatingFileHandler(
-            "/logs/autodelete-log-{:%Y-%m-%d}.log".format(datetime.now()),
+            "/logs/takohachi.log",
             when="D",
             interval=1,
             backupCount=7,
@@ -89,7 +88,7 @@ async def main():
 
         # Productionのみで読み込むcogs
         if PREFIX == '!!':
-            await bot.load_extension("cogs.purge")
+            await bot.load_extension("cogs.autodelete")
             await bot.load_extension("cogs.wt_task")
             await bot.load_extension("cogs.vcwhite")
             await bot.load_extension("cogs.save_image")
