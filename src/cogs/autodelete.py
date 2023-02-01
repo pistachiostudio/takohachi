@@ -1,3 +1,4 @@
+import datetime
 import logging
 import time
 
@@ -29,8 +30,9 @@ class AutoDelete(commands.Cog):
             811804248299143209: 600,  # 沈黙の亀
             1033285774503841862: 600,  # 沈黙の恐竜
             924924594706583562: 86400,  # 茂林塾
-            1069935021282045982: 1,  # テスト1
-            1069935102844477480: 1,  # テスト2
+            923469139597721610: 86400,  # moderator
+            1069935021282045982: 1,  # purge-test-1-1sec
+            1069935102844477480: 1,  # purge-test-2-1sec
         }
 
         # UNIX時間の現在時刻を取得
@@ -51,11 +53,14 @@ class AutoDelete(commands.Cog):
                     if message.pinned:
                         pinned_count += 1
 
+            #現在時間から指定した時間を引いたUTC時間を取得
+            utc_time = datetime.datetime.utcfromtimestamp(now - channel_list[channel_id])
+
             #checkを定義
             def is_not_pinned(message):
                 return not message.pinned and now - message_time > channel_list[channel_id]
 
-            deleted = await channel.purge(limit=purge_count, check=is_not_pinned)
+            deleted = await channel.purge(limit=purge_count, check=is_not_pinned,before=utc_time)
             logging.info(f'Purged {len(deleted)} messages in {channel.name} (pinned: {pinned_count})')
 
         logging.info(f"Message purge task is finished.")
