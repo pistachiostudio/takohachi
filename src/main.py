@@ -14,7 +14,7 @@ logging.basicConfig(
     datefmt="%Y-%m-%d %H:%M:%S",
     handlers=[
         TimedRotatingFileHandler(
-            "/logs/autodelete-log-{:%Y-%m-%d}.log".format(datetime.now()),
+            "/logs/takohachi.log",
             when="D",
             interval=1,
             backupCount=7,

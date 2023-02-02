@@ -32,8 +32,9 @@ class CardCount(commands.Cog):
         siren_list = [siren_red, siren_blue, siren_purple, siren_emoji]
 
         #count_list共通処理
-        if str(payload.emoji) in count_list:
-
+        if str(payload.emoji) not in count_list:
+            return
+        else:
             channel = self.bot.get_channel(payload.channel_id)
             message = await channel.fetch_message(payload.message_id)
             author_name = message.author
