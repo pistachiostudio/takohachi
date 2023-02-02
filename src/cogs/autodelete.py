@@ -1,3 +1,4 @@
+import datetime
 import logging
 import time
 
@@ -16,7 +17,7 @@ class AutoDelete(commands.Cog):
     @tasks.loop(seconds=600.0)
     async def printer(self):
 
-        logging.info(f"Message auto delete task is running.")
+        logging.info(f"Message purge task is running.")
 
         # チャンネルIDと削除する時間(秒)を指定。例えば1時間ごとに削除する場合は3600。
         channel_list = {
@@ -29,7 +30,9 @@ class AutoDelete(commands.Cog):
             811804248299143209: 600,  # 沈黙の亀
             1033285774503841862: 600,  # 沈黙の恐竜
             924924594706583562: 86400,  # 茂林塾
-            1068066102208372746: 1,  # テスト用
+            923469139597721610: 86400,  # moderator
+            1069935021282045982: 1,  # purge-test-1-1sec
+            1069935102844477480: 1,  # purge-test-2-1sec
         }
 
         # UNIX時間の現在時刻を取得
@@ -41,21 +44,26 @@ class AutoDelete(commands.Cog):
             channel = self.bot.get_channel(channel_id)
 
             # チャンネルのメッセージを古い順に取得
+            purge_count = 0
+            pinned_count = 0
             async for message in channel.history(oldest_first=True):
-
-                # メッセージがピン留めされている場合はスキップする
-                if message.pinned:
-                    continue
-
-                # メッセージの投稿時間をUNIX時間に変換
                 message_time = int(message.created_at.timestamp())
-
-                # 現在時間からメッセージの投稿時間を引いて、指定した時間よりも古いかどうかを確認
                 if now - message_time > channel_list[channel_id]:
-                    await message.delete()
-                    logging.info(f'{channel.name} / "**********" is deleted')
+                    purge_count += 1
+                    if message.pinned:
+                        pinned_count += 1
 
-        logging.info(f"Message auto delete task is finished.")
+            #現在時間から指定した時間を引いた時間を取得
+            del_time = datetime.datetime.fromtimestamp(now - channel_list[channel_id])
+
+            #checkを定義
+            def is_not_pinned(message):
+                return not message.pinned
+
+            deleted = await channel.purge(limit=purge_count, check=is_not_pinned, before=del_time)
+            logging.info(f'Purged {len(deleted)} messages in {channel.name} (pinned: {pinned_count})')
+
+        logging.info(f"Message purge task is finished.")
 
     # デプロイ後Botが完全に起動してからタスクを回す
     @printer.before_loop
