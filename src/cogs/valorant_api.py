@@ -1,5 +1,5 @@
 import discord
-import requests
+import httpx
 from discord import app_commands
 from discord.ext import commands
 
@@ -22,9 +22,8 @@ class Valo(commands.Cog):
         name: str,
         tagline: str
     ):
-        print("start")
-        current_season = "e6a1"
 
+        current_season = "e6a1"
         season_txt = (current_season.replace("e", "Episode ").replace("a", " Act "))
 
         # interactionは3秒以内にレスポンスしないといけないとエラーになるのでこの処理を入れる。
@@ -32,13 +31,12 @@ class Valo(commands.Cog):
 
         # API request
         rank_url = f"https://api.henrikdev.xyz/valorant/v2/mmr/ap/{name}/{tagline}"
-        res = requests.get(rank_url)
+        async with httpx.AsyncClient() as client:
+            res = await client.get(rank_url)
         json = res.json()
-        print("json")
 
         # statusが200以外の場合はエラーを返す。
         if json['status'] != 200:
-            print("error")
             embed = discord.Embed()
             embed.color = discord.Color.red()
             embed.title = f"<:p01_pepebrim:951023068275421235>:warning: 何かが間違えているかもしれません。\nあなたの入力: **{name}#{tagline}**"
@@ -51,21 +49,21 @@ class Valo(commands.Cog):
             rank_image_url = json['data']['current_data']['images']['large']
             ranking_in_tier = json['data']['current_data']['ranking_in_tier']
             elo = json['data']['current_data']['elo']
-            print("rank")
+
             current_season_data = json['data']['by_season'][current_season]
             season_games = current_season_data.get('number_of_games', 0)
             season_wins = current_season_data.get('wins', 0)
             season_lose = season_games - season_wins
-            print("wins")
+
             account_url = f"https://api.henrikdev.xyz/valorant/v1/account/{name}/{tagline}"
-            res = requests.get(account_url)
+            async with httpx.AsyncClient() as client:
+                res = await client.get(account_url)
             account_json = res.json()
-            print("accounturl")
+
             real_name = account_json['data']['name']
             real_tagline = account_json['data']['tag']
             account_level = account_json['data']['account_level']
             card_image_url = account_json['data']['card']['wide']
-            print("Done")
 
             embed = discord.Embed()
             embed.title = f"{real_name} `#{real_tagline}`"
@@ -77,7 +75,6 @@ class Valo(commands.Cog):
             embed.add_field(name="ELO", value=f"```{elo}```")
             embed.add_field(name="Account Level", value=f"```{account_level}```")
             embed.set_image(url=card_image_url)
-            print("embed")
 
             # interaction.response.deferを使ったのでここはfollowup.sendが必要
             await interaction.followup.send(embed=embed)
@@ -97,7 +94,8 @@ class Valo(commands.Cog):
         await interaction.response.defer()
 
         news_url = "https://api.henrikdev.xyz/valorant/v1/website/ja-jp"
-        res = requests.get(news_url)
+        async with httpx.AsyncClient() as client:
+            res = await client.get(news_url)
         json = res.json()
 
         news_01_title = json['data'][0]['title']
@@ -130,7 +128,7 @@ class Valo(commands.Cog):
         embed = discord.Embed()
         embed.title = "Valorant Latest News"
         embed.color = discord.Color.purple()
-        embed.description = f"- [{news_01_title}]({news_01_url})\n\n- [{news_02_title}]({news_02_url})\n\n- [{news_03_title}]({news_03_url})\n\n- [{news_04_title}]({news_04_url})"
+        embed.description = f"- [{news_01_title}]({news_01_url})\n\n- [{news_02_title}]({news_02_url})\n\n- [{news_03_title}]({news_03_url})\n\n- [{news_04_title}]({news_04_url})\n"
         embed.set_image(url=news_01_image)
 
         # interaction.response.deferを使ったのでここはfollowup.sendが必要

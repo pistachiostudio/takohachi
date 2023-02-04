@@ -1,7 +1,7 @@
 import random
 
 import discord
-import requests
+import httpx
 from discord import app_commands
 from discord.ext import commands
 
@@ -20,8 +20,8 @@ class Dice(commands.Cog):
     ):
 
         url = 'https://valorant-api.com/v1/maps'
-
-        res = requests.get(url)
+        async with httpx.AsyncClient() as client:
+            res = await client.get(url)
         json = res.json()
 
         data = json["data"]
