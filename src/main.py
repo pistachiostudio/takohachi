@@ -64,6 +64,7 @@ class MyBot(commands.Bot):
             "cogs.openai",
             "cogs.ping",
             "cogs.play",
+            "cogs.purge",
             "cogs.spotify",
             "cogs.text_channel",
             "cogs.trigger",
