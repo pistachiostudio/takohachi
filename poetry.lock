@@ -932,6 +932,25 @@ files = [
 ]
 
 [[package]]
+name = "redis"
+version = "4.5.0"
+description = "Python client for Redis database and key-value store"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "redis-4.5.0-py3-none-any.whl", hash = "sha256:98d265eea4d2255f4d0ea98c53326adf30c0a581b6cfba9d77eefb341ed8145c"},
+    {file = "redis-4.5.0.tar.gz", hash = "sha256:16135483fd35fb6c3927e4bb056780a0ad11234f61e0aa81f1db89292129c714"},
+]
+
+[package.dependencies]
+async-timeout = ">=4.0.2"
+
+[package.extras]
+hiredis = ["hiredis (>=1.0.0)"]
+ocsp = ["cryptography (>=36.0.1)", "pyopenssl (==20.0.1)", "requests (>=2.26.0)"]
+
+[[package]]
 name = "requests"
 version = "2.25.1"
 description = "Python HTTP for Humans."
@@ -1013,18 +1032,19 @@ files = [
 
 [[package]]
 name = "spotipy"
-version = "2.19.0"
+version = "2.22.1"
 description = "A light weight Python library for the Spotify Web API"
 category = "main"
 optional = false
 python-versions = "*"
 files = [
-    {file = "spotipy-2.19.0-py2-none-any.whl", hash = "sha256:dd6de229351bb6cf4d9bc169c5e183288da795f5a8265968dd98e95c037f9e7a"},
-    {file = "spotipy-2.19.0-py3-none-any.whl", hash = "sha256:766f9ef96d61851d7884c4553f2de2527c3af01df603985f6987543bb28e3ff5"},
-    {file = "spotipy-2.19.0.tar.gz", hash = "sha256:904f6e813dba837758e9510c1bee51d7ca217f169246625a13e693733dc33543"},
+    {file = "spotipy-2.22.1-py2-none-any.whl", hash = "sha256:aa023d8bc606053d95e8961f52293fdd8cd12ef4fad8f829e701bb3d61c48d76"},
+    {file = "spotipy-2.22.1-py3-none-any.whl", hash = "sha256:1dac15ac0aaf5246461a3cb0b3d837bc7af7b78597441289b500a5abac9fe9c4"},
+    {file = "spotipy-2.22.1.tar.gz", hash = "sha256:54680dbf243a2b0cff0e591e1d269692e94265273b52ab90994a661555c04ac7"},
 ]
 
 [package.dependencies]
+redis = ">=3.5.3"
 requests = ">=2.25.0"
 six = ">=1.15.0"
 urllib3 = ">=1.26.0"
@@ -1166,4 +1186,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "14d751739ffdb06d2c8e31e772f28a89496d47bf77199d7122ae9736455c3c26"
+content-hash = "26c8a5e380ed27b97001e81a429c81a4b590ec7c15b20306108e44db77a9d9bb"
