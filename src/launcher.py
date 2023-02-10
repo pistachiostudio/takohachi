@@ -80,10 +80,10 @@ async def main():
         await bot.load_extension("cogs.dice")
         await bot.load_extension("cogs.bath")
         await bot.load_extension("cogs.ping")
-        await bot.load_extension("cogs.play")
         await bot.load_extension("cogs.valorant_api")
         await bot.load_extension("cogs.text_channel")
         await bot.load_extension("cogs.gakigo")
+        # await bot.load_extension("cogs.play")
         # await bot.load_extension("cogs.currency")
 
         # Productionのみで読み込むcogs
