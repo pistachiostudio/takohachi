@@ -11,6 +11,7 @@ class VcRole(commands.Cog):
     @commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
 
+        # 各種変数定義
         INU_VC_ID = int(os.environ["INU_VC_ID"])
         NEKO_VC_ID = int(os.environ["NEKO_VC_ID"])
         KAME_VC_ID = int(os.environ["KAME_VC_ID"])
@@ -27,6 +28,10 @@ class VcRole(commands.Cog):
         role_neko = discord.utils.get(member.guild.roles, id=IN_NEKO_ROLE)
         role_kame = discord.utils.get(member.guild.roles, id=IN_KAME_ROLE)
         role_kyoryu = discord.utils.get(member.guild.roles, id=IN_KYORYU_ROLE)
+
+        # 処理対象外の条件 (ここで return する)
+        if before.channel == after.channel:
+            return
 
         # どこにも入ってない状態からVCに入った場合
         if before.channel == None and after.channel != None:
