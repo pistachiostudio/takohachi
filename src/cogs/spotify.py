@@ -23,6 +23,9 @@ class Spotify(commands.Cog):
         interaction: discord.Interaction,
         search: str
     ):
+        # interactionは3秒以内にレスポンスしないといけないとエラーになるのでこの処理を入れる。
+        await interaction.response.defer()
+
         #arguments = ' '.join(search)
         arguments = search
 
@@ -101,7 +104,7 @@ class Spotify(commands.Cog):
         embed.add_field(name="Liveness", value=f"```{liveness}%```")
         embed.add_field(name="Instrumentalness", value=f"```{inst}%```")
 
-        await interaction.response.send_message(embed=embed)
+        await interaction.followup.send(embed=embed)
 
     @app_commands.command(
         name="spartist",
@@ -115,6 +118,8 @@ class Spotify(commands.Cog):
         interaction: discord.Interaction,
         artist: str
     ):
+        # interactionは3秒以内にレスポンスしないといけないとエラーになるのでこの処理を入れる。
+        await interaction.response.defer()
 
         # arguments = ' '.join(args)
         arguments = artist
@@ -163,7 +168,7 @@ class Spotify(commands.Cog):
         embed.description = f"**Popularity:** {artistpopularity}\n**Followers:** {follower}\n**Genre:** {argenre}\n[Listen this artist!]({artisturl})"
         embed.set_image(url=imgurl)
 
-        await interaction.response.send_message(embed=embed)
+        await interaction.followup.send(embed=embed)
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(

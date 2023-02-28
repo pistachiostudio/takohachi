@@ -22,6 +22,9 @@ class TextChannel(commands.Cog):
         interaction: discord.Interaction
     ):
 
+        # interactionは3秒以内にレスポンスしないといけないとエラーになるのでこの処理を入れる。
+        await interaction.response.defer()
+
         logger.info(interaction.message)
         ch = interaction.channel
         url = ""
@@ -31,15 +34,15 @@ class TextChannel(commands.Cog):
         except discord.Forbidden as e:
             msg = "メッセージ履歴を読み取る権限がありません!"
             logger.error(msg, exc_info=True)
-            await interaction.response.send_message(msg)
+            await interaction.followup.send(msg)
             raise e
         except discord.HTTPException as e:
             msg = "メッセージ履歴の取得に失敗しました!"
             logger.error(msg, exc_info=True)
-            await interaction.response.send_message(msg)
+            await interaction.followup.send(msg)
             raise e
 
-        await interaction.response.send_message(
+        await interaction.followup.send(
             "",
             view=LinkButton("Go to top on this channel", url),
             ephemeral=True

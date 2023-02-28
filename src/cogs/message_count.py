@@ -18,6 +18,9 @@ class MessageCount(commands.Cog):
         interaction: discord.Interaction,
     ):
 
+        # interactionは3秒以内にレスポンスしないといけないとエラーになるのでこの処理を入れる。
+        await interaction.response.defer()
+
         channel = interaction.channel
         count = 0
         async for _ in channel.history(limit=None):
@@ -29,7 +32,7 @@ class MessageCount(commands.Cog):
         embed.timestamp = datetime.now(JST)
         embed.color = discord.Color.greyple()
         embed.description = f"このチャンネルには現在 **{d_count}** 件のメッセージがあります。"
-        await interaction.response.send_message(embed=embed)
+        await interaction.followup.send(embed=embed)
 
 
     @app_commands.command(
@@ -41,6 +44,8 @@ class MessageCount(commands.Cog):
         self,
         interaction: discord.Interaction
     ):
+        # interactionは3秒以内にレスポンスしないといけないとエラーになるのでこの処理を入れる。
+        await interaction.response.defer()
 
         inu_id = self.bot.get_channel(762575939623452682) #犬
         neko_id = self.bot.get_channel(762576579507126273) #猫
@@ -68,7 +73,7 @@ class MessageCount(commands.Cog):
         embed.timestamp = datetime.now(JST)
         embed.color = discord.Color.blurple()
         embed.description = f"犬～恐竜_txtには現在合計 **{ttl_count}** 件のメッセージがあります。"
-        await interaction.response.send_message(embed=embed)
+        await interaction.followup.send(embed=embed)
 
 
 async def setup(bot: commands.Bot):

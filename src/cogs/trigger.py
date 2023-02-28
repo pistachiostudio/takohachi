@@ -28,7 +28,7 @@ class Trigger(commands.Cog):
         keyword: str
     ):
 
-        # interactionは3秒以内にレスポンスしないといけないとエラーになるのでこの処理で15秒は待たせる。
+        # interactionは3秒以内にレスポンスしないといけないとエラーになるのでこの処理で待たせる。
         await interaction.response.defer()
 
         trigger: str = keyword

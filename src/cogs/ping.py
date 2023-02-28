@@ -15,11 +15,13 @@ class Ping(commands.Cog):
         self,
         interaction: discord.Interaction
     ):
+        # interactionは3秒以内にレスポンスしないといけないとエラーになるのでこの処理を入れる。
+        await interaction.response.defer()
 
         latency: float = self.bot.latency
         latency_ms: int = round(latency * 1000)
 
-        await interaction.response.send_message(f'🏓Pong! ({latency_ms}ms)')
+        await interaction.followup.send(f'🏓Pong! ({latency_ms}ms)')
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(

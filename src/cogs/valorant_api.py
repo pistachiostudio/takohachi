@@ -22,12 +22,11 @@ class Valo(commands.Cog):
         name: str,
         tagline: str
     ):
+        # interactionは3秒以内にレスポンスしないといけないとエラーになるのでこの処理を入れる。
+        await interaction.response.defer()
 
         current_season = "e6a1"
         season_txt = (current_season.replace("e", "Episode ").replace("a", " Act "))
-
-        # interactionは3秒以内にレスポンスしないといけないとエラーになるのでこの処理を入れる。
-        await interaction.response.defer()
 
         # API request
         rank_url = f"https://api.henrikdev.xyz/valorant/v2/mmr/ap/{name}/{tagline}"
@@ -40,7 +39,7 @@ class Valo(commands.Cog):
             embed = discord.Embed()
             embed.color = discord.Color.red()
             embed.title = f"<:p01_pepebrim:951023068275421235>:warning: 何かが間違えているかもしれません。\nあなたの入力: **{name}#{tagline}**"
-            embed.description = f'もう一度試してみてください。:pray: '
+            embed.description = f'もう一度試してみてください。:pray:\nError Code: {json["status"]}\nError Msg: {json["errors"][0]["message"]}'
             await interaction.followup.send(embed=embed)
             return
 

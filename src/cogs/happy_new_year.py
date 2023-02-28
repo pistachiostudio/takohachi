@@ -17,6 +17,9 @@ class HappyNewYear(commands.Cog):
         self,
         interaction: discord.Interaction
     ):
+        # interactionは3秒以内にレスポンスしないといけないとエラーになるのでこの処理を入れる。
+        await interaction.response.defer()
+
         #おみくじ！
         omikuji_list = ['大吉🎯', '中吉🐬', '小吉🍓', '末吉🍦', '吉🍨', '凶👾', '大凶💀']
         omikuji = random.choice(omikuji_list)
@@ -52,7 +55,7 @@ class HappyNewYear(commands.Cog):
         embed.color = discord.Color.dark_green()
         embed.set_footer(text=f"Happy New Year 2023! Love from Pistachio Studio & Gaming❤")
         embed.set_image(url=image_url)
-        await interaction.response.send_message(embed=embed)
+        await interaction.followup.send(embed=embed)
 
 
 async def setup(bot: commands.Bot):

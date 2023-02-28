@@ -19,6 +19,9 @@ class Dice(commands.Cog):
         interaction: discord.Interaction
     ):
 
+        # interactionは3秒以内にレスポンスしないといけないとエラーになるのでこの処理を入れる。
+        await interaction.response.defer()
+
         url = 'https://valorant-api.com/v1/maps'
         async with httpx.AsyncClient() as client:
             res = await client.get(url)
@@ -45,7 +48,7 @@ class Dice(commands.Cog):
         embed.set_image(url=listViewIcon)
         # embed.set_thumbnail(url=displayIcon)
         embed.color = discord.Color.dark_blue()
-        await interaction.response.send_message(embed=embed)
+        await interaction.followup.send(embed=embed)
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(

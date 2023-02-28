@@ -19,6 +19,8 @@ class WhatToday(commands.Cog):
         self,
         interaction: discord.Interaction
     ):
+        # interactionは3秒以内にレスポンスしないといけないとエラーになるのでこの処理を入れる。
+        await interaction.response.defer()
 
         # タイムゾーンの生成
         JST = timezone(timedelta(hours=+9), 'JST')
@@ -35,7 +37,7 @@ class WhatToday(commands.Cog):
         embed.color = discord.Color.green()
         embed.title = f'今日はなんの日？'
         embed.description = f"{this_month}月{this_day}日\n{result}"
-        await interaction.response.send_message(embed=embed)
+        await interaction.followup.send(embed=embed)
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(

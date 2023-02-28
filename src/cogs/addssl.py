@@ -30,9 +30,13 @@ class SSLAdd(commands.Cog):
         interaction: discord.Interaction,
         add_url: str
     ):
+
+        # interactionは3秒以内にレスポンスしないといけないとエラーになるのでこの処理を入れる。
+        await interaction.response.defer()
+
         #最初にaddssl引数がURLかを判断し、URL出ない場合はエラーを返す
         if not add_url.startswith('http'):
-            await interaction.response.send_message(
+            await interaction.followup.send(
                 f":warning: URLを指定してください！",
                 ephemeral=True
             )
@@ -79,7 +83,7 @@ class SSLAdd(commands.Cog):
             #今回登録したURLの便宜的ドメインが登録されているC列のドメインリストにないかチェック。すでに登録されていた場合はエラーを返す
             for l in domain_lists:
                 if domain in l:
-                    await interaction.response.send_message('このドメインはすでに登録されています！')
+                    await interaction.followup.send('このドメインはすでに登録されています！')
                     break;
 
             else:
@@ -94,7 +98,7 @@ class SSLAdd(commands.Cog):
                 embed.timestamp = datetime.now(JST)
                 embed.color = discord.Color.green()
                 embed.description = f"**「{plain_title}」** を監視いたします。\n\n[SSL Checker](https://ssl-checker.vercel.app/) | [SSLC Database](https://docs.google.com/spreadsheets/d/1c25pvMyjQ89OBCvB9whCQQLM_BPXKyY7umsj5wmpP2k/edit?usp=sharing)"
-                await interaction.response.send_message(embed=embed)
+                await interaction.followup.send(embed=embed)
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(
