@@ -59,6 +59,8 @@ class MyBot(commands.Bot):
             "cogs.card_list",
             "cogs.currency",
             "cogs.dice",
+            #"cogs.gakigo", マージする前にコメントアウト外す。(現状はProductionと二重になるため)
+            #"cogs.happy_new_year",
             "cogs.marimo",
             "cogs.message_count",
             "cogs.openai",
