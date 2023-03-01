@@ -44,8 +44,6 @@ class Openai(commands.Cog):
         answer = response.json()["choices"][0]["text"].strip()
         tokens = response.json()['usage']['total_tokens']
         cost = round(tokens*0.00002*get_exchange_rate(), 3)
-        print(tokens)
-        print(get_exchange_rate())
 
         embed = discord.Embed()
         embed.title = f"Q. {key}"
