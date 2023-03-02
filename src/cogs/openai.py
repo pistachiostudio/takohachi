@@ -48,7 +48,7 @@ class Openai(commands.Cog):
         }
 
         async with httpx.AsyncClient() as client:
-            res = await client.post(endpoint, headers=headers, json=payload)
+            res = await client.post(endpoint, headers=headers, json=payload, timeout=60)
         json = res.json()
 
         answer = json["choices"][0]["message"]["content"]
