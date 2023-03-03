@@ -36,6 +36,9 @@ class Spotify(commands.Cog):
         search: str
     ):
 
+        # interactionは3秒以内にレスポンスしないといけないとエラーになるのでこの処理を入れる。
+        await interaction.response.defer()
+
         # arguments = ' '.join(args)
         arguments = search
 
@@ -47,9 +50,6 @@ class Spotify(commands.Cog):
 
         # Songの検索の場合
         if select == "song":
-
-            # interactionは3秒以内にレスポンスしないといけないとエラーになるのでこの処理を入れる。
-            await interaction.response.defer()
 
             # searchから曲名を取る
             searchtrack = spo.search(q=f"{arguments}", type="track", market="JP", limit=1)
@@ -123,8 +123,6 @@ class Spotify(commands.Cog):
 
         # Artistの検索の場合
         elif select == "artist":
-            # interactionは3秒以内にレスポンスしないといけないとエラーになるのでこの処理を入れる。
-            await interaction.response.defer()
 
             # 検索ワード
             searchartist = spo.search(q=f"{arguments}", type="artist", market="JP", limit=1)
@@ -167,8 +165,6 @@ class Spotify(commands.Cog):
 
         # Albumの検索の場合
         elif select == "album":
-            # interactionは3秒以内にレスポンスしないといけないとエラーになるのでこの処理を入れる。
-            await interaction.response.defer()
 
             # 検索ワード
             searchalbum = spo.search(q=f"{arguments}", type="album", market="JP", limit=1)
@@ -190,6 +186,10 @@ class Spotify(commands.Cog):
             embed.description = f"**Artist:** [{album_artist_name}]({album_artist_url})\n**Release Date:** {album_release_date}\n[Listen this album!]({album_url})"
             embed.set_image(url=album_image)
             await interaction.followup.send(embed=embed)
+
+        else:
+            await interaction.followup.send("Error")
+            return
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(
