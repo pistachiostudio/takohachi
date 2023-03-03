@@ -7,7 +7,7 @@
 
 ## ⚙ Cogs
 
-https://github.com/pistachiostudio/takohachi/tree/master/src/cogs
+https://github.com/pistachiostudio/takohachi/tree/main/src/cogs
 
 ## 🪂 Package install
 
