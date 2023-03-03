@@ -12,6 +12,10 @@ class Openai(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
+    global default_character, cut_off
+    default_character = "あなたは、下町の大将です。優しさはありますが、口調は乱暴です。"
+    cut_off = "知識のカットオフ: {knowledge_cutoff} 現在の日付: {current_date}"
+
     @app_commands.command(
         name="gpt",
         description="ChatGPTに質問をしましょう！"
@@ -26,7 +30,7 @@ class Openai(commands.Cog):
         self,
         interaction: discord.Interaction,
         key: str,
-        character:str = "あなたは、OpenAI によってトレーニングされた大規模な言語モデルである ChatGPT です。できるだけ簡潔に答えてください。知識のカットオフ: {knowledge_cutoff} 現在の日付: {current_date}"
+        character:str = default_character + " " + cut_off
         ):
 
         await interaction.response.defer()
@@ -47,15 +51,24 @@ class Openai(commands.Cog):
             "max_tokens": 1000
         }
 
-        async with httpx.AsyncClient() as client:
-            res = await client.post(endpoint, headers=headers, json=payload, timeout=60)
+        try:
+            async with httpx.AsyncClient() as client:
+                res = await client.post(endpoint, headers=headers, json=payload, timeout=20)
+        except httpx.HTTPError as e:
+            await interaction.followup.send(f"⚠ APIリクエストエラーが発生しました。時間を置いて試してみてください。: {e}")
+            return
+
+        if res.status_code != 200:
+            await interaction.followup.send(f"⚠ APIリクエストエラーが発生しました。時間を置いて試してみてください。\n Status Code: {res.status_code}")
+            return
+
         json = res.json()
 
         answer = json["choices"][0]["message"]["content"]
         tokens = json["usage"]["total_tokens"]
         cost = round(tokens * 0.000002 * get_exchange_rate(), 3)
 
-        if character == "あなたは、OpenAI によってトレーニングされた大規模な言語モデルである ChatGPT です。できるだけ簡潔に答えてください。知識のカットオフ: {knowledge_cutoff} 現在の日付: {current_date}":
+        if character == default_character + " " + cut_off:
             character = "Default"
 
         embed = discord.Embed()

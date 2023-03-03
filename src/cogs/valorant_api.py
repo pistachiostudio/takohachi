@@ -30,54 +30,59 @@ class Valo(commands.Cog):
 
         # API request
         rank_url = f"https://api.henrikdev.xyz/valorant/v2/mmr/ap/{name}/{tagline}"
-        async with httpx.AsyncClient() as client:
-            res = await client.get(rank_url)
+
+        try:
+            async with httpx.AsyncClient() as client:
+                res = await client.get(rank_url, timeout=10)
+        except httpx.HTTPError as e:
+            await interaction.followup.send(f"⚠ APIリクエストエラーが発生しました。時間を置いて試してみてください。: {e}")
+            return
+
         json = res.json()
 
         # statusが200以外の場合はエラーを返す。
         if json['status'] != 200:
             embed = discord.Embed()
             embed.color = discord.Color.red()
-            embed.title = f"<:p01_pepebrim:951023068275421235>:warning: 何かが間違えているかもしれません。\nあなたの入力: **{name}#{tagline}**"
-            embed.description = f'もう一度試してみてください。:pray:\nError Code: {json["status"]}\nError Msg: {json["errors"][0]["message"]}'
+            embed.title = f"<:p01_pepebrim:951023068275421235>:warning: 入力が間違えているかもしれません。"
+            embed.description = f'**あなたの入力:** {name}#{tagline}\n**Status Code:** {json["status"]}\n**Error Msg:** {json["errors"][0]["message"]}'
             await interaction.followup.send(embed=embed)
             return
 
-        else:
-            current_rank = json['data']['current_data']['currenttierpatched']
-            rank_image_url = json['data']['current_data']['images']['large']
-            ranking_in_tier = json['data']['current_data']['ranking_in_tier']
-            elo = json['data']['current_data']['elo']
+        current_rank = json['data']['current_data']['currenttierpatched']
+        rank_image_url = json['data']['current_data']['images']['large']
+        ranking_in_tier = json['data']['current_data']['ranking_in_tier']
+        elo = json['data']['current_data']['elo']
 
-            current_season_data = json['data']['by_season'][current_season]
-            season_games = current_season_data.get('number_of_games', 0)
-            season_wins = current_season_data.get('wins', 0)
-            season_lose = season_games - season_wins
+        current_season_data = json['data']['by_season'][current_season]
+        season_games = current_season_data.get('number_of_games', 0)
+        season_wins = current_season_data.get('wins', 0)
+        season_lose = season_games - season_wins
 
-            account_url = f"https://api.henrikdev.xyz/valorant/v1/account/{name}/{tagline}"
-            async with httpx.AsyncClient() as client:
-                res = await client.get(account_url)
-            account_json = res.json()
+        account_url = f"https://api.henrikdev.xyz/valorant/v1/account/{name}/{tagline}"
+        async with httpx.AsyncClient() as client:
+            res = await client.get(account_url)
+        account_json = res.json()
 
-            real_name = account_json['data']['name']
-            real_tagline = account_json['data']['tag']
-            account_level = account_json['data']['account_level']
-            card_image_url = account_json['data']['card']['wide']
+        real_name = account_json['data']['name']
+        real_tagline = account_json['data']['tag']
+        account_level = account_json['data']['account_level']
+        card_image_url = account_json['data']['card']['wide']
 
-            embed = discord.Embed()
-            embed.title = f"{real_name} `#{real_tagline}`"
-            embed.color = discord.Color.magenta()
-            embed.description = f"{season_txt} competitive results"
-            embed.set_thumbnail(url=rank_image_url)
-            embed.add_field(name="W/L", value=f"```{season_wins}W/{season_lose}L```")
-            embed.add_field(name="Current rank", value=f"```{current_rank} (+{ranking_in_tier} RR)```")
-            embed.add_field(name="ELO", value=f"```{elo}```")
-            embed.add_field(name="Account Level", value=f"```{account_level}```")
-            embed.set_image(url=card_image_url)
+        embed = discord.Embed()
+        embed.title = f"{real_name} `#{real_tagline}`"
+        embed.color = discord.Color.magenta()
+        embed.description = f"{season_txt} competitive results"
+        embed.set_thumbnail(url=rank_image_url)
+        embed.add_field(name="W/L", value=f"```{season_wins}W/{season_lose}L```")
+        embed.add_field(name="Current rank", value=f"```{current_rank} (+{ranking_in_tier} RR)```")
+        embed.add_field(name="ELO", value=f"```{elo}```")
+        embed.add_field(name="Account Level", value=f"```{account_level}```")
+        embed.set_image(url=card_image_url)
 
-            # interaction.response.deferを使ったのでここはfollowup.sendが必要
-            await interaction.followup.send(embed=embed)
-            return
+        # interaction.response.deferを使ったのでここはfollowup.sendが必要
+        await interaction.followup.send(embed=embed)
+        return
 
     # Valorantの最新ニュースを取ってくるコマンド
     @app_commands.command(
