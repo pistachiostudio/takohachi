@@ -216,53 +216,83 @@ class Currency(commands.Cog):
 
                 # データベースに登録がない場合はbonusを'0'、moneyをamountで新規登録する
                 if len(give_user_money) == 0:
-                    sql = 'insert into currency (user_id,user_name,bonus,money) values(?,?,?,?)'
-                    data = (str(give_user_id), str(give_user), '0', int(amount))
-                    c.execute(sql, data)
-                    db.commit()
+                    # トランザクションを開始
+                    db.execute('BEGIN TRANSACTION')
+                    try:
 
-                    #かつコマンド送信者の所持金からamountをマイナスしてアップデート
-                    sender_update_tuple = (int(update_sender_money), str(command_sender_id),)
-                    sql = 'update currency set money = ? where user_id = ?'
-                    c.execute(sql, sender_update_tuple)
-                    db.commit()
+                        sql = 'insert into currency (user_id,user_name,bonus,money) values(?,?,?,?)'
+                        data = (str(give_user_id), str(give_user), '0', int(amount))
+                        c.execute(sql, data)
+                        db.commit()
 
-                    #送金完了のメッセージを送信
-                    amount_t = '{:,}'.format(amount)
-                    embed = discord.Embed()
-                    embed.color = discord.Color.dark_green()
-                    embed.description = f"<@{command_sender_id}> から <@{give_user_id}> へ {amount_t} pis を送金しました。"
-                    await interaction.response.send_message(embed=embed)
-                    return
+                        #かつコマンド送信者の所持金からamountをマイナスしてアップデート
+                        sender_update_tuple = (int(update_sender_money), str(command_sender_id),)
+                        sql = 'update currency set money = ? where user_id = ?'
+                        c.execute(sql, sender_update_tuple)
+                        db.commit()
+
+                        #送金完了のメッセージを送信
+                        amount_t = '{:,}'.format(amount)
+                        embed = discord.Embed()
+                        embed.color = discord.Color.dark_green()
+                        embed.description = f"<@{command_sender_id}> から <@{give_user_id}> へ {amount_t} pis を送金しました。"
+                        await interaction.response.send_message(embed=embed)
+                        return
+                    except Exception as e:
+                        db.rollback()
+                        #エラーメッセージを送信
+                        amount_t = '{:,}'.format(amount)
+                        embed = discord.Embed()
+                        embed.color = discord.Color.red()
+                        embed.description = "⚠ エラーが発生しました。ロールバックしました。"
+                        await interaction.response.send_message(embed=embed)
+                        return
+                    finally:
+                        db.close()
 
                 # give_userがすでにデータベースに登録がある人の場合
                 else:
-                    #give_userのmoneyに+amountしてアップデート
-                    db = sqlite3.connect(DB_DIRECTORY)
-                    c = db.cursor()
-                    query = 'select money from currency where user_id = ?'
-                    c.execute(query, tuple_give_user_id)
-                    give_user_currency = c.fetchall()
-                    give_user_currency = give_user_currency[0][0]
-                    update_give_user_money = int(give_user_currency) + int(amount)
-                    give_user_update_tuple = (int(update_give_user_money), str(give_user_id),)
-                    sql = 'update currency set money = ? where user_id = ?'
-                    c.execute(sql, give_user_update_tuple)
-                    db.commit()
+                    # トランザクションを開始
+                    db.execute('BEGIN TRANSACTION')
+                    try:
+                        #give_userのmoneyに+amountしてアップデート
+                        db = sqlite3.connect(DB_DIRECTORY)
+                        c = db.cursor()
+                        query = 'select money from currency where user_id = ?'
+                        c.execute(query, tuple_give_user_id)
+                        give_user_currency = c.fetchall()
+                        give_user_currency = give_user_currency[0][0]
+                        update_give_user_money = int(give_user_currency) + int(amount)
+                        give_user_update_tuple = (int(update_give_user_money), str(give_user_id),)
+                        sql = 'update currency set money = ? where user_id = ?'
+                        c.execute(sql, give_user_update_tuple)
+                        db.commit()
 
-                    #かつコマンド送信者の所持金からamountをマイナスしてアップデート
-                    sender_update_tuple = (int(update_sender_money), str(command_sender_id),)
-                    sql = 'update currency set money = ? where user_id = ?'
-                    c.execute(sql, sender_update_tuple)
-                    db.commit()
+                        #かつコマンド送信者の所持金からamountをマイナスしてアップデート
+                        sender_update_tuple = (int(update_sender_money), str(command_sender_id),)
+                        sql = 'update currency set money = ? where user_id = ?'
+                        c.execute(sql, sender_update_tuple)
+                        db.commit()
 
-                    #送金完了のメッセージを送信
-                    amount_t = '{:,}'.format(amount)
-                    embed = discord.Embed()
-                    embed.color = discord.Color.dark_green()
-                    embed.description = f"<@{command_sender_id}> から <@{give_user_id}> へ {amount_t} pis を送金しました。"
-                    await interaction.response.send_message(embed=embed)
-                    return
+                        #送金完了のメッセージを送信
+                        amount_t = '{:,}'.format(amount)
+                        embed = discord.Embed()
+                        embed.color = discord.Color.dark_green()
+                        embed.description = f"<@{command_sender_id}> から <@{give_user_id}> へ {amount_t} pis を送金しました。"
+                        await interaction.response.send_message(embed=embed)
+                        return
+
+                    except Exception as e:
+                        db.rollback()
+                        #エラーメッセージを送信
+                        amount_t = '{:,}'.format(amount)
+                        embed = discord.Embed()
+                        embed.color = discord.Color.red()
+                        embed.description = "⚠ エラーが発生しました。ロールバックしました。"
+                        await interaction.response.send_message(embed=embed)
+
+                    finally:
+                        db.close()
 
 # /rich
 # ここでは金持ちランキングを表示します。
