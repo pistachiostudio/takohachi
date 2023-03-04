@@ -7,7 +7,6 @@ from discord.ext import commands
 
 DB_DIRECTORY = "/data/takohachi.db"
 BONUS_VALUE = 3000
-OWENER_USER_ID = '811842047841140766' #一部の管理者専用のコマンドで使用
 
 class Currency(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -278,30 +277,103 @@ class Currency(commands.Cog):
         interaction: discord.Interaction
     ):
 
-        # money上位5件を上限に返す。
+        # データベースのレコード数を取得する。
         db = sqlite3.connect(DB_DIRECTORY)
         c = db.cursor()
-        query = 'select * from currency order by money desc limit 15'
+        query = 'select count(*) from ' + 'currency'
         c.execute(query)
-        richest_list = c.fetchall()
-        rich_text = f'''
-                    :one: <@{richest_list[0][0]}> {richest_list[0][3]:,} pis
-                    :two: <@{richest_list[1][0]}> {richest_list[1][3]:,} pis
-                    :three: <@{richest_list[2][0]}> {richest_list[2][3]:,} pis
-                    :four: <@{richest_list[3][0]}> {richest_list[3][3]:,} pis
-                    :five: <@{richest_list[4][0]}> {richest_list[4][3]:,} pis
-                    '''
+        record_num = c.fetchall()
+        record_len = int(record_num[0][0])
 
-        embed = discord.Embed()
-        embed.color = discord.Color.dark_green()
-        embed.description = rich_text
-        await interaction.response.send_message(embed=embed)
-        return
+        if record_len == 0:
+            embed = discord.Embed()
+            embed.color = discord.Color.dark_green()
+            embed.title = 'おかねもちらんきんぐ'
+            embed.description = "⚠ 現在、pisを所持しているユーザーはいません。"
+            await interaction.response.send_message(embed=embed)
 
-    """
-# !!shop
+        elif record_len == 1:
+            db = sqlite3.connect(DB_DIRECTORY)
+            c = db.cursor()
+            query = 'select * from currency order by money desc limit 1'
+            c.execute(query)
+            richest_list = c.fetchall()
+            rich_text = f':one: <@{richest_list[0][0]}> {richest_list[0][3]:,} pis'
+            embed = discord.Embed()
+            embed.color = discord.Color.dark_green()
+            embed.title = 'おかねもちらんきんぐ'
+            embed.description = rich_text
+            await interaction.response.send_message(embed=embed)
+            return
+
+        elif record_len == 2:
+            db = sqlite3.connect(DB_DIRECTORY)
+            c = db.cursor()
+            query = 'select * from currency order by money desc limit 2'
+            c.execute(query)
+            richest_list = c.fetchall()
+            rich_text = f':one: <@{richest_list[0][0]}> {richest_list[0][3]:,} pis\n:two: <@{richest_list[1][0]}> {richest_list[1][3]:,} pis'
+            embed = discord.Embed()
+            embed.color = discord.Color.dark_green()
+            embed.title = 'おかねもちらんきんぐ'
+            embed.description = rich_text
+            await interaction.response.send_message(embed=embed)
+            return
+
+        elif record_len == 3:
+            db = sqlite3.connect(DB_DIRECTORY)
+            c = db.cursor()
+            query = 'select * from currency order by money desc limit 3'
+            c.execute(query)
+            richest_list = c.fetchall()
+            rich_text = f':one: <@{richest_list[0][0]}> {richest_list[0][3]:,} pis\n:two: <@{richest_list[1][0]}> {richest_list[1][3]:,} pis\n:three: <@{richest_list[2][0]}> {richest_list[2][3]:,} pis'
+            embed = discord.Embed()
+            embed.color = discord.Color.dark_green()
+            embed.title = 'おかねもちらんきんぐ'
+            embed.description = rich_text
+            await interaction.response.send_message(embed=embed)
+            return
+
+        elif record_len == 4:
+            db = sqlite3.connect(DB_DIRECTORY)
+            c = db.cursor()
+            query = 'select * from currency order by money desc limit 4'
+            c.execute(query)
+            richest_list = c.fetchall()
+            rich_text = f':one: <@{richest_list[0][0]}> {richest_list[0][3]:,} pis\n:two: <@{richest_list[1][0]}> {richest_list[1][3]:,} pis\n:three: <@{richest_list[2][0]}> {richest_list[2][3]:,} pis\n:four: <@{richest_list[3][0]}> {richest_list[3][3]:,} pis'
+            embed = discord.Embed()
+            embed.color = discord.Color.dark_green()
+            embed.title = 'おかねもちらんきんぐ'
+            embed.description = rich_text
+            await interaction.response.send_message(embed=embed)
+            return
+
+        elif record_len >= 5:
+            db = sqlite3.connect(DB_DIRECTORY)
+            c = db.cursor()
+            query = 'select * from currency order by money desc limit 5'
+            c.execute(query)
+            richest_list = c.fetchall()
+            rich_text = f':one: <@{richest_list[0][0]}> {richest_list[0][3]:,} pis\n:two: <@{richest_list[1][0]}> {richest_list[1][3]:,} pis\n:three: <@{richest_list[2][0]}> {richest_list[2][3]:,} pis\n:four: <@{richest_list[3][0]}> {richest_list[3][3]:,} pis\n:five: <@{richest_list[4][0]}> {richest_list[4][3]:,} pis'
+            embed = discord.Embed()
+            embed.color = discord.Color.dark_green()
+            embed.title = 'おかねもちらんきんぐ'
+            embed.description = rich_text
+            await interaction.response.send_message(embed=embed)
+            return
+
+        else:
+            embed = discord.Embed()
+            embed.color = discord.Color.dark_green()
+            embed.description = '⚠ データベースの読み込みに失敗しました。'
+            await interaction.response.send_message(embed=embed)
+            return
+
+
+# /shop
 # shopテーブルに登録されている商品の一覧を返します。
-
+# どのようにするか検討中のため一旦コメントアウト
+    """
     @app_commands.command(
         name='shop',
         description='お店の商品一覧を表示します。'
@@ -457,27 +529,16 @@ class Currency(commands.Cog):
         interaction: discord.Interaction
     ):
 
-        #俺だけが使えるコマンド
-        command_sender_id = str(interaction.user.id)
-        if command_sender_id == OWENER_USER_ID:
-
-            db = sqlite3.connect(DB_DIRECTORY)
-            c = db.cursor()
-            query = 'delete from currency'
-            c.execute(query)
-            db.commit()
-            embed = discord.Embed()
-            embed.color = discord.Color.dark_green()
-            embed.description = f"データベースのテーブル currency のデータをすべて削除しました。"
-            await interaction.response.send_message(embed=embed)
-            return
-
-        else:
-            embed = discord.Embed()
-            embed.color = discord.Color.dark_green()
-            embed.description = 'そのコマンドは許可されていません。'
-            await interaction.response.send_message(embed=embed)
-            return
+        db = sqlite3.connect(DB_DIRECTORY)
+        c = db.cursor()
+        query = 'delete from currency'
+        c.execute(query)
+        db.commit()
+        embed = discord.Embed()
+        embed.color = discord.Color.dark_green()
+        embed.description = f"データベースのテーブル currency のデータをすべて削除しました。"
+        await interaction.response.send_message(embed=embed)
+        return
 
 
 # /givebonus <@user_mention>
@@ -500,49 +561,37 @@ class Currency(commands.Cog):
         bonus_give_user: discord.Member
     ):
 
-        #管理者だけが使えるコマンド
-        command_sender_id = str(interaction.user.id)
-        if command_sender_id == OWENER_USER_ID:
+        # user_idカラムからuser_idを探す
+        give_user_id = str(bonus_give_user.id)
+        tuple_give_user_id = (give_user_id,)
+        db = sqlite3.connect(DB_DIRECTORY)
+        c = db.cursor()
+        query = 'select * from currency where user_id = ? limit 1'
+        c.execute(query,tuple_give_user_id)
+        istrue = c.fetchall()
 
-            # user_idカラムからuser_idを探す
-            give_user_id = str(bonus_give_user.id)
-            tuple_give_user_id = (give_user_id,)
-            db = sqlite3.connect(DB_DIRECTORY)
-            c = db.cursor()
-            query = 'select * from currency where user_id = ? limit 1'
-            c.execute(query,tuple_give_user_id)
-            istrue = c.fetchall()
+        # user_idカラムにuser_idがない場合（dbに新規登録）はbonus 1でBONUS_VALUE円をもらい新規登録
+        if len(istrue) == 0:
+            sql = 'insert into currency (user_id,user_name,bonus,money) values(?,?,?,?)'
+            data = (str(give_user_id), str(bonus_give_user), '1', BONUS_VALUE)
+            c.execute(sql, data)
+            db.commit()
 
-            # user_idカラムにuser_idがない場合（dbに新規登録）はbonus 1でBONUS_VALUE円をもらい新規登録
-            if len(istrue) == 0:
-                sql = 'insert into currency (user_id,user_name,bonus,money) values(?,?,?,?)'
-                data = (str(give_user_id), str(bonus_give_user), '1', BONUS_VALUE)
-                c.execute(sql, data)
-                db.commit()
-
-                BONUS_VALUE_t = '{:,}'.format(BONUS_VALUE)
-                embed = discord.Embed()
-                embed.color = discord.Color.dark_green()
-                embed.description = f"<@{give_user_id}> に{BONUS_VALUE_t} pis ボーナスを配布しました。"
-                await interaction.response.send_message(embed=embed)
-                return
-
-            else:
-                embed = discord.Embed()
-                embed.color = discord.Color.dark_green()
-                embed.description = f"<@{give_user_id}> はすでにボーナスを受け取っています。"
-                await interaction.response.send_message(embed=embed)
-                return
+            BONUS_VALUE_t = '{:,}'.format(BONUS_VALUE)
+            embed = discord.Embed()
+            embed.color = discord.Color.dark_green()
+            embed.description = f"<@{give_user_id}> に{BONUS_VALUE_t} pis ボーナスを配布しました。"
+            await interaction.response.send_message(embed=embed)
+            return
 
         else:
             embed = discord.Embed()
             embed.color = discord.Color.dark_green()
-            embed.description = 'そのコマンドは許可されていません。'
+            embed.description = f"<@{give_user_id}> はすでにボーナスを受け取っています。"
             await interaction.response.send_message(embed=embed)
             return
 
-
-# !!setmoney <amount> <bonus_flag> <@user_mention>
+# /setmoney <amount> <bonus_flag> <@user_mention>
 # 管理者がコマンドで与えることもできるようにする
 
     @app_commands.command(
@@ -573,63 +622,51 @@ class Currency(commands.Cog):
         set_user: discord.Member
     ):
 
-        #俺だけが使えるコマンド
-        command_sender_id = str(interaction.user.id)
-        if command_sender_id == OWENER_USER_ID:
+        #bonusは0か1しかセットできない
+        if bonus == '0' or bonus ==  '1':
+            # user_idカラムからuser_idを探す
+            set_user_id = str(set_user.id)
+            tuple_set_user_id = (set_user_id,)
+            db = sqlite3.connect(DB_DIRECTORY)
+            c = db.cursor()
+            query = 'select * from currency where user_id = ? limit 1'
+            c.execute(query,tuple_set_user_id)
+            istrue = c.fetchall()
 
-            #bonusは0か1しかセットできない
-            if bonus == '0' or bonus ==  '1':
-                # user_idカラムからuser_idを探す
-                set_user_id = str(set_user.id)
-                tuple_set_user_id = (set_user_id,)
-                db = sqlite3.connect(DB_DIRECTORY)
-                c = db.cursor()
-                query = 'select * from currency where user_id = ? limit 1'
-                c.execute(query,tuple_set_user_id)
-                istrue = c.fetchall()
+            # 新規登録の場合
+            if len(istrue) == 0:
+                sql = 'insert into currency (user_id,user_name,bonus,money) values(?,?,?,?)'
+                data = (str(set_user_id), str(set_user), str(bonus), int(amount))
+                c.execute(sql, data)
+                db.commit()
 
-                # 新規登録の場合
-                if len(istrue) == 0:
-                    sql = 'insert into currency (user_id,user_name,bonus,money) values(?,?,?,?)'
-                    data = (str(set_user_id), str(set_user), str(bonus), int(amount))
-                    c.execute(sql, data)
-                    db.commit()
-
-                    amount_t = '{:,}'.format(amount)
-                    embed = discord.Embed()
-                    embed.color = discord.Color.dark_green()
-                    embed.description = f"<@{set_user_id}> に{amount_t} pis セットしました。bonus_flagは{bonus}です。"
-                    await interaction.response.send_message(embed=embed)
-                    return
-
-                # 新規登録ではない場合も更新する
-                else:
-                    set_update_tuple = (str(bonus), int(amount), str(set_user_id))
-                    sql = 'update currency set bonus = ?, money = ? where user_id = ?'
-                    c.execute(sql, set_update_tuple)
-                    db.commit()
-
-                    amount_t = '{:,}'.format(amount)
-                    embed = discord.Embed()
-                    embed.color = discord.Color.dark_green()
-                    embed.description = f"<@{set_user_id}> の所持金{amount_t} pisにを更新しました。bonus_flagは{bonus}です。"
-                    await interaction.response.send_message(embed=embed)
-                    return
-
-            else:
+                amount_t = '{:,}'.format(amount)
                 embed = discord.Embed()
                 embed.color = discord.Color.dark_green()
-                embed.description = f"bonus_flagは0か1以外設定できません。"
+                embed.description = f"<@{set_user_id}> に{amount_t} pis セットしました。bonus_flagは{bonus}です。"
+                await interaction.response.send_message(embed=embed)
+                return
+
+            # 新規登録ではない場合も更新する
+            else:
+                set_update_tuple = (str(bonus), int(amount), str(set_user_id))
+                sql = 'update currency set bonus = ?, money = ? where user_id = ?'
+                c.execute(sql, set_update_tuple)
+                db.commit()
+
+                amount_t = '{:,}'.format(amount)
+                embed = discord.Embed()
+                embed.color = discord.Color.dark_green()
+                embed.description = f"<@{set_user_id}> の所持金{amount_t} pisにを更新しました。bonus_flagは{bonus}です。"
                 await interaction.response.send_message(embed=embed)
                 return
 
         else:
             embed = discord.Embed()
             embed.color = discord.Color.dark_green()
-            embed.description = 'そのコマンドは許可されていません。'
+            embed.description = f"bonus_flagは0か1以外設定できません。"
             await interaction.response.send_message(embed=embed)
             return
-
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(
