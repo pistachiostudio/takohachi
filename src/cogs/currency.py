@@ -49,6 +49,8 @@ class Currency(commands.Cog):
             embed.color = discord.Color.green()
             embed.description = f":moneybag:<@{sender_id}>はボーナスを獲得しました。"
             await interaction.response.send_message(embed=embed)
+            db.close()
+            return
 
         else:
             # user_idがある場合はbonusカラムをチェックする
@@ -64,6 +66,7 @@ class Currency(commands.Cog):
                 embed.color = discord.Color.red()
                 embed.description = f":warning:<@{sender_id}>はすでにボーナスを獲得しています。ボーナスは一度しかもらえません。"
                 await interaction.response.send_message(embed=embed)
+                db.close()
                 return
 
             # bonusが0の場合はmoneyの値にBONUS_VALUEを足して更新する
@@ -90,6 +93,7 @@ class Currency(commands.Cog):
                 embed.color = discord.Color.green()
                 embed.description = f":moneybag:<@{sender_id}>はボーナスを獲得し、所持金の合計が {update_user_money_t} pisになりました。"
                 await interaction.response.send_message(embed=embed)
+                db.close()
                 return
 
 # /wallet
@@ -125,6 +129,7 @@ class Currency(commands.Cog):
             embed.color = discord.Color.dark_green()
             embed.description = f"<@{cmd_user_id}> の所持金は {cmd_user_money} pisです。"
             await interaction.response.send_message(embed=embed)
+            db.close()
             return
 
         else:
@@ -141,6 +146,7 @@ class Currency(commands.Cog):
                 embed.color = discord.Color.dark_green()
                 embed.description = f"<@{user}> の所持金は 0 pisです。"
                 await interaction.response.send_message(embed=embed)
+                db.close()
                 return
             # データベースの検索結果がある場合はそのメンションのuser_idのmoneyを返す。
             else:
@@ -150,6 +156,7 @@ class Currency(commands.Cog):
                 embed.color = discord.Color.dark_green()
                 embed.description = f"<@{user}> の所持金は {cmd_user_money} pisです。"
                 await interaction.response.send_message(embed=embed)
+                db.close()
                 return
 
 # /pay <amount> <mention>
@@ -191,6 +198,7 @@ class Currency(commands.Cog):
             embed.color = discord.Color.dark_green()
             embed.description = f":warning:自分に送金することはできません。"
             await interaction.response.send_message(embed=embed)
+            db.close()
             return
 
         else:
@@ -201,6 +209,7 @@ class Currency(commands.Cog):
                 embed.color = discord.Color.dark_green()
                 embed.description = f"所持金が足りません。\n<@{command_sender_id}> の所持金は {sender_money_t} pisです。"
                 await interaction.response.send_message(embed=embed)
+                db.close()
                 return
 
             #お金が足りる場合
@@ -290,6 +299,7 @@ class Currency(commands.Cog):
                         embed.color = discord.Color.red()
                         embed.description = "⚠ エラーが発生しました。ロールバックしました。"
                         await interaction.response.send_message(embed=embed)
+                        return
 
                     finally:
                         db.close()
@@ -321,6 +331,8 @@ class Currency(commands.Cog):
             embed.title = 'おかねもちらんきんぐ'
             embed.description = "⚠ 現在、pisを所持しているユーザーはいません。"
             await interaction.response.send_message(embed=embed)
+            db.close()
+            return
 
         elif record_len == 1:
             db = sqlite3.connect(DB_DIRECTORY)
@@ -334,6 +346,7 @@ class Currency(commands.Cog):
             embed.title = 'おかねもちらんきんぐ'
             embed.description = rich_text
             await interaction.response.send_message(embed=embed)
+            db.close()
             return
 
         elif record_len == 2:
@@ -348,6 +361,7 @@ class Currency(commands.Cog):
             embed.title = 'おかねもちらんきんぐ'
             embed.description = rich_text
             await interaction.response.send_message(embed=embed)
+            db.close()
             return
 
         elif record_len == 3:
@@ -362,6 +376,7 @@ class Currency(commands.Cog):
             embed.title = 'おかねもちらんきんぐ'
             embed.description = rich_text
             await interaction.response.send_message(embed=embed)
+            db.close()
             return
 
         elif record_len == 4:
@@ -376,6 +391,7 @@ class Currency(commands.Cog):
             embed.title = 'おかねもちらんきんぐ'
             embed.description = rich_text
             await interaction.response.send_message(embed=embed)
+            db.close()
             return
 
         elif record_len >= 5:
@@ -390,6 +406,7 @@ class Currency(commands.Cog):
             embed.title = 'おかねもちらんきんぐ'
             embed.description = rich_text
             await interaction.response.send_message(embed=embed)
+            db.close()
             return
 
         else:
@@ -397,6 +414,7 @@ class Currency(commands.Cog):
             embed.color = discord.Color.dark_green()
             embed.description = '⚠ データベースの読み込みに失敗しました。'
             await interaction.response.send_message(embed=embed)
+            db.close()
             return
 
 
@@ -568,6 +586,7 @@ class Currency(commands.Cog):
         embed.color = discord.Color.dark_green()
         embed.description = f"データベースのテーブル currency のデータをすべて削除しました。"
         await interaction.response.send_message(embed=embed)
+        db.close()
         return
 
 
@@ -612,6 +631,7 @@ class Currency(commands.Cog):
             embed.color = discord.Color.dark_green()
             embed.description = f"<@{give_user_id}> に{BONUS_VALUE_t} pis ボーナスを配布しました。"
             await interaction.response.send_message(embed=embed)
+            db.close()
             return
 
         else:
@@ -619,6 +639,7 @@ class Currency(commands.Cog):
             embed.color = discord.Color.dark_green()
             embed.description = f"<@{give_user_id}> はすでにボーナスを受け取っています。"
             await interaction.response.send_message(embed=embed)
+            db.close()
             return
 
 # /setmoney <amount> <bonus_flag> <@user_mention>
@@ -675,6 +696,7 @@ class Currency(commands.Cog):
                 embed.color = discord.Color.dark_green()
                 embed.description = f"<@{set_user_id}> に{amount_t} pis セットしました。bonus_flagは{bonus}です。"
                 await interaction.response.send_message(embed=embed)
+                db.close()
                 return
 
             # 新規登録ではない場合も更新する
@@ -689,6 +711,7 @@ class Currency(commands.Cog):
                 embed.color = discord.Color.dark_green()
                 embed.description = f"<@{set_user_id}> の所持金{amount_t} pisにを更新しました。bonus_flagは{bonus}です。"
                 await interaction.response.send_message(embed=embed)
+                db.close()
                 return
 
         else:
@@ -696,6 +719,7 @@ class Currency(commands.Cog):
             embed.color = discord.Color.dark_green()
             embed.description = f"bonus_flagは0か1以外設定できません。"
             await interaction.response.send_message(embed=embed)
+            db.close()
             return
 
 async def setup(bot: commands.Bot):
