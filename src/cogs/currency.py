@@ -178,6 +178,12 @@ class Currency(commands.Cog):
         amount: int,
         give_user: discord.Member
     ):
+        if amount <= 0:
+            embed = discord.Embed()
+            embed.color = discord.Color.dark_red()
+            embed.description = "⚠ 0pis 以下の金額は送金できません。"
+            await interaction.response.send_message(embed=embed)
+            return
 
         # コマンド送信者のID
         command_sender_id = str(interaction.user.id)
