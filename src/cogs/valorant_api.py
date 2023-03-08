@@ -25,7 +25,7 @@ class Valo(commands.Cog):
         # interactionは3秒以内にレスポンスしないといけないとエラーになるのでこの処理を入れる。
         await interaction.response.defer()
 
-        current_season = "e6a1"
+        current_season = "e6a2"
         season_txt = (current_season.replace("e", "Episode ").replace("a", " Act "))
 
         # API request
