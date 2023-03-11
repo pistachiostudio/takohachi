@@ -6,7 +6,7 @@ import discord
 from discord.ext import commands
 
 from settings import (
-    ADD_SSL_CLIENT_SECRETS,
+    ADD_SSL_CLIENT_SECRETS_PATH,
     CLIENT_SECRETS_PATH,
 )
 
@@ -37,7 +37,7 @@ def init():
 
     # addssl用のjsonファイルを生成
     addssl_client_secrets = os.environ['TAKOHACHI_JSON']
-    with open(ADD_SSL_CLIENT_SECRETS, 'w') as f:
+    with open(ADD_SSL_CLIENT_SECRETS_PATH, 'w') as f:
         f.write(addssl_client_secrets)
 
 
