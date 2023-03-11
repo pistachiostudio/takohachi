@@ -57,9 +57,9 @@ class MyBot(commands.Bot):
             "cogs.apex_tracker",
             "cogs.bath",
             "cogs.card_list",
-            "cogs.currency",
+            #"cogs.currency",
             "cogs.dice",
-            #"cogs.gakigo", マージする前にコメントアウト外す。(現状はProductionと二重になるため)
+            "cogs.gakigo",
             #"cogs.happy_new_year",
             "cogs.marimo",
             "cogs.message_count",
