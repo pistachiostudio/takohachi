@@ -20,9 +20,10 @@ ffmpeg.exe
 ffplay.exe
 ffprobe.exe
 lantest.py
-create_database.py
 app.json
 logs/
+dbrecord.py
+dbcreate.py
 
 # db file dir
 data

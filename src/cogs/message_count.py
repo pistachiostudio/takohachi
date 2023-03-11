@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta, timezone
-from typing import Any
 
 import discord
+from discord import app_commands
 from discord.ext import commands
 
 
@@ -9,10 +9,19 @@ class MessageCount(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.command()
-    async def count(self, ctx, channel: discord.TextChannel=None):
+    @app_commands.command(
+        name="count",
+        description="このチャンネルの現在のメッセージ数を数えます。"
+    )
+    async def count(
+        self,
+        interaction: discord.Interaction,
+    ):
 
-        channel = channel or ctx.channel
+        # interactionは3秒以内にレスポンスしないといけないとエラーになるのでこの処理を入れる。
+        await interaction.response.defer()
+
+        channel = interaction.channel
         count = 0
         async for _ in channel.history(limit=None):
             count += 1
@@ -23,11 +32,20 @@ class MessageCount(commands.Cog):
         embed.timestamp = datetime.now(JST)
         embed.color = discord.Color.greyple()
         embed.description = f"このチャンネルには現在 **{d_count}** 件のメッセージがあります。"
-        await ctx.send(embed=embed)
+        await interaction.followup.send(embed=embed)
 
 
-    @commands.command()
-    async def countall(self, ctx, channel: discord.TextChannel=None):
+    @app_commands.command(
+        name="countall",
+        description="犬～恐竜_txtの現在のメッセージ数を数えます。"
+    )
+
+    async def countall(
+        self,
+        interaction: discord.Interaction
+    ):
+        # interactionは3秒以内にレスポンスしないといけないとエラーになるのでこの処理を入れる。
+        await interaction.response.defer()
 
         inu_id = self.bot.get_channel(762575939623452682) #犬
         neko_id = self.bot.get_channel(762576579507126273) #猫
@@ -55,8 +73,11 @@ class MessageCount(commands.Cog):
         embed.timestamp = datetime.now(JST)
         embed.color = discord.Color.blurple()
         embed.description = f"犬～恐竜_txtには現在合計 **{ttl_count}** 件のメッセージがあります。"
-        await ctx.send(embed=embed)
+        await interaction.followup.send(embed=embed)
 
 
 async def setup(bot: commands.Bot):
-    await bot.add_cog(MessageCount(bot))
+    await bot.add_cog(
+        MessageCount(bot),
+        guilds = [discord.Object(id=731366036649279518)]
+    )

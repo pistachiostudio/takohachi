@@ -1,7 +1,8 @@
 import random
 
 import discord
-import requests
+import httpx
+from discord import app_commands
 from discord.ext import commands
 
 
@@ -9,12 +10,21 @@ class Dice(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.command()
-    async def d(self, ctx):
+    @app_commands.command(
+        name="dice",
+        description="Valorantのマップをランダムに返します。"
+    )
+    async def d(
+        self,
+        interaction: discord.Interaction
+    ):
+
+        # interactionは3秒以内にレスポンスしないといけないとエラーになるのでこの処理を入れる。
+        await interaction.response.defer()
 
         url = 'https://valorant-api.com/v1/maps'
-
-        res = requests.get(url)
+        async with httpx.AsyncClient() as client:
+            res = await client.get(url)
         json = res.json()
 
         data = json["data"]
@@ -38,7 +48,10 @@ class Dice(commands.Cog):
         embed.set_image(url=listViewIcon)
         # embed.set_thumbnail(url=displayIcon)
         embed.color = discord.Color.dark_blue()
-        await ctx.send(embed=embed)
+        await interaction.followup.send(embed=embed)
 
 async def setup(bot: commands.Bot):
-    await bot.add_cog(Dice(bot))
+    await bot.add_cog(
+        Dice(bot),
+        guilds = [discord.Object(id=731366036649279518)]
+    )

@@ -1,7 +1,9 @@
 from datetime import datetime, timedelta, timezone
 
 import discord
+from discord import app_commands
 from discord.ext import commands
+
 from libs.utils import get_what_today
 
 
@@ -9,8 +11,17 @@ class WhatToday(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.command()
-    async def whatToday(self, ctx):
+    @app_commands.command(
+        name='wt',
+        description='今日はなんの日？'
+    )
+    async def whatToday(
+        self,
+        interaction: discord.Interaction
+    ):
+        # interactionは3秒以内にレスポンスしないといけないとエラーになるのでこの処理を入れる。
+        await interaction.response.defer()
+
         # タイムゾーンの生成
         JST = timezone(timedelta(hours=+9), 'JST')
 
@@ -24,10 +35,12 @@ class WhatToday(commands.Cog):
         embed = discord.Embed()
         embed.timestamp = datetime.now(JST)
         embed.color = discord.Color.green()
-        embed.title = f'日はなんの日？'
+        embed.title = f'今日はなんの日？'
         embed.description = f"{this_month}月{this_day}日\n{result}"
-        await ctx.send(embed=embed)
-
+        await interaction.followup.send(embed=embed)
 
 async def setup(bot: commands.Bot):
-    await bot.add_cog(WhatToday(bot))
+    await bot.add_cog(
+        WhatToday(bot),
+        guilds = [discord.Object(id=731366036649279518)]
+    )

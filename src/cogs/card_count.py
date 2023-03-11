@@ -1,6 +1,5 @@
 import os
 from datetime import datetime, timedelta, timezone
-from typing import Any
 
 import gspread
 from discord.ext import commands
@@ -33,8 +32,9 @@ class CardCount(commands.Cog):
         siren_list = [siren_red, siren_blue, siren_purple, siren_emoji]
 
         #count_list共通処理
-        if str(payload.emoji) in count_list:
-
+        if str(payload.emoji) not in count_list:
+            return
+        else:
             channel = self.bot.get_channel(payload.channel_id)
             message = await channel.fetch_message(payload.message_id)
             author_name = message.author
@@ -88,7 +88,8 @@ class CardCount(commands.Cog):
                     update_value = int(cell_value) + 1
                     worksheet.update_cell(cell.row, update_col, update_value)
 
-
+            #E列のTTLを降順でソートする Sort sheet A -> Z by column 'E'
+            worksheet.sort((5, 'des'))
 
             #絵文字がレッドカードの場合
             if str(payload.emoji) in red_list:
@@ -110,7 +111,8 @@ class CardCount(commands.Cog):
                     update_value = int(cell_value) + 1
                     worksheet.update_cell(cell.row, update_col, update_value)
 
-
+            #E列のTTLを降順でソートする Sort sheet A -> Z by column 'E'
+            worksheet.sort((5, 'des'))
 
             #絵文字がパトランプの場合
             if str(payload.emoji) in siren_list:
@@ -131,9 +133,8 @@ class CardCount(commands.Cog):
                     update_value = int(cell_value) + 1
                     worksheet.update_cell(cell.row, update_col, update_value)
 
-
-        #E列のTTLを降順でソートする Sort sheet A -> Z by column 'E'
-        worksheet.sort((5, 'des'))
+            #E列のTTLを降順でソートする Sort sheet A -> Z by column 'E'
+            worksheet.sort((5, 'des'))
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(CardCount(bot))

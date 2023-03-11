@@ -8,6 +8,7 @@ import discord
 import gspread
 import requests
 from bs4 import BeautifulSoup
+from discord import app_commands
 from discord.ext import commands
 #ServiceAccountCredentials：Googleの各サービスへアクセスできるservice変数を生成。
 from oauth2client.service_account import ServiceAccountCredentials
@@ -17,19 +18,34 @@ class SSLAdd(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.command()
-    async def addssl(self, ctx, addurl):
+    @app_commands.command(
+        name="addssl",
+        description="怠けたNot SSLを監視しましょう。"
+    )
+    @app_commands.describe(
+        add_url="監視DBに登録したいURLを記載してください。"
+    )
+    async def addssl(
+        self,
+        interaction: discord.Interaction,
+        add_url: str
+    ):
+
+        # interactionは3秒以内にレスポンスしないといけないとエラーになるのでこの処理を入れる。
+        await interaction.response.defer()
 
         #最初にaddssl引数がURLかを判断し、URL出ない場合はエラーを返す
-        if not f"{addurl}".startswith('http'):
-            await ctx.send(f"URLを指定してください！")
+        if not add_url.startswith('http'):
+            await interaction.followup.send(
+                f":warning: URLを指定してください！",
+                ephemeral=True
+            )
 
         #httpから始まる文字列の場合は処理をすすめる
         else:
-            url = f"{addurl}"
             session = requests.Session()
             session.trust_env = False
-            response = requests.get(f"{addurl}")
+            response = requests.get(add_url)
             soup = BeautifulSoup(response.content, 'html.parser')
             #タイトルをゲットし、前後の空白や改行をすべて取る（ナオトインティライミのHPは前後に空白が16個ずつも入っていた！ふざけるな！）
             title = soup.find('title').text.strip()
@@ -55,7 +71,7 @@ class SSLAdd(commands.Cog):
             worksheet = gc.open_by_key(SSLADD_GSP_KEY).sheet1
 
             #//C列に記載するドメインを抽出
-            out = urlparse(addurl)
+            out = urlparse(add_url)
             domain = out.hostname
 
             #ワークシートのデータが入っている行数ゲットする
@@ -67,18 +83,14 @@ class SSLAdd(commands.Cog):
             #今回登録したURLの便宜的ドメインが登録されているC列のドメインリストにないかチェック。すでに登録されていた場合はエラーを返す
             for l in domain_lists:
                 if domain in l:
-                    await ctx.send('このドメインはすでに登録されています！')
+                    await interaction.followup.send('このドメインはすでに登録されています！')
                     break;
 
             else:
                 #新規登録と判断できたらgspに書き込みを行う
                 # A, B, C列にappend
-                export_value = [plain_title, addurl, domain]
+                export_value = [plain_title, add_url, domain]
                 worksheet.append_row(export_value)
-
-                #自分の最初のコマンドに絵文字リアクション
-                message = ctx.message
-                await message.add_reaction('✅')
 
                 #その後レスポンスメッセージ
                 embed = discord.Embed()
@@ -86,7 +98,10 @@ class SSLAdd(commands.Cog):
                 embed.timestamp = datetime.now(JST)
                 embed.color = discord.Color.green()
                 embed.description = f"**「{plain_title}」** を監視いたします。\n\n[SSL Checker](https://ssl-checker.vercel.app/) | [SSLC Database](https://docs.google.com/spreadsheets/d/1c25pvMyjQ89OBCvB9whCQQLM_BPXKyY7umsj5wmpP2k/edit?usp=sharing)"
-                await ctx.send(embed=embed)
+                await interaction.followup.send(embed=embed)
 
 async def setup(bot: commands.Bot):
-    await bot.add_cog(SSLAdd(bot))
+    await bot.add_cog(
+        SSLAdd(bot),
+        guilds = [discord.Object(id=731366036649279518)]
+    )

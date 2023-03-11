@@ -1,5 +1,6 @@
 import discord
-import requests
+import httpx
+from discord import app_commands
 from discord.ext import commands
 
 
@@ -7,76 +8,67 @@ class Valo(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.command()
-    async def vr(self, ctx, *, user):
+    @app_commands.command(
+        name="vr",
+        description="Valorantのランクなどを表示します。"
+    )
+    @app_commands.describe(
+        name="Valorantのプレイヤー名を入れてください。ex) 植 物、ウィングマン太郎、The Manなど",
+        tagline="#以降のタグを入れてください。#は不要です。"
+    )
+    async def vr(
+        self,
+        interaction: discord.Interaction,
+        name: str,
+        tagline: str
+    ):
+        # interactionは3秒以内にレスポンスしないといけないとエラーになるのでこの処理を入れる。
+        await interaction.response.defer()
 
-        print(user)
-
-        current_season = "e5a3"
-
+        current_season = "e6a2"
         season_txt = (current_season.replace("e", "Episode ").replace("a", " Act "))
 
-        # user name & tagline の入力を検証
-        if '#' not in user:
-            embed = discord.Embed()
-            embed.color = discord.Color.red()
-            embed.title = "<:p01_pepebrim:951023068275421235>:warning: Enter NAME and tagline separated by #!"
-            embed.description = 'ex): 植 物#help、快楽亭ブラック#三代目、ミスターポーゴ#imoya'
-            await ctx.send(embed=embed, delete_after=10)
-            message = ctx.message
-            await message.delete()
-            return
-
-        contents = user.split('#')
-        if len(contents) != 2:
-            embed = discord.Embed()
-            embed.color = discord.Color.red()
-            embed.title = "<:p01_pepebrim:951023068275421235>:warning: Invalid input value"
-            embed.description = 'ex): 植 物#help、快楽亭ブラック#三代目、ミスターポーゴ#imoya'
-            await ctx.send(embed=embed, delete_after=10)
-            message = ctx.message
-            await message.delete()
-            return
-
-        username = contents[0]
-        tagline = contents[1]
-
         # API request
-        async with ctx.typing():
-            try:
-                rank_url = f"https://api.henrikdev.xyz/valorant/v2/mmr/ap/{username}/{tagline}"
-                res = requests.get(rank_url)
-                json = res.json()
+        rank_url = f"https://api.henrikdev.xyz/valorant/v2/mmr/ap/{name}/{tagline}"
 
-                current_rank = json['data']['current_data']['currenttierpatched']
-                rank_image_url = json['data']['current_data']['images']['large']
-                ranking_in_tier = json['data']['current_data']['ranking_in_tier']
-                elo = json['data']['current_data']['elo']
+        try:
+            async with httpx.AsyncClient() as client:
+                res = await client.get(rank_url, timeout=10)
+        except httpx.HTTPError as e:
+            await interaction.followup.send(f"⚠ APIリクエストエラーが発生しました。時間を置いて試してみてください。: {e}")
+            return
 
-                current_season_data = json['data']['by_season'][current_season]
-                season_games = current_season_data.get('number_of_games', 0)
-                season_wins = current_season_data.get('wins', 0)
-                season_lose = season_games - season_wins
+        json = res.json()
 
-                account_url = f"https://api.henrikdev.xyz/valorant/v1/account/{username}/{tagline}"
-                res = requests.get(account_url)
-                account_json = res.json()
+        # statusが200以外の場合はエラーを返す。
+        if json['status'] != 200:
+            embed = discord.Embed()
+            embed.color = discord.Color.red()
+            embed.title = f"<:p01_pepebrim:951023068275421235>:warning: 入力が間違えているかもしれません。"
+            embed.description = f'**あなたの入力:** {name}#{tagline}\n**Status Code:** {json["status"]}\n**Error Msg:** {json["errors"][0]["message"]}'
+            await interaction.followup.send(embed=embed)
+            return
 
+        current_rank = json['data']['current_data']['currenttierpatched']
+        rank_image_url = json['data']['current_data']['images']['large']
+        ranking_in_tier = json['data']['current_data']['ranking_in_tier']
+        elo = json['data']['current_data']['elo']
 
-                real_name = account_json['data']['name']
-                real_tagline = account_json['data']['tag']
-                account_level = account_json['data']['account_level']
-                card_image_url = account_json['data']['card']['wide']
+        current_season_data = json['data']['by_season'][current_season]
+        season_games = current_season_data.get('number_of_games', 0)
+        season_wins = current_season_data.get('wins', 0)
+        season_lose = season_games - season_wins
 
-            except KeyError:
-                embed = discord.Embed()
-                embed.color = discord.Color.red()
-                embed.title = "<:p01_pepebrim:951023068275421235>:warning: Either `username` or `tagline` is wrong..."
-                embed.description = f'Check your account & `!!valo` command again:pray: '
-                await ctx.send(embed=embed, delete_after=10)
-                return
+        account_url = f"https://api.henrikdev.xyz/valorant/v1/account/{name}/{tagline}"
+        async with httpx.AsyncClient() as client:
+            res = await client.get(account_url)
+        account_json = res.json()
 
-        # Embed
+        real_name = account_json['data']['name']
+        real_tagline = account_json['data']['tag']
+        account_level = account_json['data']['account_level']
+        card_image_url = account_json['data']['card']['wide']
+
         embed = discord.Embed()
         embed.title = f"{real_name} `#{real_tagline}`"
         embed.color = discord.Color.magenta()
@@ -87,53 +79,67 @@ class Valo(commands.Cog):
         embed.add_field(name="ELO", value=f"```{elo}```")
         embed.add_field(name="Account Level", value=f"```{account_level}```")
         embed.set_image(url=card_image_url)
-        await ctx.send(embed=embed)
+
+        # interaction.response.deferを使ったのでここはfollowup.sendが必要
+        await interaction.followup.send(embed=embed)
         return
 
-
     # Valorantの最新ニュースを取ってくるコマンド
-    @commands.command()
-    async def vnews(self, ctx):
+    @app_commands.command(
+        name="vnews",
+        description="Valorantの最新ニュースを取得します。"
+    )
 
-        async with ctx.typing():
+    async def vnews(
+        self,
+        interaction: discord.Interaction
+    ):
+        # interactionは3秒以内にレスポンスしないといけないとエラーになるのでこの処理で待たせる。
+        await interaction.response.defer()
 
-            news_url = "https://api.henrikdev.xyz/valorant/v1/website/ja-jp"
-            res = requests.get(news_url)
-            json = res.json()
+        news_url = "https://api.henrikdev.xyz/valorant/v1/website/ja-jp"
+        async with httpx.AsyncClient() as client:
+            res = await client.get(news_url)
+        json = res.json()
 
-            news_01_title = json['data'][0]['title']
-            news_01_url = json['data'][0]['url']
-            news_01_external = json['data'][0]['external_link']
-            news_01_image = json['data'][0]['banner_url']
+        news_01_title = json['data'][0]['title']
+        news_01_url = json['data'][0]['url']
+        news_01_external = json['data'][0]['external_link']
+        news_01_image = json['data'][0]['banner_url']
 
-            news_02_title = json['data'][1]['title']
-            news_02_url = json['data'][1]['url']
-            news_02_external = json['data'][1]['external_link']
+        news_02_title = json['data'][1]['title']
+        news_02_url = json['data'][1]['url']
+        news_02_external = json['data'][1]['external_link']
 
-            news_03_title = json['data'][2]['title']
-            news_03_url = json['data'][2]['url']
-            news_03_external = json['data'][2]['external_link']
+        news_03_title = json['data'][2]['title']
+        news_03_url = json['data'][2]['url']
+        news_03_external = json['data'][2]['external_link']
 
-            news_04_title = json['data'][3]['title']
-            news_04_url = json['data'][3]['url']
-            news_04_external = json['data'][3]['external_link']
+        news_04_title = json['data'][3]['title']
+        news_04_url = json['data'][3]['url']
+        news_04_external = json['data'][3]['external_link']
 
-            if news_01_external != None:
-                news_01_url = news_01_external
-            if news_02_external != None:
-                news_02_url = news_02_external
-            if news_03_external != None:
-                news_03_url = news_03_external
-            if news_01_external != None:
-                news_04_url = news_04_external
+        if news_01_external != None:
+            news_01_url = news_01_external
+        if news_02_external != None:
+            news_02_url = news_02_external
+        if news_03_external != None:
+            news_03_url = news_03_external
+        if news_01_external != None:
+            news_04_url = news_04_external
 
         # Embed
         embed = discord.Embed()
         embed.title = "Valorant Latest News"
         embed.color = discord.Color.purple()
-        embed.description = f"- [{news_01_title}]({news_01_url})\n\n- [{news_02_title}]({news_02_url})\n\n- [{news_03_title}]({news_03_url})\n\n- [{news_04_title}]({news_04_url})"
+        embed.description = f"- [{news_01_title}]({news_01_url})\n\n- [{news_02_title}]({news_02_url})\n\n- [{news_03_title}]({news_03_url})\n\n- [{news_04_title}]({news_04_url})\n"
         embed.set_image(url=news_01_image)
-        await ctx.send(embed=embed)
+
+        # interaction.response.deferを使ったのでここはfollowup.sendが必要
+        await interaction.followup.send(embed=embed)
 
 async def setup(bot: commands.Bot):
-    await bot.add_cog(Valo(bot))
+    await bot.add_cog(
+        Valo(bot),
+        guilds = [discord.Object(id=731366036649279518)]
+    )

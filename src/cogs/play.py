@@ -1,8 +1,7 @@
 import glob
-from datetime import datetime, timedelta, timezone
 
 import discord
-from discord import message
+from discord import app_commands, message
 from discord.ext import commands
 
 
@@ -10,24 +9,31 @@ class Play(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.command()
-    async def play(self, ctx):
+    @app_commands.command(
+        name="play",
+        description="マル秘音楽を再生します。VCに入ってからコマンドを使用してください。"
+    )
+    async def play(
+        self,
+        interaction: discord.Interaction
+    ):
 
         # VCに入ってくる
-        if ctx.author.voice and ctx.author.voice.channel:
+        if interaction.user.voice and interaction.user.voice.channel:
             finished = False
-            vc = ctx.author.voice.channel
+            vc = interaction.user.voice.channel
             await vc.connect()
         else:
-            await ctx.send("⚠ VCに入ってからコマンドを使用してください。")
+            await interaction.response.send_message(
+                "⚠ VCに入ってからコマンドを使用してください。",
+                ephemeral=True,
+                delete_after=10
+            )
             return
 
         global emojis
         emojis = ['🇦', '🇧', '🇨', '🇩', '🇪', '🇫', '🇬', '🇭', '🇮', '🇯', '🇰', '🇱',
                    '🇲', '🇳', '🇴', '🇵', '🇶', '🇷', '🇸', '🇹', '🇺', '🇻', '🇼', '🇽', '🇾', '🇿']
-
-        # コマンド自体を削除
-        await ctx.message.delete()
 
         # mp3フォルダ内のmp3をすべて取得して投稿
         mp3list = sorted(glob.glob('mp3/*'))
@@ -40,8 +46,13 @@ class Play(commands.Cog):
             true_list.append(emojis[i] + ' ' + remove_prefix)
             mp3_name_list.append(remove_prefix)
         result = '\n'.join(true_list)
+
         global message
-        message = await ctx.send(result)
+        await interaction.response.send_message(
+            "🎶再生したい曲の絵文字を押してください。\n👋で終了し、BotがVCから切断されます。",
+            delete_after=10
+        )
+        message = await interaction.channel.send(result)
         global message_id
         message_id = str(message.id)
 
@@ -83,15 +94,14 @@ class Play(commands.Cog):
                 source = discord.PCMVolumeTransformer(discord.FFmpegPCMAudio(f"mp3/{play_mp3_name}"), volume=0.2)
                 message.guild.voice_client.play(source)
                 await message.remove_reaction(react_emoji, payload.member)
-
-
+    """
     # byeコマンドでBotをVCから抜けさせる
     @commands.command()
     async def bye(self, ctx):
         await ctx.guild.voice_client.disconnect()
         await message.delete()
         await ctx.message.delete()
-
+    """
     # VC内の最後の一人が抜けたらBotも一緒に抜ける
     @commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
@@ -104,4 +114,7 @@ class Play(commands.Cog):
 
 
 async def setup(bot: commands.Bot):
-    await bot.add_cog(Play(bot))
+    await bot.add_cog(
+        Play(bot),
+        guilds = [discord.Object(id=731366036649279518)]
+    )

@@ -1,8 +1,8 @@
 import datetime
 import random
-from datetime import timedelta
 
 import discord
+from discord import app_commands
 from discord.ext import commands
 
 
@@ -10,8 +10,15 @@ class Marimo(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.command()
-    async def mt(self, ctx):
+    @app_commands.command(
+        name="mt",
+        description="まりもたいむ"
+    )
+    async def mt(
+        self,
+        interaction: discord.Interaction
+    ):
+
         # summer time == hours=-4, not == hours=-5
         now = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=-5)))
         pnow = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=+1)))
@@ -20,31 +27,32 @@ class Marimo(commands.Cog):
         paul_time = f"{pnow.month}/{pnow.day} {pnow.hour}:{pnow.minute:02}"
         japan_time = f"{JST.month}/{JST.day} {JST.hour}:{JST.minute:02}"
 
-        #コマンド自体のチャットを削除する(やっぱりやめた)
-        #message = ctx.message
-        #await message.delete()
-
         #slot
         slot_list = ['🍒', '🔔', '🍉', '🍇', '🍋', '🐈', '🐬', '🦕', '🐢', '🐕']
         slot_left = random.choice(slot_list)
         slot_center = random.choice(slot_list)
         slot_right = random.choice(slot_list)
 
-        #おみくじ！
-        #omikuji_list = ['大吉🎯', '中吉🐬', '小吉🍓', '末吉🍦', '吉🍨', '凶👾', '大凶💀']
-        #omikuji = random.choice(omikuji_list)
+        # interaction.response.send_message() は、一回のみしか使えないので、
+        # 2.0から追加されたembedsで対応する。
+        embed1 = discord.Embed()
+        embed1.color = discord.Color.dark_green()
+        embed1.set_footer(text=f"mt slot: {slot_left}{slot_center}{slot_right}")
+        embed1.description = f"marimo time = **{marimo_time}**\npaul time = **{paul_time}**\n(In Japan = {japan_time})"
 
-        #embed
-        embed = discord.Embed()
-        embed.color = discord.Color.dark_green()
-        embed.set_footer(text=f"mt slot: {slot_left}{slot_center}{slot_right}")
-        embed.description = f"marimo time = **{marimo_time}**\npaul time = **{paul_time}**\n(In Japan = {japan_time})"
-        await ctx.send(embed=embed)
+        embed2 = discord.Embed()
+        embed2.color = discord.Color.dark_green()
+        embed2.description = f"🎉Congratulations!! {interaction.user.mention} hits the Jackpot!!🎉"
 
         if slot_left == slot_center == slot_right:
-            await ctx.send(f"🎉Congratulations!! {ctx.author.mention} hits the Jackpot!!🎉")
+            embeds = [embed1, embed2]
         else:
-            pass
+            embeds = [embed1]
+
+        await interaction.response.send_message(embeds=embeds)
 
 async def setup(bot: commands.Bot):
-    await bot.add_cog(Marimo(bot))
+    await bot.add_cog(
+        Marimo(bot),
+        guilds = [discord.Object(id=731366036649279518)]
+    )

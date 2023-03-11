@@ -1,7 +1,7 @@
 import os
-from datetime import datetime, timedelta, timezone
 
 import discord
+from discord import app_commands
 from discord.ext import commands
 
 from .api import get_trigger_repository
@@ -15,26 +15,34 @@ class Trigger(commands.Cog):
         self.bot = bot
         self.trigger_repo = get_trigger_repository()
 
-    @commands.Cog.listener()
-    async def on_message(self, message):
-        if message.author == self.bot.user:
-            return
+    @app_commands.command(
+        name="dic",
+        description="Trigger Commands"
+    )
+    @app_commands.describe(
+        keyword="キーワードを入力してください。例) genkai, 徳井病, gomi など"
+    )
+    async def trigger(
+        self,
+        interaction: discord.Interaction,
+        keyword: str
+    ):
 
-        if not message.content.startswith(PREFIX):
-            return
+        # interactionは3秒以内にレスポンスしないといけないとエラーになるのでこの処理で待たせる。
+        await interaction.response.defer()
 
-        trigger: str = message.content.lstrip(PREFIX)
+        trigger: str = keyword
         data = self.trigger_repo.select(trigger)
 
         if not data:
+            await interaction.followup.send(f":warning: 「{trigger}」は登録されていません。")
             return
         else:
             if data["response"]:
-                await message.channel.send(f'{data["response"]}')
+                await interaction.followup.send(f'{data["response"]}')
             else:
                 embed = discord.Embed()
-                JST = timezone(timedelta(hours=+9), "JST")
-                embed.timestamp = datetime.now(JST)
+                embed.set_footer(text=f"Keyword: {keyword}")
                 if data["title"]:
                     embed.title = f'{data["title"]}'
                 if data["description"]:
@@ -44,9 +52,11 @@ class Trigger(commands.Cog):
                 if data["big_image_URL"]:
                     embed.set_image(url=f'{data["big_image_URL"]}')
                 embed.color = discord.Color.dark_blue()
-                await message.channel.send(embed=embed)
+                await interaction.followup.send(embed=embed)
 
 
 async def setup(bot: commands.Bot):
-    await bot.add_cog(Trigger(bot))
-
+    await bot.add_cog(
+        Trigger(bot),
+        guilds = [discord.Object(id=731366036649279518)]
+    )
