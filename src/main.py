@@ -1,12 +1,14 @@
-import asyncio
 import logging
 import os
-from datetime import datetime, timedelta, timezone
 from logging.handlers import TimedRotatingFileHandler
-from pathlib import Path
 
 import discord
 from discord.ext import commands
+
+from settings import (
+    ADD_SSL_CLIENT_SECRETS,
+    CLIENT_SECRETS_PATH,
+)
 
 logging.basicConfig(
     level=logging.INFO,
@@ -30,16 +32,12 @@ guild_id = 731366036649279518
 def init():
     # GoogleDrive API のクレデンシャル情報を保持したファイルを生成する
     client_secrets = os.environ['CLIENT_SECRET']
-    current_path = Path(os.path.realpath(__file__)).parent
-    file = current_path / 'client_secrets.json'
-    with open(file, 'w') as f:
+    with open(CLIENT_SECRETS_PATH, 'w') as f:
         f.write(client_secrets)
 
     # addssl用のjsonファイルを生成
     addssl_client_secrets = os.environ['TAKOHACHI_JSON']
-    addssl_current_path = Path(os.path.realpath(__file__)).parent
-    file = addssl_current_path/ 'addssl_client_secrets.json'
-    with open(file, 'w') as f:
+    with open(ADD_SSL_CLIENT_SECRETS, 'w') as f:
         f.write(addssl_client_secrets)
 
 
@@ -104,5 +102,6 @@ class MyBot(commands.Bot):
         await bot.change_presence(activity=discord.Game(name="ピスタチオゲーム部", type=1))
         return
 
+init()
 bot = MyBot()
 bot.run(TOKEN)
