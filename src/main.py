@@ -5,10 +5,7 @@ from logging.handlers import TimedRotatingFileHandler
 import discord
 from discord.ext import commands
 
-from settings import (
-    ADD_SSL_CLIENT_SECRETS_PATH,
-    CLIENT_SECRETS_PATH,
-)
+from settings import ADD_SSL_CLIENT_SECRETS_PATH, CLIENT_SECRETS_PATH
 
 logging.basicConfig(
     level=logging.INFO,
@@ -55,7 +52,7 @@ class MyBot(commands.Bot):
             "cogs.apex_tracker",
             "cogs.bath",
             "cogs.card_list",
-            #"cogs.currency",
+            "cogs.currency",
             "cogs.dice",
             "cogs.gakigo",
             #"cogs.happy_new_year",

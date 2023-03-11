@@ -22,8 +22,7 @@ ffprobe.exe
 lantest.py
 app.json
 logs/
-dbrecord.py
-dbcreate.py
+
 
 # db file dir
 data
