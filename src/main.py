@@ -59,7 +59,7 @@ class MyBot(commands.Bot):
             "cogs.card_list",
             #"cogs.currency",
             "cogs.dice",
-            "cogs.gakigo",
+            #"cogs.gakigo",
             #"cogs.happy_new_year",
             "cogs.marimo",
             "cogs.message_count",
