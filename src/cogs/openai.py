@@ -53,7 +53,7 @@ class Openai(commands.Cog):
 
         try:
             async with httpx.AsyncClient() as client:
-                res = await client.post(endpoint, headers=headers, json=payload, timeout=20)
+                res = await client.post(endpoint, headers=headers, json=payload, timeout=120)
         except httpx.HTTPError as e:
             await interaction.followup.send(f"⚠ APIリクエストエラーが発生しました。時間を置いて試してみてください。: {e}")
             return
