@@ -20,7 +20,7 @@ class Marimo(commands.Cog):
     ):
 
         # summer time == hours=-4, not == hours=-5
-        now = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=-5)))
+        now = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=-4)))
         pnow = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=+1)))
         JST = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=+9)))
         marimo_time = f"{now.month}/{now.day} {now.hour}:{now.minute:02}"
