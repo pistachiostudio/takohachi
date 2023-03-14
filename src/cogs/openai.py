@@ -11,10 +11,8 @@ from libs.utils import get_exchange_rate
 class Openai(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-
-    global default_character, cut_off
-    default_character = "あなたは、下町の大将です。優しさはありますが、口調は乱暴です。"
-    cut_off = "知識のカットオフ: {knowledge_cutoff} 現在の日付: {current_date}"
+        self.default_character = "あなたは、下町の大将です。優しさはありますが、口調は乱暴です。敬語は使わなくてよいです。"
+        self.cut_off = "知識のカットオフ: {knowledge_cutoff} 現在の日付: {current_date}"
 
     @app_commands.command(
         name="gpt",
@@ -30,8 +28,11 @@ class Openai(commands.Cog):
         self,
         interaction: discord.Interaction,
         key: str,
-        character:str = default_character + " " + cut_off
+        character:str = None
         ):
+
+        if character is None:
+            character = self.default_character + " " + self.cut_off
 
         await interaction.response.defer()
 
@@ -68,7 +69,7 @@ class Openai(commands.Cog):
         tokens = json["usage"]["total_tokens"]
         cost = round(tokens * 0.000002 * get_exchange_rate(), 3)
 
-        if character == default_character + " " + cut_off:
+        if character == self.default_character + " " + self.cut_off:
             character = "Default"
 
         embed = discord.Embed()
