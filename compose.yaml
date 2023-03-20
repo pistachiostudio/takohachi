@@ -1,10 +1,8 @@
-version: "3"
 services:
-  python-service:
+  bot:
     restart: always
     build: .
     container_name: "takohachi-bot"
-    tty: true
     env_file:
       - .env
     volumes:
