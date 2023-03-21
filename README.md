@@ -1,6 +1,6 @@
 <samp>
 <p align="center">
-<img src="./images/takohachi_w_senjafuda.png" width="170px">
+<img src="./images/takohachi_w_senjafuda.png" width="250px">
 </p>
 
 # <p align="center">🐙 Discord Bot `Takohachi` 🐙 </p>
