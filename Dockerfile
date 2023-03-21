@@ -1,18 +1,16 @@
-ARG PYTHON_ENV=python:3.11-slim
+FROM python:3.11-slim as build
 
+RUN python -m pip install --upgrade pip && \
+    pip install poetry && \
+    poetry config virtualenvs.in-project true && \
+    rm -rf /root/.cache/pypoetry
 
-FROM $PYTHON_ENV as build
-
-RUN pip install poetry && poetry config virtualenvs.in-project true
-
-RUN mkdir -p /app
 WORKDIR /app
 
 COPY pyproject.toml poetry.lock ./
 RUN poetry install --only main
 
-
-FROM $PYTHON_ENV as prod
+FROM python:3.11-slim
 
 # ローカルマシン(日本) のときは効果あるかも
 # RUN sed -i 's@archive.ubuntu.com@ftp.jaist.ac.jp/pub/Linux@g' /etc/apt/sources.list
@@ -26,6 +24,5 @@ COPY --from=build /app/.venv /app/.venv
 COPY src /app
 WORKDIR /app
 
-ENTRYPOINT ["./.venv/bin/python"]
-CMD ["main.py"]
-
+ENTRYPOINT ["/app/.venv/bin/python", "main.py"]
+CMD []
