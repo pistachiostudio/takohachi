@@ -5,8 +5,7 @@
 
 # <p align="center">🐙 Discord Bot `Takohachi` 🐙 </p>
 
-
-<p align="center"><a href="https://github.com/search?q=repo%3Apistachiostudio%2Ftakohachi++language%3APython&type=code"><img alt="GitHub top language" src="https://img.shields.io/github/languages/top/pistachiostudio/takohachi"> <a href="https://github.com/pistachiostudio/takohachi/actions"><img alt="GitHub Workflow Status" src="https://img.shields.io/github/actions/workflow/status/pistachiostudio/takohachi/deploy.yml"> <a href="https://github.com/pistachiostudio/takohachi/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues/pistachiostudio/takohachi"> <a href="https://discord.gg/pistachiogaming"><img alt="Discord" src="https://img.shields.io/discord/731366036649279518"> <a href="https://open.vscode.dev/pistachiostudio/takohachi"><img alt="open in vscode" src="https://img.shields.io/badge/codes-open%20in%20VSCode-blue"></a></p>
+<p align="center"><a href="https://github.com/search?q=repo%3Apistachiostudio%2Ftakohachi++language%3APython&type=code"><img alt="GitHub top language" src="https://img.shields.io/github/languages/top/pistachiostudio/takohachi"></a> <a href="https://github.com/pistachiostudio/takohachi/actions"><img alt="GitHub Workflow Status" src="https://img.shields.io/github/actions/workflow/status/pistachiostudio/takohachi/deploy.yml"></a> <a href="https://github.com/pistachiostudio/takohachi/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues/pistachiostudio/takohachi"></a> <a href="https://discord.gg/pistachiogaming"><img alt="Discord" src="https://img.shields.io/discord/731366036649279518"></a> <a href="https://open.vscode.dev/pistachiostudio/takohachi"><img alt="open in vscode" src="https://img.shields.io/badge/codes-open%20in%20VSCode-blue"></a></p>
 
 ## 🐙 About
 
