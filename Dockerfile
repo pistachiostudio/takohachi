@@ -10,7 +10,7 @@ WORKDIR /app
 COPY pyproject.toml poetry.lock ./
 RUN poetry install --only main
 
-FROM python:3.11-alpine
+FROM python:3.11-slim
 
 # ローカルマシン(日本) のときは効果あるかも
 # RUN sed -i 's@archive.ubuntu.com@ftp.jaist.ac.jp/pub/Linux@g' /etc/apt/sources.list
