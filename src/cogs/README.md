@@ -1,42 +1,42 @@
-## Commands & Functions
+# ⚙ Commands & Functions
 
-### addssl.py
+## addssl.py
 
 `/addssl {URL}`
 
 - {URL}の情報を指定のスプレッドシートに登録します。
 - このスプレッドシートの内容は[SSL Checker](https://github.com/pistachiostudio/main/blob/main/docs/sslchecker.md)に使われます。
 
-### apex_tracker.py
+## apex_tracker.py
 
 `/apexrank {platform} {user_id}`
 
 - Apex Trackerから指定のプレイヤーのランクを取得します。
 
-### autodelete.py
+## autodelete.py
 
 - チャンネルと時間を指定し、その時間が経過したメッセージをしていきます。
 - 10分に1回Tasksを回しています。
 
-### bath.py
+## bath.py
 
 `/bath`
 
 - ニックネームの先頭に🛀絵文字をつけます。
 - 🛀がついた状態で同じコマンドを打つと外します。
 
-### card_count.py
+## card_count.py
 
 `/card`
 
 - スプレッドシートに記録されたユーザーごとの警告カードリアクションの数を返します。
 
-### card_list.py
+## card_list.py
 
 - コメントに指定した特定の絵文字でリアクションがあると、スプレッドシートにユーザー名などを保存します。
 - これは特に悪い意味では使われておらず、いい意味で使われています。
 
-### currency.py
+## currency.py
 
 pisという架空の通貨機能一式です。
 
@@ -75,35 +75,35 @@ pisという架空の通貨機能一式です。
   - 1: ボーナスを受け取っている
 - サーバー管理者のみ実行可能。
 
-### delete_image.py
+## delete_image.py
 
 - WIP
 
-### dice.py
+## dice.py
 
 `/dice`
 
 - Valorantのマップをランダムに返します。
 
-### gakigo.py
+## gakigo.py
 
 - スラッシュコマンドではなく指定したサーバー内の絵文字のみの投稿をすると決まったレスポンスをします。
 - 一人のユーザーが切望してきたために作った機能です。
 
-### happy_new_year.py
+## happy_new_year.py
 
 `/hny`
 
 - おみくじ機能です。
 - 年始のみ動かしています。
 
-### marimo.py
+## marimo.py
 
 `/mt`
 
 - アメリカ東海岸の現在時刻を返します。
 
-### message_count.py
+## message_count.py
 
 `/count`
 
@@ -113,13 +113,13 @@ pisという架空の通貨機能一式です。
 
 - 指定した複数チャンネルの現在の合計メッセージ数を返します。
 
-### ping.py
+## ping.py
 
 `/ping`
 
 - Botの応答速度を返します。
 
-### play.py
+## play.py
 
 `/play`
 
@@ -127,66 +127,66 @@ pisという架空の通貨機能一式です。
 - スラッシュコマンド切り替わりのタイミングで実装がイマイチになったので、現在は切り離して使用していません。
 - 使用するためにはDockerfileのコメントアウトを外してください。
 
-### purge.py
+## purge.py
 
 `/purge {amount}`
 
 - コマンドを打ち込んだチャンネルのメッセージを指定した数だけ一気に削除します。
 
-### save_image.py
+## save_image.py
 
 - 指定した絵文字で画像やファイルが添付されたチャットにリアクションすると、指定したGoogle Driveにそのファイルを保存します。
 
-### spotify.py
+## spotify.py
 
 `/spotify {serch_type} {keyword}`
 
 - SpotifyのAPIを使って検索を行い、結果を返します。
 - 特に曲情報はフロントには公開されていない細かい情報が取れます。
 
-### store.py
+## store.py
 
 `/store`
 
 - ValorantのStoreのアイテムを返します。
 - ユーザーのRiotのパスワードなどをDBで保つ必要があり、セキュリティ上の自信がないので、現在は切り離して使用していません。
 
-### text_channel.py
+## text_channel.py
 
 `/top`
 
 - コマンドを打ったチャンネルの先頭メッセージまでジャンプできるボタンを表示させます。
 
-### trigger.py
+## trigger.py
 
 `/dic {keyword}`
 
 - ユーザーが気楽にカスタムレスポンスを登録するために作った機能です。
 - データベースとして使用する指定のスプレッドシートから{keyword}を検索し、結果を返します。
 
-### valorant_api.py
+## valorant_api.py
 
 `/vr {name} {tagline}`
 
 - 指定したユーザーのValorantのシーズンごとのコンペティティブの戦績などを返します。
 
-### vc_role.py
+## vc_role.py
 
 - 指定したVCに入っているときだけ指定したロールを付与します。
 - VCから出たら該当のロールを外します。
 - VCにいる間だけ表示されるチャンネルなどのために使用しています。
 
-### vcwhite.py
+## vcwhite.py
 
 - 誰もいないVCに最初の人が入ったときだけ、指定したチャンネルにテキストで通知を送ります。
 
-### what_today.py
+## what_today.py
 
 `/wt`
 
 - 今日は何の日かWikipediaから取得して返します。
 
-### wt_tasks.py
+## wt_tasks.py
 
 - 毎朝7時に指定したチャンネルに投稿されます。
 - 今日は何の日か、東京地方の降水確率、ドル円相場などを投稿します。
