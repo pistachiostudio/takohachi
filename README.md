@@ -1,11 +1,12 @@
 <samp>
-<div style="text-align: center;">
+<p align="center">
 <img src="./images/takohachi_w_senjafuda.png" width="170px">
+</p>
 
-# 🐙 Discord Bot `Takohachi` 🐙
-![GitHub top language](https://img.shields.io/github/languages/top/pistachiostudio/takohachi?style=plastic) ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/pistachiostudio/takohachi/deploy.yml) ![GitHub issues](https://img.shields.io/github/issues-raw/pistachiostudio/takohachi?style=plastic) ![Discord](https://img.shields.io/discord/731366036649279518?style=plastic) [![Open in VS Code](https://img.shields.io/badge/codes-open%20in%20VSCode-blue)](https://open.vscode.dev/pistachiostudio/takohachi)
+# <p align="center">🐙 Discord Bot `Takohachi` 🐙 </p>
 
-</div>
+
+<p align="center"><img alt="GitHub top language" src="https://img.shields.io/github/languages/top/pistachiostudio/takohachi"> <img alt="GitHub Workflow Status" src="https://img.shields.io/github/actions/workflow/status/pistachiostudio/takohachi/deploy.yml"> <img alt="GitHub issues" src="https://img.shields.io/github/issues/pistachiostudio/takohachi"> <img alt="Discord" src="https://img.shields.io/discord/731366036649279518"> <a href="https://open.vscode.dev/pistachiostudio/takohachi"><img src="https://img.shields.io/badge/codes-open%20in%20VSCode-blue" alt="サンプル"></a> </p>
 
 ## 🐙 About
 
