@@ -22,6 +22,7 @@ ffprobe.exe
 lantest.py
 app.json
 logs/
+.mypy_cache
 
 
 # db file dir
