@@ -13,6 +13,7 @@ LOG_TEXT_CHANNEL_ID = os.environ["LOG_TEXT_CHANNEL_ID"]
 
 logger = logging.getLogger(__name__)
 
+
 class ApexTracker(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot: commands.Bot = bot
@@ -27,6 +28,7 @@ class ApexTracker(commands.Cog):
 
         # add ch to logger
         logger.addHandler(handler)
+
     def __get_rank_zone_rgb(self, rank_zone: str):
         if rank_zone == "Bronze":
             return 122, 89, 47
@@ -43,27 +45,16 @@ class ApexTracker(commands.Cog):
         elif rank_zone == "Apex Predator":
             return 255, 0, 0
 
-    @app_commands.command(
-        name= "apexrank",
-        description= "Apex Legendsのランクを取得します。"
-    )
-    @app_commands.describe(
-        platform="プラットフォームを選択してください",
-        user_id="ユーザーIDを入力してください"
-    )
+    @app_commands.command(name="apexrank", description="Apex Legendsのランクを取得します。")
+    @app_commands.describe(platform="プラットフォームを選択してください", user_id="ユーザーIDを入力してください")
     @app_commands.choices(
         platform=[
-            discord.app_commands.Choice(name="Origin & Steam(PC)",value="origin"),
-            discord.app_commands.Choice(name="Xbox",value="xbl"),
-            discord.app_commands.Choice(name="Play Station",value="psn")
+            discord.app_commands.Choice(name="Origin & Steam(PC)", value="origin"),
+            discord.app_commands.Choice(name="Xbox", value="xbl"),
+            discord.app_commands.Choice(name="Play Station", value="psn"),
         ]
     )
-    async def apexrank(
-        self,
-        interaction: discord.Interaction,
-        platform: str,
-        user_id: str
-    ):
+    async def apexrank(self, interaction: discord.Interaction, platform: str, user_id: str):
         # interactionは3秒以内にレスポンスしないといけないとエラーになるのでこの処理を入れる。
         await interaction.response.defer()
 
@@ -83,12 +74,9 @@ class ApexTracker(commands.Cog):
 
         for segment in segments:
             if segment.get("type") == "overview":
-                rank_name: str = segment.get("stats").get(
-                    "rankScore").get("metadata").get("rankName")
-                icon_url: str = segment.get("stats").get(
-                    "rankScore").get("metadata").get("iconUrl")
-                rank_point: str = segment.get("stats").get(
-                    "rankScore").get("displayValue")
+                rank_name: str = segment.get("stats").get("rankScore").get("metadata").get("rankName")
+                icon_url: str = segment.get("stats").get("rankScore").get("metadata").get("iconUrl")
+                rank_point: str = segment.get("stats").get("rankScore").get("displayValue")
                 break
 
         embed = discord.Embed()
@@ -103,19 +91,17 @@ class ApexTracker(commands.Cog):
 
         embed.color = discord.Color.from_rgb(r, g, b)  # Gold
         embed.set_thumbnail(url=icon_url)
-        embed.set_author(name=f"{user_id}'s profile",
-                         url=f"https://apex.tracker.gg/apex/profile/{platform}/{user_id}/overview",
-                         icon_url="https://github.com/pistachiostudio/takohachi/blob/master/images/apex%20legends.jpg?raw=true")
+        embed.set_author(
+            name=f"{user_id}'s profile",
+            url=f"https://apex.tracker.gg/apex/profile/{platform}/{user_id}/overview",
+            icon_url="https://github.com/pistachiostudio/takohachi/blob/master/images/apex%20legends.jpg?raw=true",
+        )
         embed.description = f"{user_id} の現在のランクポイントを表示します."
-        embed.add_field(name="ランクポイント",
-                        value=f"{rank_point} point ({rank_name})")
+        embed.add_field(name="ランクポイント", value=f"{rank_point} point ({rank_name})")
 
         # interaction.response.deferを使ったのでここはfollowup.sendが必要
         await interaction.followup.send(embed=embed)
 
 
 async def setup(bot: commands.Bot):
-    await bot.add_cog(
-        ApexTracker(bot),
-        guilds = [discord.Object(id=731366036649279518)]
-    )
+    await bot.add_cog(ApexTracker(bot), guilds=[discord.Object(id=731366036649279518)])

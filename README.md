@@ -192,9 +192,9 @@ $ docker compose up -d
 🔫 Yeah_bot_is_on_ready!!
 
 ## 🎨 Icons
-| by [Go Inagaki](https://hodwn.com/go-inagaki/)                                                                                 | by [Imoya](https://twitter.com/arakudai2)                                                                                      | 
-| ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ | 
-| <img src="./images/icon_tako_hachi_BG_less.png" width="500px"> | <img src="./images/imo_takohachi_bgless.png" width="500px"> | 
+| by [Go Inagaki](https://hodwn.com/go-inagaki/)                                                                                 | by [Imoya](https://twitter.com/arakudai2)                                                                                      |
+| ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
+| <img src="./images/icon_tako_hachi_BG_less.png" width="500px"> | <img src="./images/imo_takohachi_bgless.png" width="500px"> |
 
 
 ## 🐕 Pistachio Studio
@@ -215,7 +215,7 @@ $ docker compose up -d
 
 ## 🤝 License
 
-Takohachi is released under the MIT license.  
+Takohachi is released under the MIT license.
 ©2023 Pistachio Gaming & Pistachio Studio.
 
 </samp>

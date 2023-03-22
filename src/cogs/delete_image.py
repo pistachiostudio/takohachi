@@ -6,8 +6,7 @@ from pydrive2.drive import GoogleDrive
 
 
 class DeleteImage(commands.Cog):
-    """画像を削除するやつですが、動作しないので調整中です
-    """
+    """画像を削除するやつですが、動作しないので調整中です"""
 
     def __init__(self, bot: commands.Bot):
         self.bot = bot
@@ -43,8 +42,7 @@ class DeleteImage(commands.Cog):
 
         folder_id = os.environ["DRIVE_FOLDER_ID"]
 
-        file_list = drive.ListFile(
-            {'q': f"'{folder_id}' in parents and title contains '{filename}'"}).GetList()
+        file_list = drive.ListFile({"q": f"'{folder_id}' in parents and title contains '{filename}'"}).GetList()
 
         for file in file_list:
             f = drive.CreateFile({"id": file["id"]})

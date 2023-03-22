@@ -30,3 +30,6 @@ data
 
 # 環境変数
 .env
+
+# pytest
+.coverage

@@ -16,7 +16,6 @@ class AutoDelete(commands.Cog):
 
     @tasks.loop(seconds=600.0)
     async def printer(self):
-
         logging.info(f"Message purge task is running.")
 
         # チャンネルIDと削除する時間(秒)を指定。例えば1時間ごとに削除する場合は3600。
@@ -53,15 +52,15 @@ class AutoDelete(commands.Cog):
                     if message.pinned:
                         pinned_count += 1
 
-            #現在時間から指定した時間を引いた時間を取得
+            # 現在時間から指定した時間を引いた時間を取得
             del_time = datetime.datetime.fromtimestamp(now - channel_list[channel_id])
 
-            #checkを定義
+            # checkを定義
             def is_not_pinned(message):
                 return not message.pinned
 
             deleted = await channel.purge(limit=purge_count, check=is_not_pinned, before=del_time)
-            logging.info(f'Purged {len(deleted)} messages in {channel.name} (pinned: {pinned_count})')
+            logging.info(f"Purged {len(deleted)} messages in {channel.name} (pinned: {pinned_count})")
 
         logging.info(f"Message purge task is finished.")
 
