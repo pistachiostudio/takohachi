@@ -1,42 +1,37 @@
 <samp>
+<p align="center">
+<img src="./images/takohachi_w_senjafuda.png" width="250px">
+</p>
 
-# 🐙 Discord Bot `タコ八` 🐙
+# <p align="center">🐙 Takohachi 🐙</p>
 
+<p align="center"><a href="https://github.com/search?q=repo%3Apistachiostudio%2Ftakohachi++language%3APython&type=code"><img alt="GitHub top language" src="https://img.shields.io/github/languages/top/pistachiostudio/takohachi"></a> <a href="https://github.com/pistachiostudio/takohachi/actions"><img alt="GitHub Workflow Status" src="https://img.shields.io/github/actions/workflow/status/pistachiostudio/takohachi/deploy.yml"></a> <a href="https://github.com/pistachiostudio/takohachi/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues/pistachiostudio/takohachi"></a> <a href="https://discord.gg/pistachiogaming"><img alt="Discord" src="https://img.shields.io/discord/731366036649279518"></a> <a href="https://open.vscode.dev/pistachiostudio/takohachi"><img alt="open in vscode" src="https://img.shields.io/badge/codes-open%20in%20VSCode-blue"></a></p>
 
-これは[ピスタチオゲーム部親睦会](https://discord.gg/pistachiogaming)というDiscordサーバーのためのユースレスBotです。コードは自由にお使いください。
+<p align="center">Takohachi is useless Discord bot.<br>But he has romance.</p>
 
-## ⚙ Cogs
+## 🐙 About
+
+これは[ピスタチオゲーム部親睦会](https://discord.gg/pistachiogaming)というDiscordサーバーのためのユースレスBotです。
+
+## ⚙ Functions
 
 https://github.com/pistachiostudio/takohachi/tree/main/src/cogs
 
-## 🪂 Package install
+## 🪂 installing Packages & Dependencies
 
-### Using Poetry
+### With Poetry
 
 ```bash
 $ poetry install
 ```
 
-### Using pip
+### With pip
 
 ```bash
 $ pip install -r requirements.txt
 ```
 
-## 🏭 Deployment note
-
-### on Heroku dyno
-
-- heroku.yml
-- Procfile
-- runtime.txt
-
-### on VPS service
-
-- Dockerfile
-- docker-compose.yml
-
-#### Auto deploy by GitHub Actions
+## 🏭 Auto deployment by GitHub Actions
 
 - [.github/workflows/deploy.yml](https://github.com/pistachiostudio/takohachi/blob/master/.github/workflows/deploy.yml)
 - Required secrets:
@@ -45,6 +40,116 @@ $ pip install -r requirements.txt
   - Server User
   - Sever SSH Key
   - Directory to deploy
+
+## 🌊 Takohachi inhabits Lightsail
+
+### Now
+
+```mermaid
+flowchart LR
+
+Z(Codes)
+A(Docker)
+B(main<br>branch)
+C(Docker)
+D[(SQLite)]
+F(Codes)
+G[(SQLite)]
+H(.env)
+I(.env)
+J(((Discord)))
+
+subgraph Host Machine
+Z
+G
+A
+H
+end
+
+subgraph GitHub
+B
+end
+
+subgraph AWS Lightsail
+subgraph Ubuntu
+C
+D
+F
+I
+end
+end
+
+Z o--o H
+H -- run --> A
+Z -- Push --> B
+A o--o G
+B -- Auto<br>deploy --> F
+F o--o I
+I -- run --> C
+C o--o  D
+C <--> J
+```
+
+### Future Enchantment
+
+```mermaid
+
+flowchart LR
+
+Z(Codes)
+A(Docker)
+B(main<br>branch)
+C(Docker)
+D[(SQLite)]
+F(Codes)
+G[(SQLite)]
+H(.env)
+I(.env)
+J[(SQLite)]
+K(((Discord)))
+
+
+
+subgraph Host Machine
+Z
+G
+A
+H
+end
+
+subgraph GitHub
+B
+end
+
+subgraph AWS Lightsail
+subgraph Ubuntu
+C
+D
+F
+I
+end
+end
+
+subgraph Enchantment
+subgraph AWS-S3
+J
+end
+end
+style Enchantment fill:forestgreen
+style AWS-S3 fill:forestgreen
+
+Z o--o H
+H -- run --> A
+Z -- Push --> B
+A o--o J
+B -- Auto<br>deploy --> F
+F o--o I
+I -- run --> C
+C o--o  D
+D -- mirror --> J
+A x-.-x G
+C <--> K
+```
 
 ## 🐳 Docker
 
@@ -57,6 +162,7 @@ $ git clone https://github.com/pistachiostudio/takohachi.git
 ### 2. Create `.env` file on the root directory
 
 ```bash
+OPENAI_API_KEY=''
 TOKEN=''
 PREFIX='!!'
 CARDCOUNT_KEY=''
@@ -88,7 +194,7 @@ $ docker compose up -d
 ## 🎨 Icons
 | by [Go Inagaki](https://hodwn.com/go-inagaki/)                                                                                 | by [Imoya](https://twitter.com/arakudai2)                                                                                      | 
 | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ | 
-| <img src="https://user-images.githubusercontent.com/4445606/136433333-96b165e0-447c-481a-9e91-50f02b5689d4.png" width="500px"> | <img src="https://user-images.githubusercontent.com/4445606/136697820-c7526860-2b48-4a34-b32a-06b38fbb76a1.png" width="500px"> | 
+| <img src="./images/icon_tako_hachi_BG_less.png" width="500px"> | <img src="./images/imo_takohachi_bgless.png" width="500px"> | 
 
 
 ## 🐕 Pistachio Studio
