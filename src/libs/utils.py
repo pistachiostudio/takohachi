@@ -1,9 +1,12 @@
+import os
 import re
 from datetime import datetime, timedelta, timezone
 from random import randint
 from urllib import parse
 
+import httpx
 import requests
+import tenacity
 
 
 def get_now_timestamp_jst() -> datetime:
@@ -74,3 +77,41 @@ def get_exchange_rate():
     round_usd_jpy = round(usd_jpy, 2)
 
     return round_usd_jpy
+
+async def get_trivia() -> str:
+    endpoint = "https://api.openai.com/v1/chat/completions"
+
+    headers = {
+        'Content-Type': 'application/json',
+        'Authorization': f'Bearer {os.getenv("OPENAI_API_KEY")}'
+    }
+
+    payload = {
+        "model": "gpt-3.5-turbo",
+        "messages" : [
+            {"role": "system", "content": "あなたはこの世の森羅万象を知り尽くした天才です。"},
+            {"role": "user", "content": "雑学を一つ教えてください。内容は、この世の森羅万象を対象に科学、物理、生物、音楽、カルチャーなどなど、何でも良いです。難しい話ももちろんOKです。文字数はだいたい日本語で200文字程度にしてください。"}
+        ],
+        "max_tokens": 1000
+    }
+
+    @tenacity.retry(
+        stop=tenacity.stop_after_attempt(3),
+        retry=tenacity.retry_if_exception_type(httpx.HTTPError),
+    )
+    async def fetch_data():
+        async with httpx.AsyncClient() as client:
+            res = await client.post(endpoint, headers=headers, json=payload, timeout=120)
+
+        if res.status_code != 200:
+            raise httpx.HTTPError("Non-200 response from OpenAI API")
+        return res
+
+    try:
+        res = await fetch_data()
+    except tenacity.RetryError:
+        return "⚠OpenAIのAPIリクエストでエラーが発生したので今日の雑学はなしです。"
+
+    json = res.json()
+    answer = json["choices"][0]["message"]["content"]
+    return answer
