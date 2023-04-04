@@ -6,6 +6,7 @@ from urllib import parse
 
 import httpx
 import requests
+import tenacity
 
 
 def get_now_timestamp_jst() -> datetime:
@@ -78,7 +79,6 @@ def get_exchange_rate():
     return round_usd_jpy
 
 async def get_trivia() -> str:
-
     endpoint = "https://api.openai.com/v1/chat/completions"
 
     headers = {
@@ -95,16 +95,23 @@ async def get_trivia() -> str:
         "max_tokens": 1000
     }
 
-    try:
+    @tenacity.retry(
+        stop=tenacity.stop_after_attempt(3),
+        retry=tenacity.retry_if_exception_type(httpx.HTTPError),
+    )
+    async def fetch_data():
         async with httpx.AsyncClient() as client:
             res = await client.post(endpoint, headers=headers, json=payload, timeout=120)
-    except httpx.HTTPError as e:
-        return "⚠OpenAIのAPIリクエストでエラーが発生したので今日の雑学はなしです。"
 
-    if res.status_code != 200:
+        if res.status_code != 200:
+            raise httpx.HTTPError("Non-200 response from OpenAI API")
+        return res
+
+    try:
+        res = await fetch_data()
+    except tenacity.RetryError:
         return "⚠OpenAIのAPIリクエストでエラーが発生したので今日の雑学はなしです。"
 
     json = res.json()
-
     answer = json["choices"][0]["message"]["content"]
     return answer
