@@ -30,7 +30,7 @@ class WTTasks(commands.Cog):
         this_hour = today.hour
         this_minute = today.minute
 
-        if this_hour == 7:
+        if this_hour == 7 and 0 <= this_minute <= 9:
             result = get_what_today(this_month, this_day)
 
             # 東京地方の天気を取得。citycode一覧 "https://weather.tsukumijima.net/primary_area.xml"
