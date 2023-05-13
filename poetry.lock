@@ -935,14 +935,14 @@ files = [
 
 [[package]]
 name = "pydrive2"
-version = "1.8.3"
+version = "1.15.3"
 description = "Google Drive API made easy. Maintained fork of PyDrive."
 category = "main"
 optional = false
-python-versions = "*"
+python-versions = ">=3.7"
 files = [
-    {file = "PyDrive2-1.8.3-py2.py3-none-any.whl", hash = "sha256:5b8cf13d825bafaf6ea7d8161ea2da34c40200f59633de9077db63695b6b7f3a"},
-    {file = "PyDrive2-1.8.3.tar.gz", hash = "sha256:d2217ba2feabcd13c97269b7e83ac975e33c1110bc2f4bd7d36b3e74349c011d"},
+    {file = "PyDrive2-1.15.3-py3-none-any.whl", hash = "sha256:f9f3714bacd4984b8df3a5af79aeb9289859415e90740981f831dfc371d09d22"},
+    {file = "PyDrive2-1.15.3.tar.gz", hash = "sha256:a8f50d996c9dc76e51c003bcc0770fe97222fa01fb0e6ea9d027f0acf7ece7ae"},
 ]
 
 [package.dependencies]
@@ -950,10 +950,10 @@ google-api-python-client = ">=1.12.5"
 oauth2client = ">=4.0.0"
 pyOpenSSL = ">=19.1.0"
 PyYAML = ">=3.0"
-six = ">=1.13.0"
 
 [package.extras]
-tests = ["black (==19.10b0)", "flake8", "flake8-docstrings", "funcy (>=1.14)", "pytest (>=4.6.0)", "timeout-decorator"]
+fsspec = ["appdirs (>=1.4.3)", "fsspec (>=2021.07.0)", "funcy (>=1.14)", "tqdm (>=4.0.0)"]
+tests = ["black (==23.3.0)", "flake8", "flake8-docstrings", "funcy (>=1.14)", "importlib-resources", "pyinstaller", "pytest (>=4.6.0)", "pytest-mock", "timeout-decorator"]
 
 [[package]]
 name = "pynacl"
@@ -1366,4 +1366,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "3e4db5fdbba37784e8796e2990e3de62c9c0a089f9cf7b27ffc488ba6ce0010a"
+content-hash = "f16fefc89cc98b69b3d547e78e073ae10c5d49f57524891cdb9aa5acae1c6eef"
