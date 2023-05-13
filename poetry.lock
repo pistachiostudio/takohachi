@@ -1197,15 +1197,15 @@ files = [
 
 [[package]]
 name = "spotipy"
-version = "2.22.1"
+version = "2.23.0"
 description = "A light weight Python library for the Spotify Web API"
 category = "main"
 optional = false
 python-versions = "*"
 files = [
-    {file = "spotipy-2.22.1-py2-none-any.whl", hash = "sha256:aa023d8bc606053d95e8961f52293fdd8cd12ef4fad8f829e701bb3d61c48d76"},
-    {file = "spotipy-2.22.1-py3-none-any.whl", hash = "sha256:1dac15ac0aaf5246461a3cb0b3d837bc7af7b78597441289b500a5abac9fe9c4"},
-    {file = "spotipy-2.22.1.tar.gz", hash = "sha256:54680dbf243a2b0cff0e591e1d269692e94265273b52ab90994a661555c04ac7"},
+    {file = "spotipy-2.23.0-py2-none-any.whl", hash = "sha256:da850fbf62faaa05912132d2886c293a5fbbe8350d0821e7208a6a2fdd6a0079"},
+    {file = "spotipy-2.23.0-py3-none-any.whl", hash = "sha256:6bf8b963c10d0a3e51037e4baf92e29732dee36b2a1f1b7dcc8cd5771e662a5b"},
+    {file = "spotipy-2.23.0.tar.gz", hash = "sha256:0dfafe08239daae6c16faa68f60b5775d40c4110725e1a7c545ad4c7fb66d4e8"},
 ]
 
 [package.dependencies]
@@ -1366,4 +1366,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "4247ecd53bc9cda29c75183554951455911c9f2e759a8ad882d75363352c4cf2"
+content-hash = "4c157566a868ef116b39f4b700edec4d27f43ba8b89479ee91f435a821d08cf6"
