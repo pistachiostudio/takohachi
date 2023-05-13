@@ -378,9 +378,9 @@ google-auth-httplib2==0.1.0 ; python_version >= "3.11" and python_version < "4.0
 google-auth-oauthlib==1.0.0 ; python_version >= "3.11" and python_version < "4.0" \
     --hash=sha256:95880ca704928c300f48194d1770cf5b1462835b6e49db61445a520f793fd5fb \
     --hash=sha256:e375064964820b47221a7e1b7ee1fd77051b6323c3f9e3e19785f78ab67ecfc5
-google-auth==2.16.2 ; python_version >= "3.11" and python_version < "4.0" \
-    --hash=sha256:07e14f34ec288e3f33e00e2e3cc40c8942aa5d4ceac06256a28cd8e786591420 \
-    --hash=sha256:2fef3cf94876d1a0e204afece58bb4d83fb57228aaa366c64045039fda6770a2
+google-auth==2.18.0; python_version >= "3.11" and python_version < "4.0" \ \
+    --hash=sha256:c66b488a8b005b23ccb97b1198b6cece516c91869091ac5b7c267422db2733c7 \
+    --hash=sha256:ef3f3a67fa54d421a1c155864570f9a8de9179cedc937bda496b7a8ca338e936
 googleapis-common-protos==1.58.0 ; python_version >= "3.11" and python_version < "4.0" \
     --hash=sha256:c727251ec025947d545184ba17e3578840fc3a24a0516a020479edab660457df \
     --hash=sha256:ca3befcd4580dab6ad49356b46bf165bb68ff4b32389f028f1abd7c10ab9519a
