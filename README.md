@@ -25,12 +25,6 @@ https://github.com/pistachiostudio/takohachi/tree/main/src/cogs
 $ poetry install
 ```
 
-### With pip
-
-```bash
-$ pip install -r requirements.txt
-```
-
 ## 🏭 Auto deployment by GitHub Actions
 
 - [.github/workflows/deploy.yml](https://github.com/pistachiostudio/takohachi/blob/master/.github/workflows/deploy.yml)
