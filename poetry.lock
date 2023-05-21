@@ -935,14 +935,14 @@ files = [
 
 [[package]]
 name = "pydrive2"
-version = "1.15.3"
+version = "1.15.4"
 description = "Google Drive API made easy. Maintained fork of PyDrive."
 category = "main"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "PyDrive2-1.15.3-py3-none-any.whl", hash = "sha256:f9f3714bacd4984b8df3a5af79aeb9289859415e90740981f831dfc371d09d22"},
-    {file = "PyDrive2-1.15.3.tar.gz", hash = "sha256:a8f50d996c9dc76e51c003bcc0770fe97222fa01fb0e6ea9d027f0acf7ece7ae"},
+    {file = "PyDrive2-1.15.4-py3-none-any.whl", hash = "sha256:91fe28e5f094a6dfff834495c4aee0041cbef979467ad27cd0d4b1f91afa8869"},
+    {file = "PyDrive2-1.15.4.tar.gz", hash = "sha256:0c011b74ebc24f3c6ca72820626b77f1dfe0ae88f5740c5a5cf96e83dd79ba99"},
 ]
 
 [package.dependencies]
@@ -1347,4 +1347,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "62cb9b77c22a760eb6c2ed7fddf9e33ce77c4287c2286ff1bf2e583e2468e554"
+content-hash = "8919d7eb3880856d4125b3bd164887aa953c481c04e77e3b73c7602d5752424d"
