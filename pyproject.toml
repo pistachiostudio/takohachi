@@ -14,7 +14,7 @@ repository = "https://github.com/pistachiostudio/takohachi"
 [tool.poetry.dependencies]
 python = "^3.11"
 discord-py = {version = "2.2.3", extras = ["voice"]}
-typing-extensions = "4.6.2"
+typing-extensions = "4.6.3"
 gspread = "5.9.0"
 requests = "2.31.0"
 beautifulsoup4 = "4.12.2"
