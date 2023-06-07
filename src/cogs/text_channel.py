@@ -13,15 +13,8 @@ class TextChannel(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @app_commands.command(
-        name="top",
-        description="チャンネルの一番上にジャンプするボタンを表示します。"
-    )
-    async def top(
-        self,
-        interaction: discord.Interaction
-    ):
-
+    @app_commands.command(name="top", description="チャンネルの一番上にジャンプするボタンを表示します。")
+    async def top(self, interaction: discord.Interaction):
         # interactionは3秒以内にレスポンスしないといけないとエラーになるのでこの処理を入れる。
         await interaction.response.defer()
 
@@ -43,13 +36,9 @@ class TextChannel(commands.Cog):
             raise e
 
         await interaction.followup.send(
-            "",
-            view=LinkButton("Go to top on this channel", url),
-            ephemeral=True
+            "", view=LinkButton("Go to top on this channel", url), ephemeral=True
         )
 
+
 async def setup(bot: commands.Bot):
-    await bot.add_cog(
-        TextChannel(bot),
-        guilds = [discord.Object(id=731366036649279518)]
-    )
+    await bot.add_cog(TextChannel(bot), guilds=[discord.Object(id=731366036649279518)])

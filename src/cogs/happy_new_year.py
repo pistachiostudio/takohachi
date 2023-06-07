@@ -9,19 +9,13 @@ class HappyNewYear(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @app_commands.command(
-        name="hny",
-        description="あけましておめでとうございます！おみくじを引きます。"
-    )
-    async def hny(
-        self,
-        interaction: discord.Interaction
-    ):
+    @app_commands.command(name="hny", description="あけましておめでとうございます！おみくじを引きます。")
+    async def hny(self, interaction: discord.Interaction):
         # interactionは3秒以内にレスポンスしないといけないとエラーになるのでこの処理を入れる。
         await interaction.response.defer()
 
-        #おみくじ！
-        omikuji_list = ['大吉🎯', '中吉🐬', '小吉🍓', '末吉🍦', '吉🍨', '凶👾', '大凶💀']
+        # おみくじ！
+        omikuji_list = ["大吉🎯", "中吉🐬", "小吉🍓", "末吉🍦", "吉🍨", "凶👾", "大凶💀"]
         omikuji = random.choice(omikuji_list)
 
         # 画像URL
@@ -44,22 +38,21 @@ class HappyNewYear(commands.Cog):
             "https://www.fg-a.com/new-year/new-year-clock-balloons.jpg",
             "https://www.fg-a.com/new-year/friends-new-year-celebration.jpg",
             "https://www.fg-a.com/new-year/2019-happy-new-year-baby-new-year.jpg",
-            "https://www.fg-a.com/new-year/2021-happy-new-year-animated-fireworks.gif"
+            "https://www.fg-a.com/new-year/2021-happy-new-year-animated-fireworks.gif",
         ]
         image_url = random.choice(image_url_list)
 
-        #embed
+        # embed
         embed = discord.Embed()
         embed.title = "🐰ピスタチオおみくじ 2023🐰"
-        embed.description = f"おめでとうございます！\n{interaction.user.mention} さんの2023年の運勢は **{omikuji}** です👍"
+        embed.description = (
+            f"おめでとうございます！\n{interaction.user.mention} さんの2023年の運勢は **{omikuji}** です👍"
+        )
         embed.color = discord.Color.dark_green()
-        embed.set_footer(text=f"Happy New Year 2023! Love from Pistachio Studio & Gaming❤")
+        embed.set_footer(text="Happy New Year 2023! Love from Pistachio Studio & Gaming❤")
         embed.set_image(url=image_url)
         await interaction.followup.send(embed=embed)
 
 
 async def setup(bot: commands.Bot):
-    await bot.add_cog(
-        HappyNewYear(bot),
-        guilds = [discord.Object(id=731366036649279518)]
-    )
+    await bot.add_cog(HappyNewYear(bot), guilds=[discord.Object(id=731366036649279518)])

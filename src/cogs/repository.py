@@ -9,16 +9,18 @@ DIC_KEY = os.environ["DIC_KEY"]
 
 
 class TriggerRepository:
-
     def __init__(self, addssl_json_keyfile: Path):
         # 2つのAPIを記述しないとリフレッシュトークンを3600秒毎に発行し続けなければならないです！
-        scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
+        scope = [
+            "https://spreadsheets.google.com/feeds",
+            "https://www.googleapis.com/auth/drive",
+        ]
         # 認証情報設定
         credentials = ServiceAccountCredentials.from_json_keyfile_name(addssl_json_keyfile, scope)
         # OAuth2の資格情報を使用してGoogle APIにログインします。
         self.gc = gspread.authorize(credentials)
         # 共有設定したスプレッドシートのtriggerシートを開く
-        self.worksheet = self.gc.open_by_key(DIC_KEY).worksheet('trigger')
+        self.worksheet = self.gc.open_by_key(DIC_KEY).worksheet("trigger")
 
         # ヘッダー行をスプレッドシートから取得
         self.header_list: List[str] = self.worksheet.row_values(2)
@@ -37,7 +39,13 @@ class TriggerRepository:
             trigger_value_list.extend(pad_list)
 
             # 取得対象のカラム名リスト
-            colomn_names = ["response", "title", "description", "right_small_image_URL", "big_image_URL"]
+            colomn_names = [
+                "response",
+                "title",
+                "description",
+                "right_small_image_URL",
+                "big_image_URL",
+            ]
 
             # 返却値を格納する辞書
             embed_dict: Dict[str, str] = {}

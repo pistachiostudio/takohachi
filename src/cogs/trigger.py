@@ -15,19 +15,9 @@ class Trigger(commands.Cog):
         self.bot = bot
         self.trigger_repo = get_trigger_repository()
 
-    @app_commands.command(
-        name="dic",
-        description="Trigger Commands"
-    )
-    @app_commands.describe(
-        keyword="キーワードを入力してください。例) genkai, 徳井病, gomi など"
-    )
-    async def trigger(
-        self,
-        interaction: discord.Interaction,
-        keyword: str
-    ):
-
+    @app_commands.command(name="dic", description="Trigger Commands")
+    @app_commands.describe(keyword="キーワードを入力してください。例) genkai, 徳井病, gomi など")
+    async def trigger(self, interaction: discord.Interaction, keyword: str):
         # interactionは3秒以内にレスポンスしないといけないとエラーになるのでこの処理で待たせる。
         await interaction.response.defer()
 
@@ -56,7 +46,4 @@ class Trigger(commands.Cog):
 
 
 async def setup(bot: commands.Bot):
-    await bot.add_cog(
-        Trigger(bot),
-        guilds = [discord.Object(id=731366036649279518)]
-    )
+    await bot.add_cog(Trigger(bot), guilds=[discord.Object(id=731366036649279518)])

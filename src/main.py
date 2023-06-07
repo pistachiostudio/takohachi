@@ -18,7 +18,7 @@ logging.basicConfig(
             interval=1,
             backupCount=7,
         )
-    ]
+    ],
 )
 
 TOKEN = os.environ["TOKEN"]
@@ -28,23 +28,19 @@ guild_id = 731366036649279518
 
 def init():
     # GoogleDrive API のクレデンシャル情報を保持したファイルを生成する
-    client_secrets = os.environ['CLIENT_SECRET']
-    with open(CLIENT_SECRETS_PATH, 'w') as f:
+    client_secrets = os.environ["CLIENT_SECRET"]
+    with open(CLIENT_SECRETS_PATH, "w") as f:
         f.write(client_secrets)
 
     # addssl用のjsonファイルを生成
-    addssl_client_secrets = os.environ['TAKOHACHI_JSON']
-    with open(ADD_SSL_CLIENT_SECRETS_PATH, 'w') as f:
+    addssl_client_secrets = os.environ["TAKOHACHI_JSON"]
+    with open(ADD_SSL_CLIENT_SECRETS_PATH, "w") as f:
         f.write(addssl_client_secrets)
 
 
 class MyBot(commands.Bot):
     def __init__(self):
-        super().__init__(
-            command_prefix=PREFIX,
-            intents=discord.Intents.all(),
-            help_command=None
-        )
+        super().__init__(command_prefix=PREFIX, intents=discord.Intents.all(), help_command=None)
 
         # コマンド系のいつも読み込むcogs
         self.initial_extensions = [
@@ -55,7 +51,7 @@ class MyBot(commands.Bot):
             "cogs.currency",
             "cogs.dice",
             "cogs.gakigo",
-            #"cogs.happy_new_year",
+            # "cogs.happy_new_year",
             "cogs.marimo",
             "cogs.message_count",
             "cogs.openai",
@@ -65,7 +61,7 @@ class MyBot(commands.Bot):
             "cogs.text_channel",
             "cogs.trigger",
             "cogs.valorant_api",
-            "cogs.what_today"
+            "cogs.what_today",
         ]
 
         # コマンド系じゃないdevで読み込むと競合してややこしいcogs
@@ -75,15 +71,14 @@ class MyBot(commands.Bot):
             "cogs.save_image",
             "cogs.vc_role",
             "cogs.vcwhite",
-            "cogs.wt_task"
+            "cogs.wt_task",
         ]
 
     async def setup_hook(self):
-
         for extension in self.initial_extensions:
             await self.load_extension(extension)
 
-        if PREFIX == '!!':
+        if PREFIX == "!!":
             for production_extension in self.initial_extensions_only_production:
                 await self.load_extension(production_extension)
 
@@ -98,6 +93,7 @@ class MyBot(commands.Bot):
         print("Connected!")
         await bot.change_presence(activity=discord.Game(name="ピスタチオゲーム部", type=1))
         return
+
 
 init()
 bot = MyBot()

@@ -10,7 +10,6 @@ class VcRole(commands.Cog):
 
     @commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
-
         # 各種変数定義
         INU_VC_ID = int(os.environ["INU_VC_ID"])
         NEKO_VC_ID = int(os.environ["NEKO_VC_ID"])
@@ -34,7 +33,7 @@ class VcRole(commands.Cog):
             return
 
         # どこにも入ってない状態からVCに入った場合
-        if before.channel == None and after.channel != None:
+        if before.channel is None and after.channel is not None:
             # 犬VCに入った場合
             if after.channel.id == INU_VC_ID:
                 await member.add_roles(role_inu, role_mood)
@@ -51,9 +50,9 @@ class VcRole(commands.Cog):
                 pass
 
         # VCからVCへ移動した場合 (IN_THE_MOOD_ROLEはそのままにする)
-        elif before.channel != None and after.channel != None:
+        elif before.channel is not None and after.channel is not None:
             # 移動先が犬VCの場合
-            if  after.channel.id == INU_VC_ID:
+            if after.channel.id == INU_VC_ID:
                 # まず絵文字を一旦取ってからロールをつける
                 await member.remove_roles(role_inu, role_neko, role_kame, role_kyoryu)
                 await member.add_roles(role_inu)
@@ -76,12 +75,13 @@ class VcRole(commands.Cog):
                 pass
 
         # VCから出た場合
-        elif before.channel != None and after.channel == None:
+        elif before.channel is not None and after.channel is None:
             # とにかくロールを外して終わり
             await member.remove_roles(role_inu, role_neko, role_kame, role_kyoryu, role_mood)
 
         else:
             pass
+
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(VcRole(bot))

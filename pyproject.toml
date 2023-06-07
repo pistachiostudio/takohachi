@@ -41,7 +41,7 @@ tox = "tox"
 allow-direct-references = true
 
 [tool.black]
-line-length = 128
+line-length = 98
 
 [tool.ruff]
 line-length = 128
