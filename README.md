@@ -5,7 +5,7 @@
 
 # <p align="center">🐙 Takohachi 🐙</p>
 
-<p align="center"><a href="https://github.com/search?q=repo%3Apistachiostudio%2Ftakohachi++language%3APython&type=code"><img alt="GitHub top language" src="https://img.shields.io/github/languages/top/pistachiostudio/takohachi"></a> <a href="https://github.com/pistachiostudio/takohachi/actions"><img alt="GitHub Workflow Status" src="https://img.shields.io/github/actions/workflow/status/pistachiostudio/takohachi/deploy.yml"></a> <a href="https://github.com/pistachiostudio/takohachi/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues/pistachiostudio/takohachi"></a> <a href="https://discord.gg/pistachiogaming"><img alt="Discord" src="https://img.shields.io/discord/731366036649279518"></a> <a href="https://open.vscode.dev/pistachiostudio/takohachi"><img alt="open in vscode" src="https://img.shields.io/badge/codes-open%20in%20VSCode-blue"></a></p>
+<p align="center"><a href="https://github.com/search?q=repo%3Apistachiostudio%2Ftakohachi++language%3APython&type=code"><img alt="GitHub top language" src="https://img.shields.io/github/languages/top/pistachiostudio/takohachi"></a> <a href="https://github.com/pistachiostudio/takohachi/actions"><img alt="GitHub Workflow Status" src="https://img.shields.io/github/actions/workflow/status/pistachiostudio/takohachi/deploy.yml"></a> <a href="https://github.com/charliermarsh/ruff"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v2.json" alt="Ruff" style="max-width:100%;"></a> <a href="https://github.com/pistachiostudio/takohachi/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues/pistachiostudio/takohachi"></a> <a href="https://discord.gg/pistachiogaming"><img alt="Discord" src="https://img.shields.io/discord/731366036649279518"></a> <a href="https://open.vscode.dev/pistachiostudio/takohachi"><img alt="open in vscode" src="https://img.shields.io/badge/codes-open%20in%20VSCode-blue"></a></p>
 
 <p align="center">Takohachi is useless Discord bot.<br>But he has romance.</p>
 
@@ -19,10 +19,10 @@ https://github.com/pistachiostudio/takohachi/tree/main/src/cogs
 
 ## 🪂 installing Packages & Dependencies
 
-### With Poetry
+### With rye
 
 ```bash
-$ poetry install
+$ rye sync
 ```
 
 ## 🏭 Auto deployment by GitHub Actions
@@ -186,9 +186,9 @@ $ docker compose up -d
 🔫 Yeah_bot_is_on_ready!!
 
 ## 🎨 Icons
-| by [Go Inagaki](https://hodwn.com/go-inagaki/)                                                                                 | by [Imoya](https://twitter.com/arakudai2)                                                                                      | 
-| ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ | 
-| <img src="./images/icon_tako_hachi_BG_less.png" width="500px"> | <img src="./images/imo_takohachi_bgless.png" width="500px"> | 
+| by [Go Inagaki](https://hodwn.com/go-inagaki/)                                                                                 | by [Imoya](https://twitter.com/arakudai2)                                                                                      |
+| ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
+| <img src="./images/icon_tako_hachi_BG_less.png" width="500px"> | <img src="./images/imo_takohachi_bgless.png" width="500px"> |
 
 
 ## 🐕 Pistachio Studio
@@ -209,7 +209,7 @@ $ docker compose up -d
 
 ## 🤝 License
 
-Takohachi is released under the MIT license.  
+Takohachi is released under the MIT license.
 ©2023 Pistachio Gaming & Pistachio Studio.
 
 </samp>

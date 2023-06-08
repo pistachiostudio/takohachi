@@ -18,4 +18,3 @@ ps:
 
 logs:
 	docker compose logs -f -t --tail=200
-

@@ -10,37 +10,30 @@ class Dice(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @app_commands.command(
-        name="dice",
-        description="Valorantのマップをランダムに返します。"
-    )
-    async def d(
-        self,
-        interaction: discord.Interaction
-    ):
-
+    @app_commands.command(name="dice", description="Valorantのマップをランダムに返します。")
+    async def d(self, interaction: discord.Interaction):
         # interactionは3秒以内にレスポンスしないといけないとエラーになるのでこの処理を入れる。
         await interaction.response.defer()
 
-        url = 'https://valorant-api.com/v1/maps'
+        url = "https://valorant-api.com/v1/maps"
         async with httpx.AsyncClient() as client:
             res = await client.get(url)
         json = res.json()
 
         data = json["data"]
 
-        data_len = (len(data))
+        data_len = len(data)
         data_list = list(range(data_len))
 
         for range_idx in range(data_len):
-            if data[range_idx]['uuid'] == 'ee613ee9-28b7-4beb-9666-08db13bb2244':  # 射撃場のuuid
+            if data[range_idx]["uuid"] == "ee613ee9-28b7-4beb-9666-08db13bb2244":  # 射撃場のuuid
                 break
 
         data_list.remove(range_idx)
         num = random.choice(data_list)
 
-        displayName = data[num]['displayName']
-        listViewIcon = data[num]['listViewIcon']
+        displayName = data[num]["displayName"]
+        listViewIcon = data[num]["listViewIcon"]
         # displayIcon = data[num]['displayIcon']
 
         embed = discord.Embed()
@@ -50,8 +43,6 @@ class Dice(commands.Cog):
         embed.color = discord.Color.dark_blue()
         await interaction.followup.send(embed=embed)
 
+
 async def setup(bot: commands.Bot):
-    await bot.add_cog(
-        Dice(bot),
-        guilds = [discord.Object(id=731366036649279518)]
-    )
+    await bot.add_cog(Dice(bot), guilds=[discord.Object(id=731366036649279518)])

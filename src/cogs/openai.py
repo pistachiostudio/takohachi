@@ -14,23 +14,11 @@ class Openai(commands.Cog):
         self.default_character = "あなたは、下町の大将です。優しさはありますが、口調は乱暴です。敬語は使わなくてよいです。"
         self.cut_off = "知識のカットオフ: {knowledge_cutoff} 現在の日付: {current_date}"
 
-    @app_commands.command(
-        name="gpt",
-        description="ChatGPTに質問をしましょう！"
-        )
-
+    @app_commands.command(name="gpt", description="ChatGPTに質問をしましょう！")
     @app_commands.describe(
-        key="質問内容",
-        character="ChatGPTに性格やキャラを与えることができます。必ず「あなたは～です。」と書いてください。"
-        )
-
-    async def openai(
-        self,
-        interaction: discord.Interaction,
-        key: str,
-        character:str = None
-        ):
-
+        key="質問内容", character="ChatGPTに性格やキャラを与えることができます。必ず「あなたは～です。」と書いてください。"
+    )
+    async def openai(self, interaction: discord.Interaction, key: str, character: str = None):
         if character is None:
             character = self.default_character + " " + self.cut_off
 
@@ -39,17 +27,17 @@ class Openai(commands.Cog):
         endpoint = "https://api.openai.com/v1/chat/completions"
 
         headers = {
-            'Content-Type': 'application/json',
-            'Authorization': f'Bearer {os.getenv("OPENAI_API_KEY")}'
+            "Content-Type": "application/json",
+            "Authorization": f'Bearer {os.getenv("OPENAI_API_KEY")}',
         }
 
         payload = {
             "model": "gpt-3.5-turbo",
-            "messages" : [
+            "messages": [
                 {"role": "system", "content": character},
-                {"role": "user", "content": key}
+                {"role": "user", "content": key},
             ],
-            "max_tokens": 1000
+            "max_tokens": 1000,
         }
 
         try:
@@ -60,7 +48,10 @@ class Openai(commands.Cog):
             return
 
         if res.status_code != 200:
-            await interaction.followup.send(f"⚠ APIリクエストエラーが発生しました。時間を置いて試してみてください。\n Status Code: {res.status_code}")
+            await interaction.followup.send(
+                f"⚠ APIリクエストエラーが発生しました。時間を置いて試してみてください。\n \
+                                            Status Code: {res.status_code}"
+            )
             return
 
         json = res.json()
@@ -79,6 +70,7 @@ class Openai(commands.Cog):
         embed.set_footer(text=f"🤖 キャラ設定: {character}\n💸 この質問の料金は {cost}円 でした。")
 
         await interaction.followup.send(embed=embed)
+
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(Openai(bot), guilds=[discord.Object(id=731366036649279518)])

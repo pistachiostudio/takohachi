@@ -10,4 +10,3 @@ class LinkButton(discord.ui.View):
                 url=url,
             )
         )
-

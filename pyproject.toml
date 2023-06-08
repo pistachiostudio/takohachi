@@ -1,31 +1,47 @@
-[tool.poetry]
+[project]
 name = "takohachi"
 version = "1.0.0"
 description = "Gangsta Discord bot"
-authors = ["Pistachio dev",]
-maintainers = [
-    "Yuki Koyama <email>",
-    "zztkm <email>",
+authors = [
+    { name = "Yuki Koyama", email = "" },
+    { name = "zztkm", email = "zztkm@tsurutatakumi.info" }
+]
+dependencies = [
+    "discord.py[voice]~=2.2.3",
+    "gspread~=5.9.0",
+    "requests~=2.31.0",
+    "beautifulsoup4~=4.12.2",
+    "oauth2client~=4.1.3",
+    "pydrive2~=1.15.4",
+    "spotipy~=2.23.0",
+    "httpx~=0.24.1",
+    "tenacity~=8.2.2",
 ]
 readme = "README.md"
 license = "MIT"
-repository = "https://github.com/pistachiostudio/takohachi"
-
-[tool.poetry.dependencies]
-python = "^3.11"
-discord-py = {version = "2.2.3", extras = ["voice"]}
-typing-extensions = "4.6.3"
-gspread = "5.9.0"
-requests = "2.31.0"
-beautifulsoup4 = "4.12.2"
-oauth2client = "4.1.3"
-pydrive2 = "1.15.4"
-spotipy = "2.23.0"
-httpx = "^0.24.0"
-tenacity = "^8.2.2"
-
-
+requires-python = ">= 3.8"
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.rye]
+managed = true
+dev-dependencies = [
+    "tox~=4.6.0",
+    "pre-commit~=3.3.2",
+    "pytest~=7.3.1",
+]
+
+[tool.rye.scripts]
+check = "pre-commit run --all-files"
+tox = "tox"
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.black]
+line-length = 98
+
+[tool.ruff]
+line-length = 128

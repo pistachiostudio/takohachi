@@ -23,6 +23,7 @@ lantest.py
 app.json
 logs/
 .mypy_cache
+.coverage
 
 
 # db file dir

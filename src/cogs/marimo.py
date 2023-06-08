@@ -10,15 +10,8 @@ class Marimo(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @app_commands.command(
-        name="mt",
-        description="まりもたいむ"
-    )
-    async def mt(
-        self,
-        interaction: discord.Interaction
-    ):
-
+    @app_commands.command(name="mt", description="まりもたいむ")
+    async def mt(self, interaction: discord.Interaction):
         # summer time == hours=-4, not == hours=-5
         now = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=-4)))
         pnow = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=+1)))
@@ -27,8 +20,8 @@ class Marimo(commands.Cog):
         paul_time = f"{pnow.month}/{pnow.day} {pnow.hour}:{pnow.minute:02}"
         japan_time = f"{JST.month}/{JST.day} {JST.hour}:{JST.minute:02}"
 
-        #slot
-        slot_list = ['🍒', '🔔', '🍉', '🍇', '🍋', '🐈', '🐬', '🦕', '🐢', '🐕']
+        # slot
+        slot_list = ["🍒", "🔔", "🍉", "🍇", "🍋", "🐈", "🐬", "🦕", "🐢", "🐕"]
         slot_left = random.choice(slot_list)
         slot_center = random.choice(slot_list)
         slot_right = random.choice(slot_list)
@@ -51,8 +44,6 @@ class Marimo(commands.Cog):
 
         await interaction.response.send_message(embeds=embeds)
 
+
 async def setup(bot: commands.Bot):
-    await bot.add_cog(
-        Marimo(bot),
-        guilds = [discord.Object(id=731366036649279518)]
-    )
+    await bot.add_cog(Marimo(bot), guilds=[discord.Object(id=731366036649279518)])

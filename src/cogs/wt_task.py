@@ -4,8 +4,7 @@ from datetime import datetime, timedelta, timezone
 import discord
 from discord.ext import commands, tasks
 
-from libs.utils import (get_exchange_rate, get_trivia, get_weather,
-                        get_what_today)
+from libs.utils import get_exchange_rate, get_trivia, get_weather, get_what_today
 
 
 class WTTasks(commands.Cog):
@@ -19,10 +18,10 @@ class WTTasks(commands.Cog):
 
     @tasks.loop(seconds=600.0)
     async def printer(self):
-        channel = self.bot.get_channel(int('762575939623452682'))
+        channel = self.bot.get_channel(int("762575939623452682"))
 
         # タイムゾーンの生成
-        JST = timezone(timedelta(hours=+9), 'JST')
+        JST = timezone(timedelta(hours=+9), "JST")
         today = datetime.now(JST)
 
         this_month = today.month
@@ -44,15 +43,16 @@ class WTTasks(commands.Cog):
             embed = discord.Embed()
             embed.set_footer(text=f"{weather}\n💵USD/JPY = {get_exchange_rate()}")
             embed.color = discord.Color.green()
-            embed.title = f'{good_morning}{this_month}月{this_day}日 朝の7時です。'
+            embed.title = f"{good_morning}{this_month}月{this_day}日 朝の7時です。"
             embed.description = f"**💡今日はなんの日？**\n{result}\n\n**📚今日の雑学**\n{trivia}"
             await channel.send(embed=embed)
 
     # デプロイ後Botが完全に起動してからタスクを回す
     @printer.before_loop
     async def before_printer(self):
-        print('waiting until bot booting')
+        print("waiting until bot booting")
         await self.bot.wait_until_ready()
+
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(WTTasks(bot))
