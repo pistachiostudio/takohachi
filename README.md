@@ -19,10 +19,10 @@ https://github.com/pistachiostudio/takohachi/tree/main/src/cogs
 
 ## 🪂 installing Packages & Dependencies
 
-### With Poetry
+### With rye
 
 ```bash
-$ poetry install
+$ rye sync
 ```
 
 ## 🏭 Auto deployment by GitHub Actions
