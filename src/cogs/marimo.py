@@ -31,7 +31,7 @@ class Marimo(commands.Cog):
         embed1 = discord.Embed()
         embed1.color = discord.Color.dark_green()
         embed1.set_footer(text=f"mt slot: {slot_left}{slot_center}{slot_right}")
-        embed1.description = f"marimo time = **{marimo_time}**\npaul time = **{paul_time}**\n(In Japan = {japan_time})"
+        embed1.description = f"marimo time = **{marimo_time}**\n(In Japan = {japan_time})"
 
         embed2 = discord.Embed()
         embed2.color = discord.Color.dark_green()
