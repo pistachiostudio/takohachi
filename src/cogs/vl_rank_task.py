@@ -63,11 +63,14 @@ class RankTasks(commands.Cog):
 
                 # todays_eloの値に応じて絵文字を選択
                 if todays_elo > 0:
-                    emoji = "<a:p10_jppy_good:984636997916327986>"
+                    emoji = "<a:p10_jppy_verygood:984636995752046673>"
                     plusminus = "+"
+                if todays_elo < 0:
+                    emoji = "<a:p10_jppy_bad:984637001867329586>"
+                    plusminus = ""
                 else:
                     emoji = "<a:p10_jppy_soso:984636999799541760>"
-                    plusminus = ""
+                    plusminus = "±"
 
                 # フォーマットに合わせて整形
                 result_string = f"{emoji} `{name} #{tag}`\n- {currenttierpatched} (+{ranking_in_tier})\n- 前日比: {plusminus}{todays_elo}\n\n"
