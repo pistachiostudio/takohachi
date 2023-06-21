@@ -24,6 +24,8 @@ app.json
 logs/
 .mypy_cache
 .coverage
+db_create_table.py
+db_insert_data.py
 
 
 # db file dir
