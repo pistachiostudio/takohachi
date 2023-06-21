@@ -19,7 +19,7 @@ class RankTasks(commands.Cog):
 
     @tasks.loop(seconds=600.0)
     async def printer(self):
-        channel = self.bot.get_channel(int("1068066102208372746"))
+        channel = self.bot.get_channel(int("924924594706583562"))
 
         # タイムゾーンの生成
         JST = timezone(timedelta(hours=+9), "JST")
