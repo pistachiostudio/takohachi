@@ -46,12 +46,15 @@ class RankTasks(commands.Cog):
                 puuid, region, name, tag, yesterday_elo = row
 
                 # 非同期でリクエスト
-                url = f"https://api.henrikdev.xyz/valorant/v2/by-puuid/mmr/{region}/{puuid}"
-                async with httpx.AsyncClient() as client:
-                    response = await client.get(url)
+                try:
+                    url = f"https://api.henrikdev.xyz/valorant/v2/by-puuid/mmr/{region}/{puuid}"
+                    async with httpx.AsyncClient() as client:
+                        response = await client.get(url, timeout=60)
+                except httpx.HTTPError as e:
+                    return
 
                 # APIから必要な値を取得
-                data = json.loads(response.text)
+                data = response.json()
                 currenttierpatched = data['data']['current_data']['currenttierpatched']
                 ranking_in_tier = data['data']['current_data']['ranking_in_tier']
                 elo = data['data']['current_data']['elo']
