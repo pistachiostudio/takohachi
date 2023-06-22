@@ -72,6 +72,7 @@ class MyBot(commands.Bot):
             "cogs.vc_role",
             "cogs.vcwhite",
             "cogs.wt_task",
+            "cogs.vl_rank_task",
         ]
 
     async def setup_hook(self):

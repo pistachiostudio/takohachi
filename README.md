@@ -19,7 +19,9 @@ https://github.com/pistachiostudio/takohachi/tree/main/src/cogs
 
 ## 🪂 installing Packages & Dependencies
 
-### With rye
+### With rye🌾
+
+[mitsuhiko/rye: An Experimental Package Management Solution for Python](https://github.com/mitsuhiko/rye)
 
 ```bash
 $ rye sync
