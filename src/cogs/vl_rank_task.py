@@ -68,7 +68,7 @@ class RankTasks(commands.Cog):
                 if todays_elo > 0:
                     emoji = "<a:p10_jppy_verygood:984636995752046673>"
                     plusminus = "+"
-                if todays_elo < 0:
+                elif todays_elo < 0:
                     emoji = "<a:p10_jppy_bad:984637001867329586>"
                     plusminus = ""
                 else:
