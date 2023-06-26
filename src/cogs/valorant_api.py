@@ -3,6 +3,8 @@ import httpx
 from discord import app_commands
 from discord.ext import commands
 
+current_season = "e7a1"
+season_txt = current_season.replace("e", "Episode ").replace("a", " Act ")
 
 class Valo(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -16,9 +18,6 @@ class Valo(commands.Cog):
     async def vr(self, interaction: discord.Interaction, name: str, tagline: str):
         # interactionは3秒以内にレスポンスしないといけないとエラーになるのでこの処理を入れる。
         await interaction.response.defer()
-
-        current_season = "e6a3"
-        season_txt = current_season.replace("e", "Episode ").replace("a", " Act ")
 
         # API request
         rank_url = f"https://api.henrikdev.xyz/valorant/v2/mmr/ap/{name}/{tagline}"
