@@ -7,6 +7,8 @@ import discord
 import httpx
 from discord.ext import commands, tasks
 
+import cogs.valorant_api
+
 
 class RankTasks(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -60,6 +62,9 @@ class RankTasks(commands.Cog):
                 elo = data['data']['current_data']['elo']
                 name = data['data']['name']
                 tag = data['data']['tag']
+                wins = data['data']['by_season'][cogs.valorant_api.current_season]['wins']
+                number_of_games = data['data']['by_season'][cogs.valorant_api.current_season]['number_of_games']
+                loses = number_of_games - wins
 
                 # 昨日と今日のeloの差分を取得
                 todays_elo = elo - yesterday_elo
@@ -76,7 +81,7 @@ class RankTasks(commands.Cog):
                     plusminus = "±"
 
                 # フォーマットに合わせて整形
-                result_string = f"{emoji} `{name} #{tag}`\n- {currenttierpatched} (+{ranking_in_tier})\n- 前日比: {plusminus}{todays_elo}\n\n"
+                result_string = f"{emoji} `{name} #{tag}`\n- {currenttierpatched} (+{ranking_in_tier})\n- 前日比: {plusminus}{todays_elo}\n- {wins}W/{loses}L\n\n"
 
                 # DBの情報を今日の取得内容で更新
                 cur.execute("UPDATE val_puuids SET name=?, tag=?, yesterday_elo=? WHERE puuid=?", (name, tag, elo, puuid))
@@ -93,6 +98,7 @@ class RankTasks(commands.Cog):
             join = await main()
 
             embed = discord.Embed()
+            embed.set_footer(text=cogs.valorant_api.season_txt)
             embed.color = discord.Color.purple()
             embed.title = f"みんなの昨日の活動です。"
             embed.description = f"{join}"
