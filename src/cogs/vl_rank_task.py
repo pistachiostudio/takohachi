@@ -7,7 +7,7 @@ import discord
 import httpx
 from discord.ext import commands, tasks
 
-import cogs.valorant_api
+from cogs.valorant_api import current_season, season_txt
 
 
 class RankTasks(commands.Cog):
@@ -64,7 +64,7 @@ class RankTasks(commands.Cog):
                 tag = data['data']['tag']
 
                 try:
-                        current_season_data = data['data']['by_season'][cogs.valorant_api.current_season]
+                    current_season_data = data['data']['by_season'][current_season]
                 except KeyError:
                     win_loses = "-W/-L"
 
@@ -114,7 +114,7 @@ class RankTasks(commands.Cog):
             join = await main()
 
             embed = discord.Embed()
-            embed.set_footer(text=cogs.valorant_api.season_txt)
+            embed.set_footer(text=season_txt)
             embed.color = discord.Color.purple()
             embed.title = f"みんなの昨日の活動です。"
             embed.description = f"{join}"
