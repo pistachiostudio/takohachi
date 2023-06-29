@@ -5,9 +5,17 @@
 
 # <p align="center">🐙 Takohachi 🐙</p>
 
-<p align="center"><a href="https://github.com/search?q=repo%3Apistachiostudio%2Ftakohachi++language%3APython&type=code"><img alt="GitHub top language" src="https://img.shields.io/github/languages/top/pistachiostudio/takohachi"></a> <a href="https://github.com/pistachiostudio/takohachi/actions"><img alt="GitHub Workflow Status" src="https://img.shields.io/github/actions/workflow/status/pistachiostudio/takohachi/deploy.yml"></a> <a href="https://github.com/charliermarsh/ruff"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v2.json" alt="Ruff" style="max-width:100%;"></a> <a href="https://github.com/pistachiostudio/takohachi/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues/pistachiostudio/takohachi"></a> <a href="https://discord.gg/pistachiogaming"><img alt="Discord" src="https://img.shields.io/discord/731366036649279518"></a> <a href="https://open.vscode.dev/pistachiostudio/takohachi"><img alt="open in vscode" src="https://img.shields.io/badge/codes-open%20in%20VSCode-blue"></a></p>
-
+<p align="center">
+<a href="https://github.com/search?q=repo%3Apistachiostudio%2Ftakohachi++language%3APython&type=code"><img alt="GitHub top language" src="https://img.shields.io/github/languages/top/pistachiostudio/takohachi"></a>
+<a href="https://github.com/pistachiostudio/takohachi/actions/workflows/deploy.yml"><img alt="GitHub Workflow Status" src="https://github.com/pistachiostudio/takohachi/actions/workflows/deploy.yml/badge.svg"></a>
+<a href="https://github.com/pistachiostudio/takohachi/actions/workflows/ci.yml"><img alt="GitHub Workflow Status" src="https://github.com/pistachiostudio/takohachi/actions/workflows/ci.yml/badge.svg"></a>
+<a href="https://github.com/charliermarsh/ruff"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v2.json" alt="Ruff" style="max-width:100%;"></a>
+<a href="https://github.com/pistachiostudio/takohachi/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues/pistachiostudio/takohachi"></a>
+<a href="https://discord.gg/pistachiogaming"><img alt="Discord" src="https://img.shields.io/discord/731366036649279518"></a>
+<a href="https://open.vscode.dev/pistachiostudio/takohachi"><img alt="open in vscode" src="https://img.shields.io/badge/codes-open%20in%20VSCode-blue"></a>
+</p>
 <p align="center">Takohachi is useless Discord bot.<br>But he has romance.</p>
+
 
 ## 🐙 About
 
