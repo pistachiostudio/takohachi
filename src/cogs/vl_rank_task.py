@@ -10,7 +10,7 @@ from discord.ext import commands, tasks
 from cogs.valorant_api import current_season, season_txt
 
 # ランクに合わせてバッジを表示するための辞書
-rank_badge_dict: dict = {
+rank_badge_dict : dict [str, str] = {
     "Unranked": "<:Unranked_Rank:1123928409676972092>",
     "Iron 1": "<:Iron_1_Rank:1123927841680150620>",
     "Iron 2": "<:Iron_2_Rank:1123927843613720657>",
