@@ -1,5 +1,4 @@
 import asyncio
-import json
 import sqlite3
 from datetime import datetime, timedelta, timezone
 
@@ -57,8 +56,6 @@ class RankTasks(commands.Cog):
         JST = timezone(timedelta(hours=+9), "JST")
         today = datetime.now(JST)
 
-        this_month = today.month
-        this_day = today.day
         this_hour = today.hour
         this_minute = today.minute
 
@@ -81,7 +78,7 @@ class RankTasks(commands.Cog):
                     url = f"https://api.henrikdev.xyz/valorant/v2/by-puuid/mmr/{region}/{puuid}"
                     async with httpx.AsyncClient() as client:
                         response = await client.get(url, timeout=60)
-                except httpx.HTTPError as e:
+                except httpx.HTTPError:
                     return
 
                 # APIから必要な値を取得
@@ -132,7 +129,8 @@ class RankTasks(commands.Cog):
                 )
 
                 # フォーマットに合わせて整形
-                result_string = f"{emoji} `{name} #{tag}` {rank_emoji}\n- {current_rank_info}\n- 前日比: {plusminus}{todays_elo}\n- {win_loses}\n\n"
+                result_string = f"{emoji} `{name} #{tag}` {rank_emoji}\n- {current_rank_info}\n- 前日比:\
+                  {plusminus}{todays_elo}\n- {win_loses}\n\n"
 
                 # DBの情報を今日の取得内容で更新
                 cur.execute(
@@ -154,7 +152,7 @@ class RankTasks(commands.Cog):
             embed = discord.Embed()
             embed.set_footer(text=season_txt)
             embed.color = discord.Color.purple()
-            embed.title = f"みんなの昨日の活動です。"
+            embed.title = "みんなの昨日の活動です。"
             embed.description = f"{join}"
             await channel.send(embed=embed)
 

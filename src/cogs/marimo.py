@@ -14,10 +14,8 @@ class Marimo(commands.Cog):
     async def mt(self, interaction: discord.Interaction):
         # summer time == hours=-4, not == hours=-5
         now = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=-4)))
-        pnow = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=+1)))
         JST = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=+9)))
         marimo_time = f"{now.month}/{now.day} {now.hour}:{now.minute:02}"
-        paul_time = f"{pnow.month}/{pnow.day} {pnow.hour}:{pnow.minute:02}"
         japan_time = f"{JST.month}/{JST.day} {JST.hour}:{JST.minute:02}"
 
         # slot
