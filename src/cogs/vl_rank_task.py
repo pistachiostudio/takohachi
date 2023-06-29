@@ -10,7 +10,7 @@ from discord.ext import commands, tasks
 from cogs.valorant_api import current_season, season_txt
 
 # ランクに合わせてバッジを表示するための辞書
-rank_badge_dict : dict [str, str] = {
+rank_badge_dict: dict[str, str] = {
     "Unranked": "<:Unranked_Rank:1123928409676972092>",
     "Iron 1": "<:Iron_1_Rank:1123927841680150620>",
     "Iron 2": "<:Iron_2_Rank:1123927843613720657>",
@@ -36,8 +36,9 @@ rank_badge_dict : dict [str, str] = {
     "Immortal 1": "<:Immortal_1_Rank:1123927813209206907>",
     "Immortal 2": "<:Immortal_2_Rank:1123927816673689732>",
     "Immortal 3": "<:Immortal_3_Rank:1123927819228024872>",
-    "Radiant": "<:Radiant_Rank:1123927894725496842>"
+    "Radiant": "<:Radiant_Rank:1123927894725496842>",
 }
+
 
 class RankTasks(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -62,7 +63,6 @@ class RankTasks(commands.Cog):
         this_minute = today.minute
 
         if this_hour == 7 and 0 <= this_minute <= 9:
-
             DB_DIRECTORY = "/data/takohachi.db"
 
             # データベースに接続とカーソルの取得
@@ -86,24 +86,24 @@ class RankTasks(commands.Cog):
 
                 # APIから必要な値を取得
                 data = response.json()
-                currenttierpatched = data['data']['current_data']['currenttierpatched']
-                ranking_in_tier = data['data']['current_data']['ranking_in_tier']
-                elo: int = data['data']['current_data']['elo']
-                name = data['data']['name']
-                tag = data['data']['tag']
+                currenttierpatched = data["data"]["current_data"]["currenttierpatched"]
+                ranking_in_tier = data["data"]["current_data"]["ranking_in_tier"]
+                elo: int = data["data"]["current_data"]["elo"]
+                name = data["data"]["name"]
+                tag = data["data"]["tag"]
 
                 try:
-                    current_season_data = data['data']['by_season'][current_season]
+                    current_season_data = data["data"]["by_season"][current_season]
                 except KeyError:
                     win_loses = "-W/-L"
 
-                final_rank_patched = current_season_data.get('final_rank_patched', "Unrated")
+                final_rank_patched = current_season_data.get("final_rank_patched", "Unrated")
 
                 if final_rank_patched == "Unrated":
                     win_loses = "-W/-L"
                 else:
-                    wins: int = current_season_data.get('wins', 0)
-                    number_of_games: int = current_season_data.get('number_of_games', 0)
+                    wins: int = current_season_data.get("wins", 0)
+                    number_of_games: int = current_season_data.get("number_of_games", 0)
                     loses: int = number_of_games - wins
                     win_loses = f"{wins}W/{loses}L"
 
@@ -127,13 +127,18 @@ class RankTasks(commands.Cog):
                     plusminus = "±"
 
                 # ランクに合わせランクのバッジの絵文字を取得
-                rank_emoji = rank_badge_dict.get(currenttierpatched, "<:p02_win8_1_nogoodgesture:1098118812655693896>")
+                rank_emoji = rank_badge_dict.get(
+                    currenttierpatched, "<:p02_win8_1_nogoodgesture:1098118812655693896>"
+                )
 
                 # フォーマットに合わせて整形
                 result_string = f"{emoji} `{name} #{tag}` {rank_emoji}\n- {current_rank_info}\n- 前日比: {plusminus}{todays_elo}\n- {win_loses}\n\n"
 
                 # DBの情報を今日の取得内容で更新
-                cur.execute("UPDATE val_puuids SET name=?, tag=?, yesterday_elo=? WHERE puuid=?", (name, tag, elo, puuid))
+                cur.execute(
+                    "UPDATE val_puuids SET name=?, tag=?, yesterday_elo=? WHERE puuid=?",
+                    (name, tag, elo, puuid),
+                )
                 conn.commit()
 
                 return result_string
