@@ -62,9 +62,25 @@ class RankTasks(commands.Cog):
                 elo = data['data']['current_data']['elo']
                 name = data['data']['name']
                 tag = data['data']['tag']
-                wins = data['data']['by_season'][cogs.valorant_api.current_season]['wins']
-                number_of_games = data['data']['by_season'][cogs.valorant_api.current_season]['number_of_games']
-                loses = number_of_games - wins
+
+                try:
+                    final_rank_patched = data['data']['by_season'][cogs.valorant_api.current_season]['final_rank_patched']
+                except KeyError:
+                    final_rank_patched = "Unrated"
+
+                if final_rank_patched == "Unrated":
+                    win_loses = "Unranked"
+                else:
+                    try:
+                        wins = data['data']['by_season'][cogs.valorant_api.current_season]['wins']
+                    except KeyError:
+                        wins = 0
+                    try:
+                        number_of_games = data['data']['by_season'][cogs.valorant_api.current_season]['number_of_games']
+                    except KeyError:
+                        number_of_games = 0
+                    loses = number_of_games - wins
+                    win_loses = f"{wins}W/{loses}L"
 
                 # 昨日と今日のeloの差分を取得
                 todays_elo = elo - yesterday_elo
@@ -81,7 +97,7 @@ class RankTasks(commands.Cog):
                     plusminus = "±"
 
                 # フォーマットに合わせて整形
-                result_string = f"{emoji} `{name} #{tag}`\n- {currenttierpatched} (+{ranking_in_tier})\n- 前日比: {plusminus}{todays_elo}\n- {wins}W/{loses}L\n\n"
+                result_string = f"{emoji} `{name} #{tag}`\n- {currenttierpatched} (+{ranking_in_tier})\n- 前日比: {plusminus}{todays_elo}\n- {win_loses}\n\n"
 
                 # DBの情報を今日の取得内容で更新
                 cur.execute("UPDATE val_puuids SET name=?, tag=?, yesterday_elo=? WHERE puuid=?", (name, tag, elo, puuid))
