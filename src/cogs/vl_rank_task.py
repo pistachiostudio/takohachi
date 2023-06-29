@@ -66,7 +66,7 @@ class RankTasks(commands.Cog):
                 try:
                         current_season_data = data['data']['by_season'][cogs.valorant_api.current_season]
                 except KeyError:
-                    win_loses = "Unrated"
+                    win_loses = "Unranked"
 
                 final_rank_patched = current_season_data.get('final_rank_patched', "Unrated")
 
