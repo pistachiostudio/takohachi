@@ -59,27 +59,31 @@ class RankTasks(commands.Cog):
                 data = response.json()
                 currenttierpatched = data['data']['current_data']['currenttierpatched']
                 ranking_in_tier = data['data']['current_data']['ranking_in_tier']
-                elo = data['data']['current_data']['elo']
+                elo: int = data['data']['current_data']['elo']
                 name = data['data']['name']
                 tag = data['data']['tag']
 
                 try:
                         current_season_data = data['data']['by_season'][cogs.valorant_api.current_season]
                 except KeyError:
-                    win_loses = "Unranked"
+                    win_loses = "-W/-L"
 
                 final_rank_patched = current_season_data.get('final_rank_patched', "Unrated")
 
                 if final_rank_patched == "Unrated":
-                    win_loses = "Unranked"
+                    win_loses = "-W/-L"
                 else:
                     wins: int = current_season_data.get('wins', 0)
-                    number_of_games = current_season_data.get('number_of_games', 0)
-                    loses = number_of_games - wins
+                    number_of_games: int = current_season_data.get('number_of_games', 0)
+                    loses: int = number_of_games - wins
                     win_loses = f"{wins}W/{loses}L"
 
-                # 昨日と今日のeloの差分を取得
-                todays_elo = elo - yesterday_elo
+                if win_loses == "-W/-L":
+                    current_rank_info = "Unranked"
+                    todays_elo: int = 0
+                else:
+                    current_rank_info = f"{currenttierpatched} (+{ranking_in_tier})"
+                    todays_elo: int = elo - yesterday_elo
 
                 # todays_eloの値に応じて絵文字を選択
                 if todays_elo > 0:
@@ -93,7 +97,7 @@ class RankTasks(commands.Cog):
                     plusminus = "±"
 
                 # フォーマットに合わせて整形
-                result_string = f"{emoji} `{name} #{tag}`\n- {currenttierpatched} (+{ranking_in_tier})\n- 前日比: {plusminus}{todays_elo}\n- {win_loses}\n\n"
+                result_string = f"{emoji} `{name} #{tag}`\n- {current_rank_info}\n- 前日比: {plusminus}{todays_elo}\n- {win_loses}\n\n"
 
                 # DBの情報を今日の取得内容で更新
                 cur.execute("UPDATE val_puuids SET name=?, tag=?, yesterday_elo=? WHERE puuid=?", (name, tag, elo, puuid))
