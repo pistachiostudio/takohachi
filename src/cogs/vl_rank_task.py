@@ -21,7 +21,7 @@ class RankTasks(commands.Cog):
 
     @tasks.loop(seconds=600.0)
     async def printer(self):
-        channel = self.bot.get_channel(int("924924594706583562"))
+        channel = self.bot.get_channel(int("893528538190344192"))
 
         # タイムゾーンの生成
         JST = timezone(timedelta(hours=+9), "JST")
@@ -32,7 +32,7 @@ class RankTasks(commands.Cog):
         this_hour = today.hour
         this_minute = today.minute
 
-        if this_hour == 7 and 0 <= this_minute <= 9:
+        if this_hour == 11:# and 0 <= this_minute <= 9:
 
             DB_DIRECTORY = "/data/takohachi.db"
 
@@ -64,21 +64,17 @@ class RankTasks(commands.Cog):
                 tag = data['data']['tag']
 
                 try:
-                    final_rank_patched = data['data']['by_season'][cogs.valorant_api.current_season]['final_rank_patched']
+                        current_season_data = data['data']['by_season'][cogs.valorant_api.current_season]
                 except KeyError:
-                    final_rank_patched = "Unrated"
+                    win_loses = "Unrated"
+
+                final_rank_patched = current_season_data.get('final_rank_patched', "Unrated")
 
                 if final_rank_patched == "Unrated":
                     win_loses = "Unranked"
                 else:
-                    try:
-                        wins = data['data']['by_season'][cogs.valorant_api.current_season]['wins']
-                    except KeyError:
-                        wins = 0
-                    try:
-                        number_of_games = data['data']['by_season'][cogs.valorant_api.current_season]['number_of_games']
-                    except KeyError:
-                        number_of_games = 0
+                    wins: int = current_season_data.get('wins', 0)
+                    number_of_games = current_season_data.get('number_of_games', 0)
                     loses = number_of_games - wins
                     win_loses = f"{wins}W/{loses}L"
 
