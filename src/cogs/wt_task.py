@@ -4,8 +4,7 @@ from datetime import datetime, timedelta, timezone
 import discord
 from discord.ext import commands, tasks
 
-from libs.utils import (get_exchange_rate, get_trivia, get_weather,
-                        get_what_today)
+from libs.utils import get_exchange_rate, get_trivia, get_weather, get_what_today
 
 
 class WTTasks(commands.Cog):
@@ -45,7 +44,9 @@ class WTTasks(commands.Cog):
             embed.set_footer(text=f"{weather}\n💵USD/JPY = {get_exchange_rate()}")
             embed.color = discord.Color.green()
             embed.title = f"{good_morning}{this_month}月{this_day}日 朝の7時です。"
-            embed.description = f"**💡今日はなんの日？**\n{result}\n\n**📚今日の雑学**\n{trivia} (Powered by gpt-3.5-turbo)"
+            embed.description = (
+                f"**💡今日はなんの日？**\n{result}\n\n**📚今日の雑学**\n{trivia} (Powered by gpt-3.5-turbo)"
+            )
             await channel.send(embed=embed)
 
     # デプロイ後Botが完全に起動してからタスクを回す
