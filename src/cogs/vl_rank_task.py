@@ -32,7 +32,7 @@ class RankTasks(commands.Cog):
         this_hour = today.hour
         this_minute = today.minute
 
-        if this_hour == 11:# and 0 <= this_minute <= 9:
+        if this_hour == 7 and 0 <= this_minute <= 9:
 
             DB_DIRECTORY = "/data/takohachi.db"
 
