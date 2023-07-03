@@ -101,8 +101,12 @@ class RankTasks(commands.Cog):
                 else:
                     wins: int = current_season_data.get("wins", 0)
 
-                    # アクト1は毎回5試合の振り分け戦があり、APIは上はその振り分け戦はwinをカウントせず、number_of_gamesだけがカウントされていく。
-                    # よってアクト1の場合のみ、number_of_gamesから5を引いた値 (振り分け戦が終わってから) W/Lをカウントすることにする。
+                    """
+                    アクト1は毎回5試合の振り分け戦があり、APIは上はその振り分け戦はwinをカウントせず、
+                    number_of_gamesだけがカウントされていく。
+                    よってアクト1の場合のみ、number_of_gamesから5を引いた値
+                    (振り分け戦が終わってから) W/Lをカウントすることにする。
+                    """
                     if current_season[-2:] == "a1":
                         number_of_games: int = current_season_data.get("number_of_games", 0) - 5
                         loses: int = number_of_games - wins
