@@ -10,7 +10,7 @@ from cogs.valorant_api import current_season, season_txt
 
 # ランクに合わせてバッジを表示するための辞書
 rank_badge_dict: dict[str, str] = {
-    "Unranked": "<:Unranked_Rank:1123928409676972092>",
+    "Unrated": "<:Unranked_Rank:1123928409676972092>",
     "Iron 1": "<:Iron_1_Rank:1123927841680150620>",
     "Iron 2": "<:Iron_2_Rank:1123927843613720657>",
     "Iron 3": "<:Iron_3_Rank:1123927839146774578>",
@@ -81,7 +81,7 @@ class RankTasks(commands.Cog):
                 except httpx.HTTPError:
                     return
 
-                # APIから必要な値を取得
+                # APIから必要な基本情報の値を取得
                 data = response.json()
                 currenttierpatched = data["data"]["current_data"]["currenttierpatched"]
                 ranking_in_tier = data["data"]["current_data"]["ranking_in_tier"]
@@ -89,37 +89,27 @@ class RankTasks(commands.Cog):
                 name = data["data"]["name"]
                 tag = data["data"]["tag"]
 
+                # 新シーズンになって1試合もやってない場合は
+                # アクトごとのレスポンス部分はKeyErrorが発生するのでその判定を行う
                 try:
                     current_season_data = data["data"]["by_season"][current_season]
+                    final_rank_patched = current_season_data.get("final_rank_patched", "Unrated")
+                    number_of_games: int = current_season_data.get("number_of_games", 0)
+                    # 正確なwinsを取得するために変更
+                    wins: int = len(data["data"]["by_season"][current_season]["act_rank_wins"])
+                    loses: int = number_of_games - wins
                 except KeyError:
-                    win_loses = "-W/-L"
+                    wins = 0
+                    loses = 0
+                    final_rank_patched = "Unrated"
 
-                final_rank_patched = current_season_data.get("final_rank_patched", "Unrated")
-
+                # ランクがUnratedの場合はELOなども一旦0にする。
+                # Unratedではなくランクがついている場合は通常の処理。
                 if final_rank_patched == "Unrated":
-                    win_loses = "-W/-L"
-                else:
-                    wins: int = current_season_data.get("wins", 0)
-
-                    """
-                    アクト1は毎回5試合の振り分け戦があり、APIは上はその振り分け戦はwinをカウントせず、
-                    number_of_gamesだけがカウントされていく。
-                    よってアクト1の場合のみ、number_of_gamesから5を引いた値
-                    (振り分け戦が終わってから) W/Lをカウントすることにする。
-                    """
-                    if current_season[-2:] == "a1":
-                        number_of_games: int = current_season_data.get("number_of_games", 0) - 5
-                        loses: int = number_of_games - wins
-                        win_loses = f"{wins}W/{loses}L"
-                    else:
-                        number_of_games: int = current_season_data.get("number_of_games", 0)
-                        loses: int = number_of_games - wins
-                        win_loses = f"{wins}W/{loses}L"
-
-                if win_loses == "-W/-L":
-                    current_rank_info = "Unranked"
-                    currenttierpatched = "Unranked"
-                    todays_elo: int = 0
+                    current_rank_info = "Unrated"
+                    currenttierpatched = "Unrated"
+                    todays_elo = 0
+                    elo = 0
                 else:
                     current_rank_info = f"{currenttierpatched} (+{ranking_in_tier})"
                     todays_elo: int = elo - yesterday_elo
@@ -135,13 +125,13 @@ class RankTasks(commands.Cog):
                     emoji = "<a:p10_jppy_soso:984636999799541760>"
                     plusminus = "±"
 
-                # ランクに合わせランクのバッジの絵文字を取得
+                # ランクに合わせてバッジの絵文字を取得
                 rank_emoji = rank_badge_dict.get(
                     currenttierpatched, "<:p02_win8_1_nogoodgesture:1098118812655693896>"
                 )
 
                 # フォーマットに合わせて整形
-                result_string = f"{emoji} `{name} #{tag}` {rank_emoji}\n- {current_rank_info}\n- 前日比: {plusminus}{todays_elo}\n- {win_loses}\n\n"  # noqa: E501
+                result_string = f"{emoji} `{name} #{tag}` {rank_emoji}\n- {current_rank_info}\n- 前日比: {plusminus}{todays_elo}\n- {wins}W/{loses}L\n\n"  # noqa: E501
 
                 # DBの情報を今日の取得内容で更新
                 cur.execute(
@@ -161,7 +151,7 @@ class RankTasks(commands.Cog):
             join = await main()
 
             embed = discord.Embed()
-            embed.set_footer(text=f"{season_txt}\n※アクト1は振り分け戦の5試合分のW/Lをカウントしません。")
+            embed.set_footer(text=f"{season_txt}")
             embed.color = discord.Color.purple()
             embed.title = "みんなの昨日の活動です。"
             embed.description = f"{join}"
