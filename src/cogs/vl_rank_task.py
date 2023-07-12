@@ -130,8 +130,20 @@ class RankTasks(commands.Cog):
                     currenttierpatched, "<:p02_win8_1_nogoodgesture:1098118812655693896>"
                 )
 
+                # これまでのランクすべてのWLを取得
+                total_act_rank_wins = 0
+                total_number_of_games = 0
+                season_data = data["data"]["by_season"]
+
+                for season, info in season_data.items():
+                    if 'act_rank_wins' in info:
+                        total_act_rank_wins += len(info['act_rank_wins'])
+                    if 'number_of_games' in info:
+                        total_number_of_games += info['number_of_games']
+                total_act_rank_loses = total_number_of_games - total_act_rank_wins
+
                 # フォーマットに合わせて整形
-                result_string = f"{emoji} `{name} #{tag}` {rank_emoji}\n- {current_rank_info}\n- 前日比: {plusminus}{todays_elo}\n- {wins}W/{loses}L\n\n"  # noqa: E501
+                result_string = f"{emoji} `{name} #{tag}` {rank_emoji}\n- {current_rank_info}\n- Daily changes: {plusminus}{todays_elo}\n- Current act: {wins}W/{loses}L\n- Lifetime: {total_act_rank_wins}W/{total_act_rank_loses}L\n\n"  # noqa: E501
 
                 # DBの情報を今日の取得内容で更新
                 cur.execute(
@@ -151,7 +163,7 @@ class RankTasks(commands.Cog):
             join = await main()
 
             embed = discord.Embed()
-            embed.set_footer(text=f"{season_txt}")
+            embed.set_footer(text=f"{season_txt}\n※ WLはランクのみの集計です。\n※ 引き分けは負けとしてカウントされます。")
             embed.color = discord.Color.purple()
             embed.title = "みんなの昨日の活動です。"
             embed.description = f"{join}"
