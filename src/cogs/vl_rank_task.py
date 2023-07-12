@@ -136,10 +136,10 @@ class RankTasks(commands.Cog):
                 season_data = data["data"]["by_season"]
 
                 for season, info in season_data.items():
-                    if 'act_rank_wins' in info:
-                        total_act_rank_wins += len(info['act_rank_wins'])
-                    if 'number_of_games' in info:
-                        total_number_of_games += info['number_of_games']
+                    if "act_rank_wins" in info:
+                        total_act_rank_wins += len(info["act_rank_wins"])
+                    if "number_of_games" in info:
+                        total_number_of_games += info["number_of_games"]
                 total_act_rank_loses = total_number_of_games - total_act_rank_wins
 
                 # フォーマットに合わせて整形
