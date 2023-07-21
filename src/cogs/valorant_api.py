@@ -44,7 +44,9 @@ class Valo(commands.Cog):
         # URLのエンドポイント
         rank_url = f"https://api.henrikdev.xyz/valorant/v2/mmr/ap/{name}/{tagline}"
         account_url = f"https://api.henrikdev.xyz/valorant/v1/account/{name}/{tagline}"
-        lifetime_matches_url = f"https://api.henrikdev.xyz/valorant/v1/lifetime/matches/ap/{name}/{tagline}"
+        lifetime_matches_url = (
+            f"https://api.henrikdev.xyz/valorant/v1/lifetime/matches/ap/{name}/{tagline}"
+        )
 
         try:
             # リクエストを送信
@@ -110,11 +112,11 @@ class Valo(commands.Cog):
         # これまでの全試合のhead率を取得
         total_head, total_body, total_leg = 0, 0, 0
 
-        for match in match_data['data']:
-            shots = match['stats']['shots']
-            total_head += shots['head']
-            total_body += shots['body']
-            total_leg += shots['leg']
+        for match in match_data["data"]:
+            shots = match["stats"]["shots"]
+            total_head += shots["head"]
+            total_body += shots["body"]
+            total_leg += shots["leg"]
 
         total_shots = total_head + total_body + total_leg
         head_rate = round((total_head / total_shots) * 100, 2)
@@ -126,12 +128,18 @@ class Valo(commands.Cog):
         embed.description = f"{season_txt} competitive results"
         embed.set_thumbnail(url=rank_image_url)
 
-        embed.add_field(name="Current Rank", value=f"```{currenttierpatched} (+{ranking_in_tier})```")
+        embed.add_field(
+            name="Current Rank", value=f"```{currenttierpatched} (+{ranking_in_tier})```"
+        )
         embed.add_field(name="Current Act W/L", value=f"```{wins}W/{loses}L```")
-        embed.add_field(name="Lifetime W/L", value=f"```{total_act_rank_wins}W/{total_act_rank_loses}L```")
+        embed.add_field(
+            name="Lifetime W/L", value=f"```{total_act_rank_wins}W/{total_act_rank_loses}L```"
+        )
         embed.add_field(name="Lifetime HS Rate", value=f"```{head_rate}%```")
         embed.add_field(name="Account Level", value=f"```{account_level}```")
-        embed.set_footer(text="※ WLはランクのみの集計です。\n※ 引き分けは負けとしてカウントされます。\n※ ヘッショ率は過去100試合くらいのアンレやコンペすべての試合から算出しています。\n※ またキルしたショットではなく敵に当たった弾すべてでカウントしています。")
+        embed.set_footer(
+            text="※ WLはランクのみの集計です。\n※ 引き分けは負けとしてカウントされます。\n※ ヘッショ率は過去100試合くらいのアンレやコンペすべての試合から算出しています。\n※ またキルしたショットではなく敵に当たった弾すべてでカウントしています。"  # noqa E501
+        )
         embed.set_image(url=card_image_url)
 
         # interaction.response.deferを使ったのでここはfollowup.sendが必要
