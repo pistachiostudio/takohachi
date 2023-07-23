@@ -37,6 +37,8 @@ dev-dependencies = [
 [tool.rye.scripts]
 check = "pre-commit run --all-files"
 tox = "tox"
+add = "python scripts/db_insert_data.py"
+delete = "python scripts/db_delete_data.py"
 
 [tool.hatch.metadata]
 allow-direct-references = true
