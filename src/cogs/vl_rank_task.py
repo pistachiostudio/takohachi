@@ -71,7 +71,7 @@ class RankTasks(commands.Cog):
             rows = cur.fetchall()
 
             async def fetch(row):
-                puuid, region, name, tag, yesterday_elo = row
+                puuid, region, name, tag, yesterday_elo, yesterday_win, yesterday_lose = row
 
                 # 非同期でリクエスト
                 try:
@@ -130,6 +130,10 @@ class RankTasks(commands.Cog):
                     currenttierpatched, "<:p02_win8_1_nogoodgesture:1098118812655693896>"
                 )
 
+                # デイリーのWLを取得
+                daily_wins = wins - yesterday_win
+                daily_loses = loses - yesterday_lose
+
                 # これまでのランクすべてのWLを取得
                 total_act_rank_wins = 0
                 total_number_of_games = 0
@@ -143,12 +147,12 @@ class RankTasks(commands.Cog):
                 total_act_rank_loses = total_number_of_games - total_act_rank_wins
 
                 # フォーマットに合わせて整形
-                result_string = f"{emoji} `{name} #{tag}` {rank_emoji}\n- {current_rank_info}\n- Daily changes: {plusminus}{todays_elo}\n- Current act: {wins}W/{loses}L\n- Lifetime: {total_act_rank_wins}W/{total_act_rank_loses}L\n\n"  # noqa: E501
+                result_string = f"{emoji} `{name} #{tag}` {rank_emoji}\n- {current_rank_info}\n- Daily changes: {plusminus}{todays_elo}\n- Daily matches: {daily_wins}W/{daily_loses}L\n- Current act: {wins}W/{loses}L\n- Lifetime: {total_act_rank_wins}W/{total_act_rank_loses}L\n\n"  # noqa: E501
 
                 # DBの情報を今日の取得内容で更新
                 cur.execute(
-                    "UPDATE val_puuids SET name=?, tag=?, yesterday_elo=? WHERE puuid=?",
-                    (name, tag, elo, puuid),
+                    "UPDATE val_puuids SET name=?, tag=?, yesterday_elo=?, yesterday_win=?, yesterday_lose=? WHERE puuid=?",
+                    (name, tag, elo, wins, loses, puuid),
                 )
                 conn.commit()
 
