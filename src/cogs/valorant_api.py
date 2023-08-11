@@ -149,49 +149,34 @@ class Valo(commands.Cog):
     # Valorantの最新ニュースを取ってくるコマンド
     @app_commands.command(name="vnews", description="Valorantの最新ニュースを取得します。")
     async def vnews(self, interaction: discord.Interaction):
-        # interactionは3秒以内にレスポンスしないといけないとエラーになるのでこの処理で待たせる。
         await interaction.response.defer()
 
         news_url = "https://api.henrikdev.xyz/valorant/v1/website/ja-jp"
-        async with httpx.AsyncClient() as client:
-            res = await client.get(news_url)
-        json = res.json()
 
-        news_01_title = json["data"][0]["title"]
-        news_01_url = json["data"][0]["url"]
-        news_01_external = json["data"][0]["external_link"]
-        news_01_image = json["data"][0]["banner_url"]
+        try:
+            async with httpx.AsyncClient() as client:
+                res = await client.get(news_url)
+            res.raise_for_status()
+            json_data = res.json()
+        except httpx.HTTPError as e:
+            await interaction.followup.send(f"APIリクエストエラー: {e}")
+            return
 
-        news_02_title = json["data"][1]["title"]
-        news_02_url = json["data"][1]["url"]
-        news_02_external = json["data"][1]["external_link"]
+        # news articles list
+        news_articles = json_data["data"][:4]
 
-        news_03_title = json["data"][2]["title"]
-        news_03_url = json["data"][2]["url"]
-        news_03_external = json["data"][2]["external_link"]
+        news_description = []
+        for article in news_articles:
+            title = article["title"]
+            url = article.get("external_link") or article["url"]
+            news_description.append(f"- [{title}]({url})")
 
-        news_04_title = json["data"][3]["title"]
-        news_04_url = json["data"][3]["url"]
-        news_04_external = json["data"][3]["external_link"]
-
-        if news_01_external is not None:
-            news_01_url = news_01_external
-        if news_02_external is not None:
-            news_02_url = news_02_external
-        if news_03_external is not None:
-            news_03_url = news_03_external
-        if news_01_external is not None:
-            news_04_url = news_04_external
-
-        # Embed
         embed = discord.Embed()
         embed.title = "Valorant Latest News"
         embed.color = discord.Color.purple()
-        embed.description = f"- [{news_01_title}]({news_01_url})\n\n- \
-            [{news_02_title}]({news_02_url})\n\n- [{news_03_title}]({news_03_url})\n\n- [{news_04_title}]({news_04_url})\n"
-        embed.set_image(url=news_01_image)
+        embed.description = "\n".join(news_description)
+        embed.set_image(url=news_articles[0]["banner_url"])
 
-        # interaction.response.deferを使ったのでここはfollowup.sendが必要
         await interaction.followup.send(embed=embed)
 
 

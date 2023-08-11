@@ -54,16 +54,16 @@ class RankTasks(commands.Cog):
 
         # タイムゾーンの生成
         JST = timezone(timedelta(hours=+9), "JST")
-        today = datetime.now(JST)
+        now = datetime.now(JST)
 
-        this_hour = today.hour
-        this_minute = today.minute
+        now_hour = now.hour
+        now_minute = now.minute
 
-        if this_hour == 7 and 0 <= this_minute <= 9:
-            DB_DIRECTORY = "/data/takohachi.db"
+        if now_hour == 7 and 0 <= now_minute <= 9:
+            db_path = "/data/takohachi.db"
 
             # データベースに接続とカーソルの取得
-            conn = sqlite3.connect(DB_DIRECTORY)
+            conn = sqlite3.connect(db_path)
             cur = conn.cursor()
 
             # レコードを全て取得し、yesterday_eloで降順にソート
@@ -73,27 +73,43 @@ class RankTasks(commands.Cog):
             async def fetch(row):
                 puuid, region, name, tag, yesterday_elo, yesterday_win, yesterday_lose = row
 
-                # 非同期でリクエスト
+                # 非同期でキャッシュをパージしてリクエスト。最新のnameとtagを取得する。
                 try:
-                    url = f"https://api.henrikdev.xyz/valorant/v2/by-puuid/mmr/{region}/{puuid}"
+                    account_url = f"https://api.henrikdev.xyz/valorant/v1/by-puuid/account/{puuid}?force=true"
+                    async with httpx.AsyncClient() as client:
+                        name_tag_response = await client.get(account_url, timeout=60)
+                except httpx.HTTPError:
+                    return
+
+                # jsonから必要な値を取得
+                account_data = name_tag_response.json()
+                api_name: str = account_data["data"]["name"]
+                api_tag: str = account_data["data"]["tag"]
+                api_region: str = account_data["data"]["region"]
+
+                # mmrのエンドポイントを非同期でリクエスト
+                try:
+                    url = (
+                        f"https://api.henrikdev.xyz/valorant/v2/by-puuid/mmr/{api_region}/{puuid}"
+                    )
                     async with httpx.AsyncClient() as client:
                         response = await client.get(url, timeout=60)
                 except httpx.HTTPError:
                     return
 
-                # APIから必要な基本情報の値を取得
+                # jsonから必要な値を取得
                 data = response.json()
-                currenttierpatched = data["data"]["current_data"]["currenttierpatched"]
-                ranking_in_tier = data["data"]["current_data"]["ranking_in_tier"]
+                currenttierpatched: str = data["data"]["current_data"]["currenttierpatched"]
+                ranking_in_tier: str = data["data"]["current_data"]["ranking_in_tier"]
                 elo: int = data["data"]["current_data"]["elo"]
-                name = data["data"]["name"]
-                tag = data["data"]["tag"]
 
                 # 新シーズンになって1試合もやってない場合は
                 # アクトごとのレスポンス部分はKeyErrorが発生するのでその判定を行う
                 try:
                     current_season_data = data["data"]["by_season"][current_season]
-                    final_rank_patched = current_season_data.get("final_rank_patched", "Unrated")
+                    final_rank_patched: str = current_season_data.get(
+                        "final_rank_patched", "Unrated"
+                    )
                     number_of_games: int = current_season_data.get("number_of_games", 0)
                     # 正確なwinsを取得するために変更
                     wins: int = len(data["data"]["by_season"][current_season]["act_rank_wins"])
@@ -131,8 +147,8 @@ class RankTasks(commands.Cog):
                 )
 
                 # デイリーのWLを取得
-                daily_wins = wins - yesterday_win
-                daily_loses = loses - yesterday_lose
+                daily_wins: int = wins - yesterday_win
+                daily_loses: int = loses - yesterday_lose
 
                 # これまでのランクすべてのWLを取得
                 total_act_rank_wins = 0
@@ -144,15 +160,15 @@ class RankTasks(commands.Cog):
                         total_act_rank_wins += len(info["act_rank_wins"])
                     if "number_of_games" in info:
                         total_number_of_games += info["number_of_games"]
-                total_act_rank_loses = total_number_of_games - total_act_rank_wins
+                total_act_rank_loses: int = total_number_of_games - total_act_rank_wins
 
                 # フォーマットに合わせて整形
-                result_string = f"{emoji} `{name} #{tag}` {rank_emoji}\n- {current_rank_info}\n- Daily changes: {plusminus}{todays_elo}\n- Daily matches: {daily_wins}W/{daily_loses}L\n- Current act: {wins}W/{loses}L\n- Lifetime: {total_act_rank_wins}W/{total_act_rank_loses}L\n\n"  # noqa: E501
+                result_string = f"{emoji} `{api_name} #{api_tag}` {rank_emoji}\n- {current_rank_info}\n- Daily changes: {plusminus}{todays_elo}\n- Daily matches: {daily_wins}W/{daily_loses}L\n- Current act: {wins}W/{loses}L\n- Lifetime: {total_act_rank_wins}W/{total_act_rank_loses}L\n\n"  # noqa: E501
 
                 # DBの情報を今日の取得内容で更新
                 cur.execute(
-                    "UPDATE val_puuids SET name=?, tag=?, yesterday_elo=?, yesterday_win=?, yesterday_lose=? WHERE puuid=?",
-                    (name, tag, elo, wins, loses, puuid),
+                    "UPDATE val_puuids SET region=?, name=?, tag=?, yesterday_elo=?, yesterday_win=?, yesterday_lose=? WHERE puuid=?",  # noqa: E501
+                    (api_region, api_name, api_tag, elo, wins, loses, puuid),
                 )
                 conn.commit()
 
