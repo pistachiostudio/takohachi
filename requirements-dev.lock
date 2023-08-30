@@ -31,7 +31,7 @@ google-auth==2.19.1
 google-auth-httplib2==0.1.0
 google-auth-oauthlib==1.0.0
 googleapis-common-protos==1.59.0
-gspread==5.9.0
+gspread==5.10.0
 h11==0.14.0
 httpcore==0.17.2
 httplib2==0.22.0
@@ -51,7 +51,7 @@ protobuf==4.23.2
 pyasn1==0.5.0
 pyasn1-modules==0.3.0
 pycparser==2.21
-pydrive2==1.15.4
+pydrive2==1.17.0
 pynacl==1.5.0
 pyopenssl==23.2.0
 pyparsing==3.0.9
