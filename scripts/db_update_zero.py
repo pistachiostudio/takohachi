@@ -1,6 +1,6 @@
 import sqlite3
 
-conn = sqlite3.connect('data/takohachi.db')
+conn = sqlite3.connect("data/takohachi.db")
 cursor = conn.cursor()
 
 # yesterday_win と yesterday_lose の値を0に更新
