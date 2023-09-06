@@ -22,14 +22,16 @@ class Dice(commands.Cog):
 
         data = json["data"]
 
-        data_len = len(data)
-        data_list = list(range(data_len))
+        # 除外したいuuidのリストを作成
+        excluded_uuids = [
+            "ee613ee9-28b7-4beb-9666-08db13bb2244",  # 射撃場のuuid
+            "690b3ed2-4dff-945b-8223-6da834e30d24",  # Districtのuuid
+            "12452a9d-48c3-0b02-e7eb-0381c3520404",  # Kasbahのuuid
+            "de28aa9b-4cbe-1003-320e-6cb3ec309557"   # Piazzaのuuid
+        ]
 
-        for range_idx in range(data_len):
-            if data[range_idx]["uuid"] == "ee613ee9-28b7-4beb-9666-08db13bb2244":  # 射撃場のuuid
-                break
+        data_list = [idx for idx, d in enumerate(data) if d["uuid"] not in excluded_uuids]
 
-        data_list.remove(range_idx)
         num = random.choice(data_list)
 
         displayName = data[num]["displayName"]
