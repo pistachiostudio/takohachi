@@ -130,16 +130,21 @@ class RankTasks(commands.Cog):
                     current_rank_info = f"{currenttierpatched} (+{ranking_in_tier})"
                     todays_elo: int = elo - yesterday_elo
 
-                # todays_eloの値に応じて絵文字を選択
-                if todays_elo > 0:
-                    emoji = "<a:p10_jppy_verygood:984636995752046673>"
-                    plusminus = "+"
-                elif todays_elo < 0:
-                    emoji = "<a:p10_jppy_bad:984637001867329586>"
-                    plusminus = ""
-                else:
-                    emoji = "<a:p10_jppy_soso:984636999799541760>"
-                    plusminus = "±"
+                # ELOに合わせて絵文字を取得
+                conditions = [
+                    (50, "<a:p10_jppy_verygood:984636995752046673>", "+"),
+                    (1, "<a:p10_jppy_good:984636997916327986>", "+"),
+                    (0, "<a:p10_jppy_soso:984636999799541760>", "±"),
+                    (-49, "<a:p10_jppy_bad:984637001867329586>", ""),
+                    (-99, "<a:p10_jppy_terrible:984637004094505001>", ""),
+                    (-100, "<a:p10_jppy_worst:984637006040682496>", ""),
+                ]
+
+                for limit, e, pm in conditions:
+                    if todays_elo >= limit:
+                        emoji = e
+                        plusminus = pm
+                        break
 
                 # ランクに合わせてバッジの絵文字を取得
                 rank_emoji = rank_badge_dict.get(
