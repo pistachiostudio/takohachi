@@ -132,16 +132,16 @@ class RankTasks(commands.Cog):
 
                 # ELOに合わせて絵文字を取得
                 conditions = [
-                    (50, "<a:p10_jppy_verygood:984636995752046673>", "+"),
-                    (1, "<a:p10_jppy_good:984636997916327986>", "+"),
-                    (0, "<a:p10_jppy_soso:984636999799541760>", "±"),
-                    (-49, "<a:p10_jppy_bad:984637001867329586>", ""),
-                    (-99, "<a:p10_jppy_terrible:984637004094505001>", ""),
-                    (-100, "<a:p10_jppy_worst:984637006040682496>", ""),
+                    (50, float("inf"), "<a:p10_jppy_verygood:984636995752046673>", "+"),
+                    (1, 49, "<a:p10_jppy_good:984636997916327986>", "+"),
+                    (0, 0, "<a:p10_jppy_soso:984636999799541760>", "±"),
+                    (-49, -1, "<a:p10_jppy_bad:984637001867329586>", ""),
+                    (-99, -50, "<a:p10_jppy_terrible:984637004094505001>", ""),
+                    (float("-inf"), -100, "<a:p10_jppy_worst:984637006040682496>", ""),
                 ]
 
-                for limit, e, pm in conditions:
-                    if todays_elo >= limit:
+                for min_limit, max_limit, e, pm in conditions:
+                    if min_limit <= todays_elo <= max_limit:
                         emoji = e
                         plusminus = pm
                         break
