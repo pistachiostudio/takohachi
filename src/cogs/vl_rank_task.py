@@ -59,7 +59,7 @@ class RankTasks(commands.Cog):
         now_hour = now.hour
         now_minute = now.minute
 
-        if now_hour == 7 and 0 <= now_minute <= 9:
+        if now_hour == 10 and 0 <= now_minute <= 9:
             db_path = "/data/takohachi.db"
 
             # データベースに接続とカーソルの取得
