@@ -3,7 +3,7 @@ import httpx
 from discord import app_commands
 from discord.ext import commands
 
-current_season = "e7a2"
+current_season = "e7a3"
 season_txt = current_season.replace("e", "Episode ").replace("a", " Act ")
 
 
