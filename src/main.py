@@ -45,7 +45,7 @@ class MyBot(commands.Bot):
         # コマンド系のいつも読み込むcogs
         self.initial_extensions = [
             "cogs.addssl",
-            "cogs.apex_tracker",
+            # "cogs.apex_tracker",
             "cogs.bath",
             "cogs.card_list",
             "cogs.currency",
