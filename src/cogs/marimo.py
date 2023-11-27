@@ -13,7 +13,7 @@ class Marimo(commands.Cog):
     @app_commands.command(name="mt", description="まりもたいむ")
     async def mt(self, interaction: discord.Interaction):
         # summer time == hours=-4, not == hours=-5
-        now = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=-4)))
+        now = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=-5)))
         JST = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=+9)))
         marimo_time = f"{now.month}/{now.day} {now.hour}:{now.minute:02}"
         japan_time = f"{JST.month}/{JST.day} {JST.hour}:{JST.minute:02}"
