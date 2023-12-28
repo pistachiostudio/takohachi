@@ -220,6 +220,6 @@ $ docker compose up -d
 ## 🤝 License
 
 Takohachi is released under the MIT license.
-©2023 Pistachio Gaming & Pistachio Studio.
+©2024 Pistachio Gaming & Pistachio Studio.
 
 </samp>

@@ -24,6 +24,7 @@ logging.basicConfig(
 TOKEN = os.environ["TOKEN"]
 PREFIX = os.environ["PREFIX"]
 guild_id = 731366036649279518
+reboot_log_channel_id = 901373361618296862
 
 
 def init():
@@ -93,6 +94,8 @@ class MyBot(commands.Bot):
     async def on_ready(self):
         print("Connected!")
         await bot.change_presence(activity=discord.Game(name="ピスタチオゲーム部", type=1))
+        channel = bot.get_channel(reboot_log_channel_id)
+        await channel.send("Rebooting... Takohachi is back!")
         return
 
 
