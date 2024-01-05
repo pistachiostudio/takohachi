@@ -16,10 +16,10 @@ cur = conn.cursor()
 
 cur.execute(
     """
-    INSERT INTO val_puuids (puuid, region, name, tag, yesterday_elo)
-    VALUES (?, ?, ?, ?, ?)
+    INSERT INTO val_puuids (puuid, region, name, tag, yesterday_elo, yesterday_win, yesterday_lose)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
 """,
-    (puuid_input, region_input, "xxxxx", "xxxxx", elo_input),
+    (puuid_input, region_input, "xxxxx", "xxxxx", elo_input, 0, 0),
 )
 
 conn.commit()
