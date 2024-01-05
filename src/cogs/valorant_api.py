@@ -9,6 +9,7 @@ current_season = "e7a3"
 season_txt = current_season.replace("e", "Episode ").replace("a", " Act ")
 VALORANT_TOKEN = os.environ["VALORANT_TOKEN"]
 
+
 class Valo(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
@@ -56,7 +57,9 @@ class Valo(commands.Cog):
         account_level = account_data["data"]["account_level"]
         card_image_url = account_data["data"]["card"]["wide"]
         rank_url = f"https://api.henrikdev.xyz/valorant/v2/mmr/{region}/{name}/{tagline}"
-        lifetime_matches_url = f"https://api.henrikdev.xyz/valorant/v1/lifetime/matches/{region}/{name}/{tagline}"
+        lifetime_matches_url = (
+            f"https://api.henrikdev.xyz/valorant/v1/lifetime/matches/{region}/{name}/{tagline}"
+        )
 
         try:
             # リクエストを送信
@@ -77,7 +80,6 @@ class Valo(commands.Cog):
         name = data["data"]["name"]
         tag = data["data"]["tag"]
         rank_image_url = data["data"]["current_data"]["images"]["small"]
-
 
         # 新シーズンになって1試合もやってない場合は
         # アクトごとのレスポンス部分はKeyErrorが発生するのでその判定を行う

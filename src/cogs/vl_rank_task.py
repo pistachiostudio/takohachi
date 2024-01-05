@@ -41,6 +41,7 @@ rank_badge_dict: dict[str, str] = {
 
 VALORANT_TOKEN = os.environ["VALORANT_TOKEN"]
 
+
 class RankTasks(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.index = 0
@@ -81,8 +82,10 @@ class RankTasks(commands.Cog):
                 try:
                     account_url = f"https://api.henrikdev.xyz/valorant/v1/by-puuid/account/{puuid}?force=true"
                     async with httpx.AsyncClient() as client:
-                        name_tag_response = await client.get(account_url, headers=headers, timeout=60)
-                except httpx.HTTPError as e:
+                        name_tag_response = await client.get(
+                            account_url, headers=headers, timeout=60
+                        )
+                except httpx.HTTPError:
                     return
 
                 # jsonから必要な値を取得
@@ -98,7 +101,7 @@ class RankTasks(commands.Cog):
                     )
                     async with httpx.AsyncClient() as client:
                         response = await client.get(url, headers=headers, timeout=60)
-                except httpx.HTTPError as e:
+                except httpx.HTTPError:
                     return
 
                 # jsonから必要な値を取得
@@ -211,7 +214,9 @@ class RankTasks(commands.Cog):
             # 各メッセージを順番に送信
             for msg in messages:
                 embed = discord.Embed()
-                embed.set_footer(text=f"{season_txt}\n※ WLはランクのみの集計です。\n※ 引き分けは負けとしてカウントされます。\nchr: {len(msg)}")
+                embed.set_footer(
+                    text=f"{season_txt}\n※ WLはランクのみの集計です。\n※ 引き分けは負けとしてカウントされます。\nchr: {len(msg)}"  # noqa: E501
+                )
                 embed.color = discord.Color.purple()
                 embed.title = "みんなの昨日の活動です。"
                 embed.description = msg
