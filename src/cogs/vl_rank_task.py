@@ -1,4 +1,5 @@
 import asyncio
+import os
 import sqlite3
 from datetime import datetime, timedelta, timezone
 
@@ -38,6 +39,7 @@ rank_badge_dict: dict[str, str] = {
     "Radiant": "<:Radiant_Rank:1123927894725496842>",
 }
 
+VALORANT_TOKEN = os.environ["VALORANT_TOKEN"]
 
 class RankTasks(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -73,12 +75,14 @@ class RankTasks(commands.Cog):
             async def fetch(row):
                 puuid, region, name, tag, yesterday_elo, yesterday_win, yesterday_lose = row
 
+                headers = {"Authorization": VALORANT_TOKEN}
+
                 # 非同期でキャッシュをパージしてリクエスト。最新のnameとtagを取得する。
                 try:
                     account_url = f"https://api.henrikdev.xyz/valorant/v1/by-puuid/account/{puuid}?force=true"
                     async with httpx.AsyncClient() as client:
-                        name_tag_response = await client.get(account_url, timeout=60)
-                except httpx.HTTPError:
+                        name_tag_response = await client.get(account_url, headers=headers, timeout=60)
+                except httpx.HTTPError as e:
                     return
 
                 # jsonから必要な値を取得
@@ -93,8 +97,8 @@ class RankTasks(commands.Cog):
                         f"https://api.henrikdev.xyz/valorant/v2/by-puuid/mmr/{api_region}/{puuid}"
                     )
                     async with httpx.AsyncClient() as client:
-                        response = await client.get(url, timeout=60)
-                except httpx.HTTPError:
+                        response = await client.get(url, headers=headers, timeout=60)
+                except httpx.HTTPError as e:
                     return
 
                 # jsonから必要な値を取得
@@ -182,17 +186,36 @@ class RankTasks(commands.Cog):
             async def main():
                 tasks = [fetch(row) for row in rows]
                 output = await asyncio.gather(*tasks)
-                join = "".join(output)
-                return join
 
-            join = await main()
+                # 分割されたメッセージのリストを初期化
+                messages = []
+                current_message = ""
+                for player_info in output:
+                    # 現在のメッセージと追加するプレイヤー情報を合わせた長さを確認
+                    if len(current_message) + len(player_info) > 4096:
+                        # 現在のメッセージをリストに追加して、新しいメッセージを開始
+                        messages.append(current_message)
+                        current_message = player_info
+                    else:
+                        current_message += player_info
 
-            embed = discord.Embed()
-            embed.set_footer(text=f"{season_txt}\n※ WLはランクのみの集計です。\n※ 引き分けは負けとしてカウントされます。")
-            embed.color = discord.Color.purple()
-            embed.title = "みんなの昨日の活動です。"
-            embed.description = f"{join}"
-            await channel.send(embed=embed)
+                # 最後のメッセージをリストに追加
+                if current_message:
+                    messages.append(current_message)
+
+                return messages
+
+            # main関数を実行してメッセージのリストを取得
+            messages = await main()
+
+            # 各メッセージを順番に送信
+            for msg in messages:
+                embed = discord.Embed()
+                embed.set_footer(text=f"{season_txt}\n※ WLはランクのみの集計です。\n※ 引き分けは負けとしてカウントされます。\nchr: {len(msg)}")
+                embed.color = discord.Color.purple()
+                embed.title = "みんなの昨日の活動です。"
+                embed.description = msg
+                await channel.send(embed=embed)
 
             conn.close()
 

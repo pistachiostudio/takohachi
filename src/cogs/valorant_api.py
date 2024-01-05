@@ -1,3 +1,5 @@
+import os
+
 import discord
 import httpx
 from discord import app_commands
@@ -5,7 +7,7 @@ from discord.ext import commands
 
 current_season = "e7a3"
 season_txt = current_season.replace("e", "Episode ").replace("a", " Act ")
-
+VALORANT_TOKEN = os.environ["VALORANT_TOKEN"]
 
 class Valo(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -24,8 +26,9 @@ class Valo(commands.Cog):
         await interaction.response.defer()
 
         async def send_request(url, name, tagline):
+            headers = {"Authorization": VALORANT_TOKEN}
             async with httpx.AsyncClient() as client:
-                res = await client.get(url, timeout=10)
+                res = await client.get(url, headers=headers, timeout=10)
 
             data = res.json()
 
