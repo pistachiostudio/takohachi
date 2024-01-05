@@ -15,7 +15,11 @@ class Marimo(commands.Cog):
         # summer time == hours=-4, not == hours=-5
         now = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=-5)))
         JST = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=+9)))
+        # summer time == hours=+2, not == hours=+1
+        paris = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=+1)))
+
         marimo_time = f"{now.month}/{now.day} {now.hour}:{now.minute:02}"
+        sopot_time = f"{paris.month}/{paris.day} {paris.hour}:{paris.minute:02}"
         japan_time = f"{JST.month}/{JST.day} {JST.hour}:{JST.minute:02}"
 
         # slot
@@ -29,7 +33,7 @@ class Marimo(commands.Cog):
         embed1 = discord.Embed()
         embed1.color = discord.Color.dark_green()
         embed1.set_footer(text=f"mt slot: {slot_left}{slot_center}{slot_right}")
-        embed1.description = f"marimo time = **{marimo_time}**\n(In Japan = {japan_time})"
+        embed1.description = f"marimo time = **{marimo_time}**\nSopot time = **{sopot_time}**\n(In Japan = {japan_time})"
 
         embed2 = discord.Embed()
         embed2.color = discord.Color.dark_green()
