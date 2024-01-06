@@ -8,16 +8,18 @@ except ValueError:
     print("ELOは整数でなければなりません。")
     exit(1)
 
+region_input = input("プレイヤーのリージョンを入力してください。(eu, na, latam, br, ap, kr)")
+
 conn = sqlite3.connect("data/takohachi.db")
 
 cur = conn.cursor()
 
 cur.execute(
     """
-    INSERT INTO val_puuids (puuid, region, name, tag, yesterday_elo)
-    VALUES (?, ?, ?, ?, ?)
+    INSERT INTO val_puuids (puuid, region, name, tag, yesterday_elo, yesterday_win, yesterday_lose)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
 """,
-    (puuid_input, "ap", "xxxxx", "xxxxx", elo_input),
+    (puuid_input, region_input, "xxxxx", "xxxxx", elo_input, 0, 0),
 )
 
 conn.commit()

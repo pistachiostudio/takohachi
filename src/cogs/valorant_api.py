@@ -1,3 +1,5 @@
+import os
+
 import discord
 import httpx
 from discord import app_commands
@@ -5,6 +7,7 @@ from discord.ext import commands
 
 current_season = "e7a3"
 season_txt = current_season.replace("e", "Episode ").replace("a", " Act ")
+VALORANT_TOKEN = os.environ["VALORANT_TOKEN"]
 
 
 class Valo(commands.Cog):
@@ -24,8 +27,9 @@ class Valo(commands.Cog):
         await interaction.response.defer()
 
         async def send_request(url, name, tagline):
+            headers = {"Authorization": VALORANT_TOKEN}
             async with httpx.AsyncClient() as client:
-                res = await client.get(url, timeout=10)
+                res = await client.get(url, headers=headers, timeout=10)
 
             data = res.json()
 
@@ -41,21 +45,26 @@ class Valo(commands.Cog):
 
             return data
 
-        # URLのエンドポイント
-        rank_url = f"https://api.henrikdev.xyz/valorant/v2/mmr/ap/{name}/{tagline}"
+        # account_urlでユーザーのリージョンを取得
         account_url = f"https://api.henrikdev.xyz/valorant/v1/account/{name}/{tagline}"
+
+        account_data = await send_request(account_url, name, tagline)
+        if account_data is None:  # エラーチェック
+            return
+
+        # 取得したリージョン情報を使ってURLを更新
+        region = account_data["data"]["region"]
+        account_level = account_data["data"]["account_level"]
+        card_image_url = account_data["data"]["card"]["wide"]
+        rank_url = f"https://api.henrikdev.xyz/valorant/v2/mmr/{region}/{name}/{tagline}"
         lifetime_matches_url = (
-            f"https://api.henrikdev.xyz/valorant/v1/lifetime/matches/ap/{name}/{tagline}"
+            f"https://api.henrikdev.xyz/valorant/v1/lifetime/matches/{region}/{name}/{tagline}"
         )
 
         try:
             # リクエストを送信
             data = await send_request(rank_url, name, tagline)
             if data is None:  # エラーチェック
-                return
-
-            account_data = await send_request(account_url, name, tagline)
-            if account_data is None:  # エラーチェック
                 return
 
             match_data = await send_request(lifetime_matches_url, name, tagline)
@@ -71,8 +80,6 @@ class Valo(commands.Cog):
         name = data["data"]["name"]
         tag = data["data"]["tag"]
         rank_image_url = data["data"]["current_data"]["images"]["small"]
-        account_level = account_data["data"]["account_level"]
-        card_image_url = account_data["data"]["card"]["wide"]
 
         # 新シーズンになって1試合もやってない場合は
         # アクトごとのレスポンス部分はKeyErrorが発生するのでその判定を行う
@@ -128,6 +135,7 @@ class Valo(commands.Cog):
         embed.description = f"{season_txt} competitive results"
         embed.set_thumbnail(url=rank_image_url)
 
+        embed.add_field(name="Region", value=f"```{region}```")
         embed.add_field(
             name="Current Rank", value=f"```{currenttierpatched} (+{ranking_in_tier})```"
         )
