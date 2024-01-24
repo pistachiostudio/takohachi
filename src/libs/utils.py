@@ -87,7 +87,7 @@ async def get_trivia() -> str:
     }
 
     payload = {
-        "model": "gpt-3.5-turbo",
+        "model": "gpt-4-1106-preview",
         "messages": [
             {"role": "system", "content": "あなたはこの世の森羅万象を知り尽くした天才です。"},
             {
