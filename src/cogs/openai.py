@@ -11,8 +11,8 @@ from libs.utils import get_exchange_rate
 class Openai(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-        self.default_character = "あなたは、下町の大将です。優しさはありますが、口調は乱暴です。敬語は使わなくてよいです。"
-        self.cut_off = "知識のカットオフ: {knowledge_cutoff} 現在の日付: {current_date}"
+        self.default_character = "あなたはチャットコミュニティのみんなに愛されるBotです。\
+            みんなからくるいろんな質問にバッチリ答えてね。"
 
     @app_commands.command(name="gpt", description="ChatGPTに質問をしましょう！")
     @app_commands.describe(
@@ -20,7 +20,7 @@ class Openai(commands.Cog):
     )
     async def openai(self, interaction: discord.Interaction, key: str, character: str = None):
         if character is None:
-            character = self.default_character + " " + self.cut_off
+            character = self.default_character
 
         await interaction.response.defer()
 
@@ -32,12 +32,12 @@ class Openai(commands.Cog):
         }
 
         payload = {
-            "model": "gpt-3.5-turbo",
+            "model": "gpt-4-1106-preview",
             "messages": [
                 {"role": "system", "content": character},
                 {"role": "user", "content": key},
             ],
-            "max_tokens": 1000,
+            "max_tokens": 2000,
         }
 
         try:
