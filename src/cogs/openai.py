@@ -5,7 +5,7 @@ import httpx
 from discord import app_commands
 from discord.ext import commands
 
-from libs.utils import get_exchange_rate
+# from libs.utils import get_exchange_rate
 
 
 class Openai(commands.Cog):
@@ -49,25 +49,24 @@ class Openai(commands.Cog):
 
         if res.status_code != 200:
             await interaction.followup.send(
-                f"⚠ APIリクエストエラーが発生しました。時間を置いて試してみてください。\n \
-                                            Status Code: {res.status_code}"
+                f"⚠ APIリクエストエラーが発生しました。時間を置いて試してみてください。\nStatus Code: {res.status_code}"
             )
             return
 
         json = res.json()
 
         answer = json["choices"][0]["message"]["content"]
-        tokens = json["usage"]["total_tokens"]
-        cost = round(tokens * 0.000002 * get_exchange_rate(), 3)
+        # tokens = json["usage"]["total_tokens"]
+        # cost = round(tokens * 0.0000015 * get_exchange_rate(), 3)
 
-        if character == self.default_character + " " + self.cut_off:
+        if character == self.default_character:
             character = "Default"
 
         embed = discord.Embed()
         embed.title = f"Q. {key}"
         embed.description = answer
         embed.color = discord.Color.dark_green()
-        embed.set_footer(text=f"🤖 キャラ設定: {character}\n💸 この質問の料金は {cost}円 でした。")
+        embed.set_footer(text=f"🤖 Model: gpt-4-1106-preview\n🪀 キャラ設定: {character}")
 
         await interaction.followup.send(embed=embed)
 
