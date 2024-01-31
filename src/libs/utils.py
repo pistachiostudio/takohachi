@@ -1,3 +1,4 @@
+import json
 import os
 import re
 from datetime import datetime, timedelta, timezone
@@ -7,6 +8,7 @@ from urllib import parse
 import httpx
 import requests
 import tenacity
+import yfinance as yf
 
 
 def get_now_timestamp_jst() -> datetime:
@@ -60,7 +62,7 @@ def get_weather(citycode: int):
     chanceOfRain_evening = json["forecasts"][0]["chanceOfRain"]["T12_18"]
     chanceOfRain_night = json["forecasts"][0]["chanceOfRain"]["T18_24"]
 
-    result = f"{district}: {weather}\n☔ 朝: {chanceOfRain_morning} | 昼: {chanceOfRain_evening} | 晩: {chanceOfRain_night}"
+    result = f"- {district}: {weather}\n- ☔ 朝: {chanceOfRain_morning} | 昼: {chanceOfRain_evening} | 晩: {chanceOfRain_night}"
 
     return result
 
@@ -120,3 +122,22 @@ async def get_trivia() -> str:
     json = res.json()
     answer = json["choices"][0]["message"]["content"]
     return answer
+
+
+def get_stock_price(ticker_symbol: str):
+    index = yf.Ticker(ticker_symbol)
+
+    data = index.history(period="2d")
+    data_json_with_date = data.to_json(orient="split", date_format="iso")
+    data_json = json.loads(data_json_with_date)
+
+    stock_yesterday = data_json["data"][0][3]
+    stock_today = data_json["data"][1][3]
+    day_before_ratio = round(stock_today - stock_yesterday, 1)
+
+    if day_before_ratio > 0:
+        day_before_ratio = f"+{day_before_ratio:,}"
+    else:
+        day_before_ratio = f"{day_before_ratio:,}"
+
+    return day_before_ratio, stock_today
