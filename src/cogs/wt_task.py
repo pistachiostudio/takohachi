@@ -56,12 +56,16 @@ class WTTasks(commands.Cog):
             ticker_symbol = "^IXIC"
             nasdaq_day_before_ratio, nasdaq_stock_today = get_stock_price(ticker_symbol)
 
-            market_text = f"- **USD/JPY:** {round(usd_jpy_stock_today, 1):,}円 ({usd_jpy_day_before_ratio})\n- **日経225:** {round(nikkei_stock_today, 1):,}円 ({nikkei_day_before_ratio})\n- **S&P500:** {round(sp500_stock_today, 1):,}pt ({sp500_day_before_ratio})\n- **NASDAQ:** {round(nasdaq_stock_today, 1):,}pt ({nasdaq_day_before_ratio})\n※()内は前日比。"  # noqa: E501
+            # 丸千代山岡家
+            ticker_symbol = "3399.T"
+            yamaokaya_day_before_ratio, yamaokaya_stock_today = get_stock_price(ticker_symbol)
+
+            market_text = f"- :moneybag: **USD/JPY:** {round(usd_jpy_stock_today, 1):,}円 ({usd_jpy_day_before_ratio})\n- :flag_jp: **日経225:** {round(nikkei_stock_today, 1):,}円 ({nikkei_day_before_ratio})\n- :flag_us: **S&P500:** {round(sp500_stock_today, 1):,}pt ({sp500_day_before_ratio})\n- :flag_us: **NASDAQ:** {round(nasdaq_stock_today, 1):,}pt ({nasdaq_day_before_ratio})\n- :ramen: **丸千代山岡家:** {round(yamaokaya_stock_today, 1):,}円 ({yamaokaya_day_before_ratio})\n※()内は前日比。"  # noqa: E501
 
             embed = discord.Embed()
             embed.color = discord.Color.green()
             embed.title = f"{good_morning}{this_month}月{this_day}日 朝の7時です。"
-            embed.description = f"### 💡 今日はなんの日？\n{result}\n### 📚 今日の雑学\n{trivia}\n(Powered by [gpt-4-1106-preview](https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo))\n### 💹 相場\n{market_text}\n### ⛅ 天気\n{weather}"  # noqa: E501
+            embed.description = f"### 💡 今日はなんの日？\n{result}\n### 📚 今日の雑学\n{trivia}\n(Powered by [gpt-4-1106-preview](https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo))\n### 💹 相場\n{market_text}\n### ⛅ 今日の天気\n{weather}"  # noqa: E501
             await channel.send(embed=embed)
 
     # デプロイ後Botが完全に起動してからタスクを回す
