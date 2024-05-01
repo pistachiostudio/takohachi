@@ -5,7 +5,7 @@ import httpx
 from discord import app_commands
 from discord.ext import commands
 
-current_season = "e8a2"
+current_season = "e8a3"
 season_txt = current_season.replace("e", "Episode ").replace("a", " Act ")
 VALORANT_TOKEN = os.environ["VALORANT_TOKEN"]
 
