@@ -42,7 +42,7 @@ def get_what_today(this_month: int, this_day: int) -> str:
     return result
 
 
-def get_weather(citycode: int):
+def get_weather(citycode: str):
     url = "https://weather.tsukumijima.net/api/forecast"
 
     # citycode一覧"https://weather.tsukumijima.net/primary_area.xml"
@@ -52,17 +52,17 @@ def get_weather(citycode: int):
     json = res.json()
 
     # date = json["forecasts"][0]["date"]
-    district = json["location"]["district"]
+    city = json["location"]["city"]
     # body_text = json["description"]["bodyText"]
     weather = json["forecasts"][0]["detail"]["weather"]
     weather = weather.replace("　", "")
     # min_temp = json["forecasts"][0]["temperature"]["min"]["celsius"]
-    # max_temp = json["forecasts"][0]["temperature"]["max"]["celsius"]
+    max_temp = json["forecasts"][0]["temperature"]["max"]["celsius"]
     chanceOfRain_morning = json["forecasts"][0]["chanceOfRain"]["T06_12"]
     chanceOfRain_evening = json["forecasts"][0]["chanceOfRain"]["T12_18"]
     chanceOfRain_night = json["forecasts"][0]["chanceOfRain"]["T18_24"]
 
-    result = f"- {district}: {weather}\n- ☔ 朝: {chanceOfRain_morning} | 昼: {chanceOfRain_evening} | 晩: {chanceOfRain_night}"
+    result = f"- {city}: {weather}\n  - ️️️️🌡️ 最高気温: {max_temp} ℃\n  - ☔ 朝: {chanceOfRain_morning} | 昼: {chanceOfRain_evening} | 晩: {chanceOfRain_night}"
 
     return result
 
