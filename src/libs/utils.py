@@ -62,7 +62,7 @@ def get_weather(citycode: str):
     chanceOfRain_evening = json["forecasts"][0]["chanceOfRain"]["T12_18"]
     chanceOfRain_night = json["forecasts"][0]["chanceOfRain"]["T18_24"]
 
-    result = f"- {city}: {weather}\n  - ️️️️🌡️ 最高気温: {max_temp} ℃\n  - ☔ 朝: {chanceOfRain_morning} | 昼: {chanceOfRain_evening} | 晩: {chanceOfRain_night}"
+    result = f"- {city}: {weather}\n  - ️️️️🌡️ 最高気温: {max_temp} ℃\n  - ☔ 朝: {chanceOfRain_morning} | 昼: {chanceOfRain_evening} | 晩: {chanceOfRain_night}"  # noqa: E501
 
     return result
 
