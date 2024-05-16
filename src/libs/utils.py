@@ -89,7 +89,7 @@ async def get_trivia() -> str:
     }
 
     payload = {
-        "model": "gpt-4-1106-preview",
+        "model": "gpt-4o",
         "messages": [
             {"role": "system", "content": "あなたはこの世の森羅万象を知り尽くした天才です。"},
             {
@@ -99,7 +99,7 @@ async def get_trivia() -> str:
                     文字数はだいたい日本語で200文字程度にしてください。",
             },
         ],
-        "max_tokens": 1000,
+        "max_tokens": 2000,
     }
 
     @tenacity.retry(
