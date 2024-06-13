@@ -28,6 +28,7 @@ class Dice(commands.Cog):
             "690b3ed2-4dff-945b-8223-6da834e30d24",  # Districtのuuid
             "12452a9d-48c3-0b02-e7eb-0381c3520404",  # Kasbahのuuid
             "de28aa9b-4cbe-1003-320e-6cb3ec309557",  # Piazzaのuuid
+            "2c09d728-42d5-30d8-43dc-96a05cc7ee9d",  # Driftのuuid
         ]
 
         data_list = [idx for idx, d in enumerate(data) if d["uuid"] not in excluded_uuids]
