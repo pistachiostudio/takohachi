@@ -10,7 +10,7 @@ except ValueError:
 
 try:
     region_input = input("プレイヤーのリージョンを入力してください。(eu, na, latam, br, ap, kr): ")
-    if region_input not in ['eu', 'na', 'latam', 'br', 'ap', 'kr']:
+    if region_input not in ["eu", "na", "latam", "br", "ap", "kr"]:
         raise ValueError("無効なリージョンが入力されました。")
 except ValueError:
     print("無効なリージョンが入力されました。")

@@ -30,7 +30,7 @@ cur.execute(
     SET d_uid = ?
     WHERE puuid = ?
     """,
-    (discord_uid_input, puuid_input)
+    (discord_uid_input, puuid_input),
 )
 
 conn.commit()

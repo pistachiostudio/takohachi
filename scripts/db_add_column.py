@@ -16,13 +16,13 @@ cur.execute(
 
 
 # "yesterday_win"と"yesterday_lose"のカラムに0を設定
-#cur.execute(
+# cur.execute(
 #    """
 #    UPDATE val_puuids
 #    SET yesterday_win = 0,
 #        yesterday_lose = 0
 #    """
-#)
+# )
 
 
 # 変更をコミット
