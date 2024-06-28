@@ -74,7 +74,16 @@ class RankTasks(commands.Cog):
             rows = cur.fetchall()
 
             async def fetch(row):
-                puuid, region, name, tag, yesterday_elo, yesterday_win, yesterday_lose = row
+                (
+                    puuid,
+                    region,
+                    name,
+                    tag,
+                    yesterday_elo,
+                    yesterday_win,
+                    yesterday_lose,
+                    d_uid,
+                ) = row
 
                 headers = {"Authorization": VALORANT_TOKEN}
 
@@ -175,7 +184,7 @@ class RankTasks(commands.Cog):
                 total_act_rank_loses: int = total_number_of_games - total_act_rank_wins
 
                 # フォーマットに合わせて整形
-                result_string = f"{emoji} `{api_name} #{api_tag}` {rank_emoji}\n- {current_rank_info}\n- Daily changes: {plusminus}{todays_elo}\n- Daily matches: {daily_wins}W/{daily_loses}L\n- Current act: {wins}W/{loses}L\n- Lifetime: {total_act_rank_wins}W/{total_act_rank_loses}L\n\n"  # noqa: E501
+                result_string = f"{emoji} <@{d_uid}> {rank_emoji}\n- Name: `{api_name}#{api_tag}`\n- {current_rank_info}\n- Daily changes: {plusminus}{todays_elo}\n- Daily matches: {daily_wins}W/{daily_loses}L\n- Current act: {wins}W/{loses}L\n- Lifetime: {total_act_rank_wins}W/{total_act_rank_loses}L\n\n"  # noqa: E501
 
                 # DBの情報を今日の取得内容で更新
                 cur.execute(

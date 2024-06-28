@@ -10,19 +10,20 @@ cur = conn.cursor()
 cur.execute(
     """
     ALTER TABLE val_puuids
-    ADD COLUMN yesterday_win INTEGER,
-    ADD COLUMN yesterday_lose INTEGER
+    ADD COLUMN d_uid INTEGER
     """
 )
 
+
 # "yesterday_win"と"yesterday_lose"のカラムに0を設定
-cur.execute(
-    """
-    UPDATE val_puuids
-    SET yesterday_win = 0,
-        yesterday_lose = 0
-    """
-)
+# cur.execute(
+#    """
+#    UPDATE val_puuids
+#    SET yesterday_win = 0,
+#        yesterday_lose = 0
+#    """
+# )
+
 
 # 変更をコミット
 conn.commit()
