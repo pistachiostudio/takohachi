@@ -1,4 +1,4 @@
-FROM python:3.11-slim as runtime
+FROM python:3.12-slim as runtime
 
 COPY requirements.lock ./
 RUN sed '/-e/d' requirements.lock > requirements.txt
