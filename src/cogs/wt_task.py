@@ -64,7 +64,11 @@ class WTTasks(commands.Cog):
             ticker_symbol = "3399.T"
             yamaokaya_day_before_ratio, yamaokaya_stock_today = get_stock_price(ticker_symbol)
 
-            market_text = f"- :moneybag: **USD/JPY:** {round(usd_jpy_stock_today, 1):,}円 ({usd_jpy_day_before_ratio})\n- :flag_jp: **日経225:** {round(nikkei_stock_today, 1):,}円 ({nikkei_day_before_ratio})\n- :flag_us: **S&P500:** {round(sp500_stock_today, 1):,}pt ({sp500_day_before_ratio})\n- :flag_us: **NASDAQ:** {round(nasdaq_stock_today, 1):,}pt ({nasdaq_day_before_ratio})\n- :ramen: **丸千代山岡家:** {round(yamaokaya_stock_today, 1):,}円 ({yamaokaya_day_before_ratio})\n※()内は前日比。"  # noqa: E501
+            # 東京地下鉄株式会社
+            ticker_symbol = "9023.T"
+            metro_day_before_ratio, metro_stock_today = get_stock_price(ticker_symbol)
+
+            market_text = f"- :moneybag: **USD/JPY:** {round(usd_jpy_stock_today, 1):,}円 ({usd_jpy_day_before_ratio})\n- :flag_jp: **日経225:** {round(nikkei_stock_today, 1):,}円 ({nikkei_day_before_ratio})\n- :flag_us: **S&P500:** {round(sp500_stock_today, 1):,}pt ({sp500_day_before_ratio})\n- :flag_us: **NASDAQ:** {round(nasdaq_stock_today, 1):,}pt ({nasdaq_day_before_ratio})\n- :ramen: **丸千代山岡家:** {round(yamaokaya_stock_today, 1):,}円 ({yamaokaya_day_before_ratio})\n- :metro: **東京地下鉄:** {round(metro_stock_today, 1):,}円 ({metro_day_before_ratio})\n※()内は前日比。"  # noqa: E501
 
             embed = discord.Embed()
             embed.color = discord.Color.green()
