@@ -13,12 +13,12 @@ jobs:
     name: Python ${{ matrix.python-version }} on ${{ matrix.platform }}
     runs-on: ${{ matrix.platform }}
     env:
-      USING_COVERAGE: "3.11"
+      USING_COVERAGE: "3.12"
 
     strategy:
       matrix:
         platform: [ubuntu-latest]
-        python-version: ["3.11"]
+        python-version: ["3.12"]
 
     steps:
     - uses: actions/checkout@v4
