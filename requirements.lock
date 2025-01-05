@@ -5,67 +5,172 @@
 #   pre: false
 #   features: []
 #   all-features: false
+#   with-sources: false
+#   generate-hashes: false
+#   universal: false
 
 -e file:.
-aiohttp==3.8.4
-aiosignal==1.3.1
-anyio==3.7.0
-appdirs==1.4.4
-async-timeout==4.0.2
-attrs==23.1.0
-beautifulsoup4==4.12.2
-cachetools==5.3.1
-certifi==2023.5.7
-cffi==1.15.1
-charset-normalizer==3.1.0
-cryptography==41.0.1
-discord-py==2.3.1
-frozendict==2.4.0
-frozenlist==1.3.3
-google-api-core==2.11.0
-google-api-python-client==2.88.0
-google-auth==2.19.1
-google-auth-httplib2==0.1.0
-google-auth-oauthlib==1.0.0
-googleapis-common-protos==1.59.0
-gspread==5.12.3
+aiohappyeyeballs==2.4.4
+    # via aiohttp
+aiohttp==3.11.11
+    # via discord-py
+aiosignal==1.3.2
+    # via aiohttp
+anyio==4.7.0
+    # via httpx
+attrs==24.3.0
+    # via aiohttp
+beautifulsoup4==4.12.3
+    # via takohachi
+    # via yfinance
+cachetools==5.5.0
+    # via google-auth
+certifi==2024.12.14
+    # via httpcore
+    # via httpx
+    # via requests
+cffi==1.17.1
+    # via cryptography
+    # via pynacl
+charset-normalizer==3.4.1
+    # via requests
+cryptography==44.0.0
+    # via pyopenssl
+discord-py==2.3.2
+    # via takohachi
+frozendict==2.4.6
+    # via yfinance
+frozenlist==1.5.0
+    # via aiohttp
+    # via aiosignal
+google-api-core==2.24.0
+    # via google-api-python-client
+google-api-python-client==2.157.0
+    # via pydrive2
+google-auth==2.37.0
+    # via google-api-core
+    # via google-api-python-client
+    # via google-auth-httplib2
+    # via google-auth-oauthlib
+    # via gspread
+google-auth-httplib2==0.2.0
+    # via google-api-python-client
+google-auth-oauthlib==1.2.1
+    # via gspread
+googleapis-common-protos==1.66.0
+    # via google-api-core
+gspread==5.12.4
+    # via takohachi
 h11==0.14.0
+    # via httpcore
 html5lib==1.1
-httpcore==1.0.2
+    # via yfinance
+httpcore==1.0.7
+    # via httpx
 httplib2==0.22.0
+    # via google-api-python-client
+    # via google-auth-httplib2
+    # via oauth2client
 httpx==0.26.0
-idna==3.4
-lxml==5.1.0
-multidict==6.0.4
+    # via takohachi
+idna==3.10
+    # via anyio
+    # via httpx
+    # via requests
+    # via yarl
+lxml==5.3.0
+    # via yfinance
+multidict==6.1.0
+    # via aiohttp
+    # via yarl
 multitasking==0.0.11
-numpy==1.26.3
+    # via yfinance
+numpy==2.2.1
+    # via pandas
+    # via yfinance
 oauth2client==4.1.3
+    # via pydrive2
+    # via takohachi
 oauthlib==3.2.2
-pandas==2.2.0
-peewee==3.17.0
-protobuf==4.23.2
-pyasn1==0.5.0
-pyasn1-modules==0.3.0
-pycparser==2.21
+    # via requests-oauthlib
+pandas==2.2.3
+    # via yfinance
+peewee==3.17.8
+    # via yfinance
+platformdirs==4.3.6
+    # via yfinance
+propcache==0.2.1
+    # via aiohttp
+    # via yarl
+proto-plus==1.25.0
+    # via google-api-core
+protobuf==5.29.2
+    # via google-api-core
+    # via googleapis-common-protos
+    # via proto-plus
+pyasn1==0.6.1
+    # via oauth2client
+    # via pyasn1-modules
+    # via rsa
+pyasn1-modules==0.4.1
+    # via google-auth
+    # via oauth2client
+pycparser==2.22
+    # via cffi
 pydrive2==1.18.1
+    # via takohachi
 pynacl==1.5.0
-pyopenssl==23.2.0
-pyparsing==3.0.9
-python-dateutil==2.8.2
-pytz==2023.4
-pyyaml==6.0
-redis==4.5.5
+    # via discord-py
+pyopenssl==24.3.0
+    # via pydrive2
+pyparsing==3.2.1
+    # via httplib2
+python-dateutil==2.9.0.post0
+    # via pandas
+pytz==2024.2
+    # via pandas
+    # via yfinance
+pyyaml==6.0.2
+    # via pydrive2
+redis==5.2.1
+    # via spotipy
 requests==2.31.0
-requests-oauthlib==1.3.1
+    # via google-api-core
+    # via requests-oauthlib
+    # via spotipy
+    # via takohachi
+    # via yfinance
+requests-oauthlib==2.0.0
+    # via google-auth-oauthlib
 rsa==4.9
-six==1.16.0
-sniffio==1.3.0
-soupsieve==2.4.1
+    # via google-auth
+    # via oauth2client
+six==1.17.0
+    # via html5lib
+    # via oauth2client
+    # via python-dateutil
+    # via spotipy
+sniffio==1.3.1
+    # via anyio
+    # via httpx
+soupsieve==2.6
+    # via beautifulsoup4
 spotipy==2.23.0
-tenacity==8.2.2
-tzdata==2023.4
+    # via takohachi
+tenacity==8.2.3
+    # via takohachi
+typing-extensions==4.12.2
+    # via anyio
+tzdata==2024.2
+    # via pandas
 uritemplate==4.1.1
-urllib3==1.26.16
+    # via google-api-python-client
+urllib3==2.3.0
+    # via requests
+    # via spotipy
 webencodings==0.5.1
-yarl==1.9.2
-yfinance==0.2.36
+    # via html5lib
+yarl==1.18.3
+    # via aiohttp
+yfinance==0.2.51
+    # via takohachi
