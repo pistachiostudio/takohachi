@@ -101,8 +101,8 @@ class ApexTracker(commands.Cog):
             icon_url="https://github.com/pistachiostudio/takohachi/blob/main/images/apex_legends.jpg?raw=true",
         )
         embed.description = f"{user_id} の現在のランクポイントを表示します."
-        embed.add_field(name="ランクポイント", value=f"{rank_score} point ({rank_name} {rank_div})")
-        embed.add_field(name="{上位何%にいるか", value=f"{al_stop_percent}% ({platform} only) / {al_stop_percent_grobal}% (Global)")
+        embed.add_field(name="", value=f"{rank_score} RP({rank_name} {rank_div})")
+        embed.add_field(name="", value=f"Top {al_stop_percent}% ({platform} only) / Top {al_stop_percent_grobal}% (Global)")
 
         # interaction.response.deferを使ったのでここはfollowup.sendが必要
         await interaction.followup.send(embed=embed)
