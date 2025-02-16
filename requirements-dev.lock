@@ -40,6 +40,7 @@ chardet==5.2.0
 charset-normalizer==3.4.1
     # via requests
 colorama==0.4.6
+    # via pytest
     # via tox
 cryptography==43.0.3
     # via pydrive2

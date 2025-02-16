@@ -1,15 +1,17 @@
 import logging
 import os
 from datetime import datetime, timedelta, timezone
+from typing import Any
 
 import discord
-import requests
+import httpx
 from discord import app_commands
 from discord.ext import commands
 
 from libs.logging import DiscordBotHandler
 
 LOG_TEXT_CHANNEL_ID = os.environ["LOG_TEXT_CHANNEL_ID"]
+APEX_LEGENDS_API_BASE_URL = "https://api.mozambiquehe.re/"
 
 logger = logging.getLogger(__name__)
 
@@ -30,6 +32,9 @@ class ApexTracker(commands.Cog):
         logger.addHandler(handler)
 
     def __get_rank_zone_rgb(self, rank_zone: str):
+        """
+        ランク帯に応じたRGB値を返す
+        """
         if rank_zone == "Bronze":
             return 122, 89, 47
         elif rank_zone == "Silver":
@@ -49,59 +54,49 @@ class ApexTracker(commands.Cog):
     @app_commands.describe(platform="プラットフォームを選択してください", user_id="ユーザーIDを入力してください")
     @app_commands.choices(
         platform=[
-            discord.app_commands.Choice(name="Origin & Steam(PC)", value="origin"),
-            discord.app_commands.Choice(name="Xbox", value="xbl"),
-            discord.app_commands.Choice(name="Play Station", value="psn"),
+            discord.app_commands.Choice(name="PC (Origin or Steam)", value="PC"),
+            discord.app_commands.Choice(name="PS4 (Playstation 4/5)", value="PS4"),
+            discord.app_commands.Choice(name="X1 (Xbox)", value="X1"),
         ]
     )
     async def apexrank(self, interaction: discord.Interaction, platform: str, user_id: str):
         # interactionは3秒以内にレスポンスしないといけないとエラーになるのでこの処理を入れる。
         await interaction.response.defer()
 
-        url = f"https://public-api.tracker.gg/v2/apex/standard/profile/{platform}/{user_id}"
-        trn_api_key = os.environ["TRN_API_KEY"]
-        headers = {"TRN-Api-Key": trn_api_key}
+        url = f"{APEX_LEGENDS_API_BASE_URL}bridge/masters/{platform}/{user_id}"
+        apex_api_key = os.environ["APEX_API_KEY"]
+        headers = {"Authorization": apex_api_key}
+        params = {"player": user_id, "platform": platform}
 
-        res = requests.get(url, headers=headers)
+        res = httpx.get(url, headers=headers, params=params)
 
-        if res.status_code != 200:
+        if res.status_code != httpx.codes.OK:
             logger.error(res.json())
             await interaction.response.send_message("ランクポイントの取得に失敗しました...")
             return
 
-        data = res.json()
-        segments = data.get("data").get("segments")
+        data: dict[str, Any] = res.json()
+        rank = data["global"]["rank"]
 
-        for segment in segments:
-            if segment.get("type") == "overview":
-                rank_name: str = (
-                    segment.get("stats").get("rankScore").get("metadata").get("rankName")
-                )
-                icon_url: str = (
-                    segment.get("stats").get("rankScore").get("metadata").get("iconUrl")
-                )
-                rank_point: str = segment.get("stats").get("rankScore").get("displayValue")
-                break
+        rank_name: str = rank.get("rankName")
+        rank_score: str = rank.get("rankScore")
+        rank_img_url: str = rank.get("rankImg")
 
         embed = discord.Embed()
         JST = timezone(timedelta(hours=+9), "JST")
         embed.timestamp = datetime.now(JST)
 
-        if rank_name == "Apex Predator":
-            rank_zone = rank_name
-        else:
-            rank_zone = rank_name.split()[0]
-        r, g, b = self.__get_rank_zone_rgb(rank_zone)
+        r, g, b = self.__get_rank_zone_rgb(rank_name)
 
         embed.color = discord.Color.from_rgb(r, g, b)  # Gold
-        embed.set_thumbnail(url=icon_url)
+        embed.set_thumbnail(url=rank_img_url)
         embed.set_author(
-            name=f"{user_id}'s profile",
-            url=f"https://apex.tracker.gg/apex/profile/{platform}/{user_id}/overview",
-            icon_url="https://github.com/pistachiostudio/takohachi/blob/master/images/apex%20legends.jpg?raw=true",
+            name=f"{user_id}'s profile (Apex Legends Status)",
+            url=f"https://apexlegendsstatus.com/profile/{platform}/{user_id}",
+            icon_url="https://github.com/pistachiostudio/takohachi/blob/main/images/apex_legends.jpg?raw=true",
         )
         embed.description = f"{user_id} の現在のランクポイントを表示します."
-        embed.add_field(name="ランクポイント", value=f"{rank_point} point ({rank_name})")
+        embed.add_field(name="ランクポイント", value=f"{rank_score} point ({rank_name})")
 
         # interaction.response.deferを使ったのでここはfollowup.sendが必要
         await interaction.followup.send(embed=embed)
