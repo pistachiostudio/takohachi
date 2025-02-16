@@ -79,7 +79,8 @@ class ApexTracker(commands.Cog):
         rank = data["global"]["rank"]
 
         rank_name: str = rank.get("rankName")
-        rank_score: str = rank.get("rankScore")
+        rank_score: int = rank.get("rankScore")
+        rank_div: int = rank.get("rankDiv")
         rank_img_url: str = rank.get("rankImg")
 
         embed = discord.Embed()
@@ -96,7 +97,7 @@ class ApexTracker(commands.Cog):
             icon_url="https://github.com/pistachiostudio/takohachi/blob/main/images/apex_legends.jpg?raw=true",
         )
         embed.description = f"{user_id} の現在のランクポイントを表示します."
-        embed.add_field(name="ランクポイント", value=f"{rank_score} point ({rank_name})")
+        embed.add_field(name="ランクポイント", value=f"{rank_score} point ({rank_name} {rank_div})")
 
         # interaction.response.deferを使ったのでここはfollowup.sendが必要
         await interaction.followup.send(embed=embed)
