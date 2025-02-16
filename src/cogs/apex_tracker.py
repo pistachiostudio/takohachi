@@ -11,7 +11,7 @@ from discord.ext import commands
 from libs.logging import DiscordBotHandler
 
 LOG_TEXT_CHANNEL_ID = os.environ["LOG_TEXT_CHANNEL_ID"]
-APEX_LEGENDS_API_BASE_URL = "https://api.mozambiquehe.re/"
+APEX_LEGENDS_API_BASE_URL = "https://api.mozambiquehe.re"
 
 logger = logging.getLogger(__name__)
 
@@ -63,7 +63,7 @@ class ApexTracker(commands.Cog):
         # interactionは3秒以内にレスポンスしないといけないとエラーになるのでこの処理を入れる。
         await interaction.response.defer()
 
-        url = f"{APEX_LEGENDS_API_BASE_URL}bridge/masters/{platform}/{user_id}"
+        url = f"{APEX_LEGENDS_API_BASE_URL}/bridge"
         apex_api_key = os.environ["APEX_API_KEY"]
         headers = {"Authorization": apex_api_key}
         params = {"player": user_id, "platform": platform}
