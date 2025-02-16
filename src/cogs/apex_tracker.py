@@ -83,6 +83,10 @@ class ApexTracker(commands.Cog):
         rank_div: int = rank.get("rankDiv")
         rank_img_url: str = rank.get("rankImg")
 
+        # プレイヤーが上位何%にいるか
+        al_stop_percent: float = rank.get("ALStopPercent")
+        al_stop_percent_grobal: float = rank.get("ALStopPercentGlobal")
+
         embed = discord.Embed()
         JST = timezone(timedelta(hours=+9), "JST")
         embed.timestamp = datetime.now(JST)
@@ -98,6 +102,7 @@ class ApexTracker(commands.Cog):
         )
         embed.description = f"{user_id} の現在のランクポイントを表示します."
         embed.add_field(name="ランクポイント", value=f"{rank_score} point ({rank_name} {rank_div})")
+        embed.add_field(name="{上位何%にいるか", value=f"{al_stop_percent}% ({platform} only) / {al_stop_percent_grobal}% (Global)")
 
         # interaction.response.deferを使ったのでここはfollowup.sendが必要
         await interaction.followup.send(embed=embed)
