@@ -102,7 +102,10 @@ class ApexTracker(commands.Cog):
         )
         embed.description = f"{user_id} の現在のランクポイントを表示します."
         embed.add_field(name="", value=f"{rank_score} RP({rank_name} {rank_div})")
-        embed.add_field(name="", value=f"Top {al_stop_percent}% ({platform} only) / Top {al_stop_percent_grobal}% (Global)")
+        embed.add_field(
+            name="",
+            value=f"Top {al_stop_percent}% ({platform} only) / Top {al_stop_percent_grobal}% (Global)",
+        )
 
         # interaction.response.deferを使ったのでここはfollowup.sendが必要
         await interaction.followup.send(embed=embed)

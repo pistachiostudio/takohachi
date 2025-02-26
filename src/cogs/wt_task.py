@@ -1,4 +1,5 @@
 import random
+import time
 from datetime import datetime, timedelta, timezone
 
 import discord
@@ -44,31 +45,39 @@ class WTTasks(commands.Cog):
             trivia = await get_trivia()
             good_morning = random.choice(["おざし。", "おざす。", "お。", "おはようございます。"])
 
-            # USD/JPY
-            ticker_symbol = "USDJPY=X"
-            usd_jpy_day_before_ratio, usd_jpy_stock_today = get_stock_price(ticker_symbol)
+            # 市場データの設定
+            # (ticker_symbol, 表示名, 単位, アイコン)
+            market_data = [
+                ("USDJPY=X", "USD/JPY", "円", ":moneybag:"),
+                ("^N225", "日経225", "円", ":flag_jp:"),
+                ("^GSPC", "S&P500", "pt", ":flag_us:"),
+                ("^IXIC", "NASDAQ", "pt", ":flag_us:"),
+                ("3399.T", "丸千代山岡家", "円", ":ramen:"),
+                ("9023.T", "東京地下鉄", "円", ":metro:"),
+            ]
 
-            # 日経平均
-            ticker_symbol = "^N225"
-            nikkei_day_before_ratio, nikkei_stock_today = get_stock_price(ticker_symbol)
+            stock_results = {}
+            # 各銘柄のデータを取得（リクエスト間に遅延を入れる）
+            for ticker, name, unit, icon in market_data:
+                day_before_ratio, stock_today = get_stock_price(ticker)
+                stock_results[ticker] = (day_before_ratio, stock_today, name, unit, icon)
+                # APIリクエスト制限回避のために遅延を入れる
+                time.sleep(0.5)
 
-            # S&P500
-            ticker_symbol = "^GSPC"
-            sp500_day_before_ratio, sp500_stock_today = get_stock_price(ticker_symbol)
+            # 市場データのテキスト生成
+            market_lines = []
+            for ticker, (
+                day_before_ratio,
+                stock_today,
+                name,
+                unit,
+                icon,
+            ) in stock_results.items():
+                market_lines.append(
+                    f"- {icon} **{name}:** {round(stock_today, 1):,}{unit} ({day_before_ratio})"
+                )
 
-            # NASDAQ
-            ticker_symbol = "^IXIC"
-            nasdaq_day_before_ratio, nasdaq_stock_today = get_stock_price(ticker_symbol)
-
-            # 丸千代山岡家
-            ticker_symbol = "3399.T"
-            yamaokaya_day_before_ratio, yamaokaya_stock_today = get_stock_price(ticker_symbol)
-
-            # 東京地下鉄株式会社
-            ticker_symbol = "9023.T"
-            metro_day_before_ratio, metro_stock_today = get_stock_price(ticker_symbol)
-
-            market_text = f"- :moneybag: **USD/JPY:** {round(usd_jpy_stock_today, 1):,}円 ({usd_jpy_day_before_ratio})\n- :flag_jp: **日経225:** {round(nikkei_stock_today, 1):,}円 ({nikkei_day_before_ratio})\n- :flag_us: **S&P500:** {round(sp500_stock_today, 1):,}pt ({sp500_day_before_ratio})\n- :flag_us: **NASDAQ:** {round(nasdaq_stock_today, 1):,}pt ({nasdaq_day_before_ratio})\n- :ramen: **丸千代山岡家:** {round(yamaokaya_stock_today, 1):,}円 ({yamaokaya_day_before_ratio})\n- :metro: **東京地下鉄:** {round(metro_stock_today, 1):,}円 ({metro_day_before_ratio})\n※()内は前日比。"  # noqa: E501
+            market_text = "\n".join(market_lines) + "\n※()内は前日比。"
 
             embed = discord.Embed()
             embed.color = discord.Color.green()
