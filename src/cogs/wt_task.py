@@ -53,7 +53,7 @@ class WTTasks(commands.Cog):
                 ("^GSPC", "S&P500", "pt", ":flag_us:"),
                 ("^IXIC", "NASDAQ", "pt", ":flag_us:"),
                 ("3399.T", "丸千代山岡家", "円", ":ramen:"),
-                ("9023.T", "東京地下鉄", "円", ":metro:")
+                ("9023.T", "東京地下鉄", "円", ":metro:"),
             ]
 
             stock_results = {}
@@ -66,8 +66,16 @@ class WTTasks(commands.Cog):
 
             # 市場データのテキスト生成
             market_lines = []
-            for ticker, (day_before_ratio, stock_today, name, unit, icon) in stock_results.items():
-                market_lines.append(f"- {icon} **{name}:** {round(stock_today, 1):,}{unit} ({day_before_ratio})")
+            for ticker, (
+                day_before_ratio,
+                stock_today,
+                name,
+                unit,
+                icon,
+            ) in stock_results.items():
+                market_lines.append(
+                    f"- {icon} **{name}:** {round(stock_today, 1):,}{unit} ({day_before_ratio})"
+                )
 
             market_text = "\n".join(market_lines) + "\n※()内は前日比。"
 
