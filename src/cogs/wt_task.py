@@ -4,6 +4,7 @@ from datetime import datetime, timedelta, timezone
 
 import discord
 from discord.ext import commands, tasks
+from yfinance.exceptions import YFRateLimitError
 
 from libs.utils import get_stock_price, get_trivia, get_weather, get_what_today
 
@@ -59,10 +60,18 @@ class WTTasks(commands.Cog):
             stock_results = {}
             # 各銘柄のデータを取得（リクエスト間に遅延を入れる）
             for ticker, name, unit, icon in market_data:
-                day_before_ratio, stock_today = get_stock_price(ticker)
-                stock_results[ticker] = (day_before_ratio, stock_today, name, unit, icon)
-                # APIリクエスト制限回避のために遅延を入れる
-                time.sleep(0.5)
+                try:
+                    day_before_ratio, stock_today = get_stock_price(ticker)
+                    stock_results[ticker] = (day_before_ratio, stock_today, name, unit, icon)
+                    # APIリクエスト制限回避のために遅延を入れる
+                    time.sleep(0.5)
+                except YFRateLimitError:
+                    print(f"Rate limit exceeded for ticker: {ticker}")
+                    continue
+                except Exception as e:
+                    print(f"Failed to get stock price for ticker: {ticker}")
+                    print("Error message:", e)
+                    continue
 
             # 市場データのテキスト生成
             market_lines = []
