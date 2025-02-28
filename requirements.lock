@@ -64,8 +64,6 @@ gspread==6.1.4
     # via takohachi
 h11==0.14.0
     # via httpcore
-html5lib==1.1
-    # via yfinance
 httpcore==1.0.7
     # via httpx
 httplib2==0.22.0
@@ -79,8 +77,6 @@ idna==3.10
     # via httpx
     # via requests
     # via yarl
-lxml==5.3.0
-    # via yfinance
 multidict==6.1.0
     # via aiohttp
     # via yarl
@@ -147,7 +143,6 @@ rsa==4.9
     # via google-auth
     # via oauth2client
 six==1.17.0
-    # via html5lib
     # via oauth2client
     # via python-dateutil
 sniffio==1.3.1
@@ -167,9 +162,7 @@ uritemplate==4.1.1
 urllib3==2.3.0
     # via requests
     # via spotipy
-webencodings==0.5.1
-    # via html5lib
 yarl==1.18.3
     # via aiohttp
-yfinance==0.2.52
+yfinance==0.2.54
     # via takohachi
