@@ -27,15 +27,18 @@ https://github.com/pistachiostudio/takohachi/tree/main/src/cogs
 
 ## 🪂 installing Packages & Dependencies
 
-### With rye🌾
+### With uv🌾
 
-[mitsuhiko/rye: An Experimental Package Management Solution for Python](https://github.com/mitsuhiko/rye)
+[An extremely fast Python package and project manager, written in Rust.](https://docs.astral.sh/uv/)
+
 
 ```bash
-$ rye sync
+$ uv sync
 ```
 
 ## 🏭 Auto deployment by GitHub Actions
+
+現在停止中
 
 - [.github/workflows/deploy.yml](https://github.com/pistachiostudio/takohachi/blob/master/.github/workflows/deploy.yml)
 - Required secrets:

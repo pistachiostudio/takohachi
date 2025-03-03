@@ -11,5 +11,8 @@
 
 ## main
 
+- [CHANGE] 依存管理ツールを Rye から uv に移行
+  - @zztkm
 - [UPDATE] Python 3.12 にバージョンアップする
   - `rye sync --update-all` で依存関係を更新
+  - @zztkm
