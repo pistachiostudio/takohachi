@@ -10,6 +10,8 @@ import requests
 import tenacity
 import yfinance as yf
 
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+
 
 def get_now_timestamp_jst() -> datetime:
     JST = timezone(timedelta(hours=+9), "JST")
@@ -81,26 +83,24 @@ def get_exchange_rate():
 
 
 async def get_trivia() -> str:
-    endpoint = "https://api.openai.com/v1/chat/completions"
-
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": f'Bearer {os.getenv("OPENAI_API_KEY")}',
-    }
-
+    """Gemini APIを使用して雑学を取得する。"""
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={GEMINI_API_KEY}"
+    headers = {"Content-Type": "application/json"}
     payload = {
-        "model": "gpt-4o",
-        "messages": [
-            {"role": "system", "content": "あなたはこの世の森羅万象を知り尽くした天才です。"},
+        "contents": [
             {
-                "role": "user",
-                "content": "雑学を一つ教えてください。内容は、この世の森羅万象を対象に動物、昆虫、その他の生物、\
-                    科学、物理、音楽、文学、カルチャーなどなど、何でも良いです。難しい話ももちろんOKです。\
-                    文字数はだいたい日本語で200文字程度にしてください。冒頭に「それでは一つ紹介しましょう」や \
-                    「それでは、今日の雑学です」などの挨拶文は不要です。",
-            },
-        ],
-        "max_tokens": 2000,
+                "parts": [
+                    {"text": "あなたはこの世の森羅万象を知り尽くした天才です。"},
+                    {
+                        "text": "雑学を一つ教えてください。\
+                            内容は、この世の森羅万象を対象に動物、昆虫、その他の生物、科学、物理、音楽、文学、カルチャーなどなど、何でも良いです。\
+                            難しい話ももちろんOKです。\
+                            文字数はだいたい日本語で200文字程度にしてください。\
+                            冒頭に「それでは一つ紹介しましょう」や「それでは、今日の雑学です」などの挨拶文は不要です。"
+                    },
+                ]
+            }
+        ]
     }
 
     @tenacity.retry(
@@ -109,20 +109,16 @@ async def get_trivia() -> str:
     )
     async def fetch_data():
         async with httpx.AsyncClient() as client:
-            res = await client.post(endpoint, headers=headers, json=payload, timeout=120)
-
-        if res.status_code != 200:
-            raise httpx.HTTPError("Non-200 response from OpenAI API")
-        return res
+            response = await client.post(url, headers=headers, json=payload, timeout=120)
+            response.raise_for_status()
+            return response.json()
 
     try:
         res = await fetch_data()
+        answer = res["candidates"][0]["content"]["parts"][0]["text"]
+        return answer
     except tenacity.RetryError:
-        return "⚠OpenAIのAPIリクエストでエラーが発生したので今日の雑学はなしです。"
-
-    json = res.json()
-    answer = json["choices"][0]["message"]["content"]
-    return answer
+        return "⚠GeminiのAPIリクエストでエラーが発生したので今日の雑学はなしです。"
 
 
 def get_stock_price(ticker_symbol: str):

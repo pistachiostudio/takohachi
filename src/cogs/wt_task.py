@@ -42,7 +42,7 @@ class WTTasks(commands.Cog):
             citycode = "060010"
             yamagata_weather = get_weather(citycode)
 
-            # ChatGPTで雑学を取得
+            # Geminiで雑学を取得
             trivia = await get_trivia()
             good_morning = random.choice(["おざし。", "おざす。", "お。", "おはようございます。"])
 
@@ -91,7 +91,7 @@ class WTTasks(commands.Cog):
             embed = discord.Embed()
             embed.color = discord.Color.green()
             embed.title = f"{good_morning}{this_month}月{this_day}日 朝の7時です。"
-            embed.description = f"### 💡 今日はなんの日？\n{result}\n### 📚 今日の雑学\n{trivia}\n(Powered by [gpt-4o](https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo))\n### 💹 相場\n{market_text}\n### ⛅ 今日の天気\n{tokyo_weather}\n{yamagata_weather}"  # noqa: E501
+            embed.description = f"### 💡 今日はなんの日？\n{result}\n### 📚 今日の雑学\n{trivia}(Powered by [Gemini 2.0 Flash](https://deepmind.google/technologies/gemini/flash/))\n### 💹 相場\n{market_text}\n### ⛅ 今日の天気\n{tokyo_weather}\n{yamagata_weather}"  # noqa: E501
             await channel.send(embed=embed)
 
     # デプロイ後Botが完全に起動してからタスクを回す
