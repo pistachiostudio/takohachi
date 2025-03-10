@@ -31,8 +31,8 @@ jobs:
     - name: Install the project
       run: uv sync --all-extras --dev
 
-    - name: Setup test suite
-      run: uv run tox -vv --notest
-
-    - name: Run test suite
-      run: uv run tox --skip-pkg-install
+    - name: Run Check
+      run: uv run pre-commit run --all-files
+    
+    - name: Run Test
+      run: uv run pytest tests
