@@ -15,5 +15,5 @@ COPY src/ ./src/
 
 RUN uv sync --frozen
 
-ENTRYPOINT ["uv", "run", "python", "main.py"]
+ENTRYPOINT ["uv", "run", "python", "src/main.py"]
 CMD []
