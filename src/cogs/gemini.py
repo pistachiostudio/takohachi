@@ -7,15 +7,18 @@ from discord.ext import commands
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
+
 class Gemini(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-        self.default_character = "あなたはチャットコミュニティのみんなに愛されるBotです。みんなからくるいろんな質問にバッチリ答えてね。"
+        self.default_character = (
+            "あなたはチャットコミュニティのみんなに愛されるBotです。みんなからくるいろんな質問にバッチリ答えてね。"  # noqa: E501
+        )
 
     @app_commands.command(name="gemini", description="Geminiに質問をしましょう！")
     @app_commands.describe(
         key="質問内容", character="Geminiに性格やキャラを与えることができます。必ず「あなたは～です。」と書いてください。"
-    )
+    )  # noqa: E501
     async def gemini(self, interaction: discord.Interaction, key: str, character: str = None):
         if character is None:
             character = self.default_character
@@ -24,11 +27,7 @@ class Gemini(commands.Cog):
 
         url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={GEMINI_API_KEY}"
         headers = {"Content-Type": "application/json"}
-        payload = {
-            "contents": [
-                {"parts": [{"text": character}, {"text": key}]}
-            ]
-        }
+        payload = {"contents": [{"parts": [{"text": character}, {"text": key}]}]}
 
         try:
             async with httpx.AsyncClient() as client:
