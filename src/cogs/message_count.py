@@ -9,7 +9,9 @@ class MessageCount(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @app_commands.command(name="count", description="このチャンネルの現在のメッセージ数を数えます。")
+    @app_commands.command(
+        name="count", description="このチャンネルの現在のメッセージ数を数えます。"
+    )
     async def count(
         self,
         interaction: discord.Interaction,
@@ -30,7 +32,9 @@ class MessageCount(commands.Cog):
         embed.description = f"このチャンネルには現在 **{d_count}** 件のメッセージがあります。"
         await interaction.followup.send(embed=embed)
 
-    @app_commands.command(name="countall", description="犬～恐竜_txtの現在のメッセージ数を数えます。")
+    @app_commands.command(
+        name="countall", description="犬～恐竜_txtの現在のメッセージ数を数えます。"
+    )
     async def countall(self, interaction: discord.Interaction):
         # interactionは3秒以内にレスポンスしないといけないとエラーになるのでこの処理を入れる。
         await interaction.response.defer()

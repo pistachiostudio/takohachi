@@ -38,8 +38,10 @@ class Valo(commands.Cog):
                 embed = discord.Embed()
                 embed.color = discord.Color.red()
                 embed.title = "<:p01_pepebrim:951023068275421235>:warning: 入力が間違えているかもしれません。"
-                embed.description = f'**あなたの入力:** {name}#{tagline}\n**Status Code:** {data["status"]}\n\
-                **Error Msg:** {data["errors"][0]["message"]}'
+                embed.description = (
+                    f"**あなたの入力:** {name}#{tagline}\n**Status Code:** {data['status']}\n\
+                **Error Msg:** {data['errors'][0]['message']}"
+                )
                 await interaction.followup.send(embed=embed)
                 return None
 
@@ -72,7 +74,9 @@ class Valo(commands.Cog):
                 return
 
         except httpx.HTTPError as e:
-            await interaction.followup.send(f"⚠ APIリクエストエラーが発生しました。時間を置いて試してみてください。: {e}")
+            await interaction.followup.send(
+                f"⚠ APIリクエストエラーが発生しました。時間を置いて試してみてください。: {e}"
+            )
 
         # APIから必要な基本情報の値を取得
         currenttierpatched = data["data"]["current_data"]["currenttierpatched"]

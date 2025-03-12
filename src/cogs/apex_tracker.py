@@ -51,7 +51,9 @@ class ApexTracker(commands.Cog):
             return 255, 0, 0
 
     @app_commands.command(name="apexrank", description="Apex Legendsのランクを取得します。")
-    @app_commands.describe(platform="プラットフォームを選択してください", user_id="ユーザーIDを入力してください")
+    @app_commands.describe(
+        platform="プラットフォームを選択してください", user_id="ユーザーIDを入力してください"
+    )
     @app_commands.choices(
         platform=[
             discord.app_commands.Choice(name="PC (Origin or Steam)", value="PC"),

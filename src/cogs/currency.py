@@ -15,7 +15,9 @@ class Currency(commands.Cog):
 
     # /bonus ボーナスをもらうためのコマンド
 
-    @app_commands.command(name="getbonus", description="初期ボーナス3,000pisをもらうためのコマンドです。")
+    @app_commands.command(
+        name="getbonus", description="初期ボーナス3,000pisをもらうためのコマンドです。"
+    )
     async def bonus(self, interaction: discord.Interaction):
         sender_id = str(interaction.user.id)
         tuple_id = (sender_id,)
@@ -93,8 +95,12 @@ class Currency(commands.Cog):
     # /wallet
     # ここでは自分、もしくはサーバー内のユーザーの所持金を返します。
 
-    @app_commands.command(name="wallet", description="自分、もしくはサーバー内のユーザーの所持金を返します。")
-    @app_commands.describe(user="ユーザーを指定してください。入力しない場合は自分の所持金を返します。")
+    @app_commands.command(
+        name="wallet", description="自分、もしくはサーバー内のユーザーの所持金を返します。"
+    )
+    @app_commands.describe(
+        user="ユーザーを指定してください。入力しない場合は自分の所持金を返します。"
+    )
     async def wallet(self, interaction: discord.Interaction, user: discord.Member = None):
         # userオプションが空欄の場合はコマンド送信者の情報をレスポンス
         if user is None:
@@ -145,7 +151,9 @@ class Currency(commands.Cog):
     # お金を送金する処理です。
 
     @app_commands.command(name="pay", description="ユーザーに送金します。")
-    @app_commands.describe(amount="送金する金額を入力してください。", give_user="送金する相手を指定してください。")
+    @app_commands.describe(
+        amount="送金する金額を入力してください。", give_user="送金する相手を指定してください。"
+    )
     async def pay(self, interaction: discord.Interaction, amount: int, give_user: discord.Member):
         if amount <= 0:
             embed = discord.Embed()
@@ -182,9 +190,7 @@ class Currency(commands.Cog):
                 sender_money_t = "{:,}".format(sender_money)
                 embed = discord.Embed()
                 embed.color = discord.Color.dark_green()
-                embed.description = (
-                    f"所持金が足りません。\n<@{command_sender_id}> の所持金は {sender_money_t} pisです。"
-                )
+                embed.description = f"所持金が足りません。\n<@{command_sender_id}> の所持金は {sender_money_t} pisです。"
                 await interaction.response.send_message(embed=embed)
                 db.close()
                 return
@@ -557,7 +563,10 @@ class Currency(commands.Cog):
     # /resetcurrency
     # currencyテーブルのすべてのレコードを削除します。
 
-    @app_commands.command(name="resetcurrency", description="[admin]currencyテーブルのすべてのレコードを削除します。")
+    @app_commands.command(
+        name="resetcurrency",
+        description="[admin]currencyテーブルのすべてのレコードを削除します。",
+    )
     @app_commands.default_permissions(administrator=True)
     async def resetcurrency(self, interaction: discord.Interaction):
         db = sqlite3.connect(DB_DIRECTORY)
@@ -575,7 +584,9 @@ class Currency(commands.Cog):
     # /givebonus <@user_mention>
     # 管理者がコマンドで与えることもできるようにする
 
-    @app_commands.command(name="givebonus", description="[admin]指定したユーザーにボーナスを与えます。")
+    @app_commands.command(
+        name="givebonus", description="[admin]指定したユーザーにボーナスを与えます。"
+    )
     @app_commands.default_permissions(administrator=True)
     @app_commands.describe(bonus_give_user="Bonusを与えるユーザーを指定。")
     async def givebonus(self, interaction: discord.Interaction, bonus_give_user: discord.Member):
@@ -598,7 +609,9 @@ class Currency(commands.Cog):
             BONUS_VALUE_t = "{:,}".format(BONUS_VALUE)
             embed = discord.Embed()
             embed.color = discord.Color.dark_green()
-            embed.description = f"<@{give_user_id}> に{BONUS_VALUE_t} pis ボーナスを配布しました。"
+            embed.description = (
+                f"<@{give_user_id}> に{BONUS_VALUE_t} pis ボーナスを配布しました。"
+            )
             await interaction.response.send_message(embed=embed)
             db.close()
             return
@@ -614,10 +627,14 @@ class Currency(commands.Cog):
     # /setmoney <amount> <bonus_flag> <@user_mention>
     # 管理者がコマンドで与えることもできるようにする
 
-    @app_commands.command(name="setmoney", description="[admin]指定したユーザーのmoneyを変更します。")
+    @app_commands.command(
+        name="setmoney", description="[admin]指定したユーザーのmoneyを変更します。"
+    )
     @app_commands.default_permissions(administrator=True)
     @app_commands.describe(
-        amount="セットする金額を指定。", bonus="ボーナスフラグを1 or 0で選択", set_user="セットするユーザーを指定"
+        amount="セットする金額を指定。",
+        bonus="ボーナスフラグを1 or 0で選択",
+        set_user="セットするユーザーを指定",
     )
     @app_commands.choices(
         bonus=[
@@ -670,9 +687,7 @@ class Currency(commands.Cog):
                 amount_t = "{:,}".format(amount)
                 embed = discord.Embed()
                 embed.color = discord.Color.dark_green()
-                embed.description = (
-                    f"<@{set_user_id}> の所持金{amount_t} pisにを更新しました。bonus_flagは{bonus}です。"
-                )
+                embed.description = f"<@{set_user_id}> の所持金{amount_t} pisにを更新しました。bonus_flagは{bonus}です。"
                 await interaction.response.send_message(embed=embed)
                 db.close()
                 return

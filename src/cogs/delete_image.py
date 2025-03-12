@@ -31,9 +31,13 @@ class DeleteImage(commands.Cog):
             attachment = message.attachments[0]
             try:
                 self._delete_img(attachment.filename)
-                await channel.send(f"GoogleDriveに保存されている`{attachment.filename}`を削除しました")
+                await channel.send(
+                    f"GoogleDriveに保存されている`{attachment.filename}`を削除しました"
+                )
             except Exception:
-                await channel.send(f"GoogleDriveに保存されている`{attachment.filename}`の削除に失敗しました")
+                await channel.send(
+                    f"GoogleDriveに保存されている`{attachment.filename}`の削除に失敗しました"
+                )
 
     def _delete_img(self, filename):
         gauth = GoogleAuth()

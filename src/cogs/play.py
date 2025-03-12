@@ -9,7 +9,10 @@ class Play(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @app_commands.command(name="play", description="マル秘音楽を再生します。VCに入ってからコマンドを使用してください。")
+    @app_commands.command(
+        name="play",
+        description="マル秘音楽を再生します。VCに入ってからコマンドを使用してください。",
+    )
     async def play(self, interaction: discord.Interaction):
         # VCに入ってくる
         if interaction.user.voice and interaction.user.voice.channel:
@@ -65,7 +68,8 @@ class Play(commands.Cog):
 
         global message
         await interaction.response.send_message(
-            "🎶再生したい曲の絵文字を押してください。\n👋で終了し、BotがVCから切断されます。", delete_after=10
+            "🎶再生したい曲の絵文字を押してください。\n👋で終了し、BotがVCから切断されます。",
+            delete_after=10,
         )
         message = await interaction.channel.send(result)
         global message_id

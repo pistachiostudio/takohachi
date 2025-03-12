@@ -63,15 +63,19 @@ class Store(commands.Cog):
                 except KeyError:
                     embed = discord.Embed()
                     embed.color = discord.Color.red()
-                    embed.description = "<:p01_pepebrim:951023068275421235>:warning: 情報を取得できません。。\n\n\
+                    embed.description = (
+                        "<:p01_pepebrim:951023068275421235>:warning: 情報を取得できません。。\n\n\
                         <@813757574058213376>にDMで `!!register`と送信して再度登録してください。"
+                    )
                     await ctx.reply(embed=embed)
 
             # dbに登録がない場合は登録無しのコメント送信でreturn
             else:
                 embed = discord.Embed()
-                embed.description = "<:p01_pepebrim:951023068275421235>:warning: データベースに登録がありません。\n\n\
+                embed.description = (
+                    "<:p01_pepebrim:951023068275421235>:warning: データベースに登録がありません。\n\n\
                     <@813757574058213376>にDMで `!!register`と送信して登録してください。"
+                )
                 await ctx.reply(embed=embed)
                 return
 
@@ -85,9 +89,11 @@ class Store(commands.Cog):
         takohachi_id = "813757574058213376"
 
         embed = discord.Embed()
-        embed.description = "<:p01_pepebrim:951023068275421235>:warning: このコマンドはあなたの`Riot ID`と\
+        embed.description = (
+            "<:p01_pepebrim:951023068275421235>:warning: このコマンドはあなたの`Riot ID`と\
             `Riot Password`と`Discord ID`をデータベースに保存します。\n\nデータベースは暗号化され、安全に管理されていますが、\
                 万が一流出などの事故が起きても一切の責任を負いません。"
+        )
         await ctx.reply(embed=embed)
 
         embed = discord.Embed()
@@ -106,13 +112,17 @@ class Store(commands.Cog):
         # asyncio.TimeoutError が発生したらここに飛ぶ
         except asyncio.TimeoutError:
             embed = discord.Embed()
-            embed.description = "<:p01_pepebrim:951023068275421235>:warning: タイムアウトしました。\n\
+            embed.description = (
+                "<:p01_pepebrim:951023068275421235>:warning: タイムアウトしました。\n\
                 再度 `!!register` コマンドからやり直してください。"
+            )
             await ctx.send(embed=embed)
             return
 
         embed = discord.Embed()
-        embed.description = "<:p01_pepeyoru:951023518068387880> 次に `Riot Password` を入力してください。"
+        embed.description = (
+            "<:p01_pepeyoru:951023518068387880> 次に `Riot Password` を入力してください。"
+        )
         await ctx.send(embed=embed)
 
         try:
@@ -126,14 +136,18 @@ class Store(commands.Cog):
         # asyncio.TimeoutError が発生したらここに飛ぶ
         except asyncio.TimeoutError:
             embed = discord.Embed()
-            embed.description = "<:p01_pepebrim:951023068275421235>:warning: タイムアウトしました。\n\
+            embed.description = (
+                "<:p01_pepebrim:951023068275421235>:warning: タイムアウトしました。\n\
                 再度 `!!register` コマンドからやり直してください。"
+            )
             await ctx.send(embed=embed)
             return
 
         embed = discord.Embed()
-        embed.description = "<:p01_pepejett:977101860068524062> 最後に `Region` を入力してください。\n\
+        embed.description = (
+            "<:p01_pepejett:977101860068524062> 最後に `Region` を入力してください。\n\
             日本の人はみんな `ap` でOKです。"
+        )
         await ctx.send(embed=embed)
 
         try:
@@ -183,16 +197,20 @@ class Store(commands.Cog):
 
                 # 登録情報を更新したメッセージを送信
                 embed = discord.Embed()
-                embed.description = "<:p01_pepebrim:951023068275421235>:ballot_box_with_check: 登録情報を更新しました。\n\
+                embed.description = (
+                    "<:p01_pepebrim:951023068275421235>:ballot_box_with_check: 登録情報を更新しました。\n\
                         念のため今入力したIDとPassは削除してください。"
+                )
                 await ctx.reply(embed=embed)
                 return
 
         # asyncio.TimeoutError が発生したらここに飛ぶ
         except asyncio.TimeoutError:
             embed = discord.Embed()
-            embed.description = "<:p01_pepebrim:951023068275421235>:warning: タイムアウトしました。\n\
+            embed.description = (
+                "<:p01_pepebrim:951023068275421235>:warning: タイムアウトしました。\n\
                 再度 `!!register` コマンドからやり直してください。"
+            )
             await ctx.send(embed=embed)
             return
 

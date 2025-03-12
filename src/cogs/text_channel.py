@@ -13,7 +13,9 @@ class TextChannel(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @app_commands.command(name="top", description="チャンネルの一番上にジャンプするボタンを表示します。")
+    @app_commands.command(
+        name="top", description="チャンネルの一番上にジャンプするボタンを表示します。"
+    )
     async def top(self, interaction: discord.Interaction):
         # interactionは3秒以内にレスポンスしないといけないとエラーになるのでこの処理を入れる。
         await interaction.response.defer()

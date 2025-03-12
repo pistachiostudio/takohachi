@@ -37,7 +37,9 @@ class Marimo(commands.Cog):
 
         embed2 = discord.Embed()
         embed2.color = discord.Color.dark_green()
-        embed2.description = f"🎉Congratulations!! {interaction.user.mention} hits the Jackpot!!🎉"
+        embed2.description = (
+            f"🎉Congratulations!! {interaction.user.mention} hits the Jackpot!!🎉"
+        )
 
         if slot_left == slot_center == slot_right:
             embeds = [embed1, embed2]

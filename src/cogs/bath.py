@@ -15,13 +15,17 @@ class Bath(commands.Cog):
         if rtn is False:
             after_nick = f"🛀{before_nick}"
             await interaction.user.edit(nick=after_nick)
-            await interaction.response.send_message("🛀をつけました◎", ephemeral=True, delete_after=5)
+            await interaction.response.send_message(
+                "🛀をつけました◎", ephemeral=True, delete_after=5
+            )
             pass
 
         if rtn is True:
             after_nick = before_nick.lstrip("🛀")
             await interaction.user.edit(nick=after_nick)
-            await interaction.response.send_message("🛀をはずしました◎", ephemeral=True, delete_after=5)
+            await interaction.response.send_message(
+                "🛀をはずしました◎", ephemeral=True, delete_after=5
+            )
             pass
 
 

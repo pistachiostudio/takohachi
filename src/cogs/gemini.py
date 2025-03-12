@@ -11,13 +11,12 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 class Gemini(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-        self.default_character = (
-            "あなたはチャットコミュニティのみんなに愛されるBotです。みんなからくるいろんな質問にバッチリ答えてね。"  # noqa: E501
-        )
+        self.default_character = "あなたはチャットコミュニティのみんなに愛されるBotです。みんなからくるいろんな質問にバッチリ答えてね。"  # noqa: E501
 
     @app_commands.command(name="gemini", description="Geminiに質問をしましょう！")
     @app_commands.describe(
-        key="質問内容", character="Geminiに性格やキャラを与えることができます。必ず「あなたは～です。」と書いてください。"
+        key="質問内容",
+        character="Geminiに性格やキャラを与えることができます。必ず「あなたは～です。」と書いてください。",
     )  # noqa: E501
     async def gemini(self, interaction: discord.Interaction, key: str, character: str = None):
         if character is None:
@@ -36,10 +35,14 @@ class Gemini(commands.Cog):
                 json = res.json()
                 answer = json["candidates"][0]["content"]["parts"][0]["text"]
         except httpx.HTTPError as e:
-            await interaction.followup.send(f"⚠ APIリクエストエラーが発生しました。時間を置いて試してみてください。: {e}")
+            await interaction.followup.send(
+                f"⚠ APIリクエストエラーが発生しました。時間を置いて試してみてください。: {e}"
+            )
             return
         except Exception as e:
-            await interaction.followup.send(f"⚠ 予期せぬエラーが発生しました。時間を置いて試してみてください。: {e}")
+            await interaction.followup.send(
+                f"⚠ 予期せぬエラーが発生しました。時間を置いて試してみてください。: {e}"
+            )
             return
 
         if character == self.default_character:
