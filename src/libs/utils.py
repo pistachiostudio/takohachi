@@ -84,19 +84,19 @@ def get_exchange_rate():
 
 async def get_trivia() -> str:
     """Gemini APIを使用して雑学を取得する。"""
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={GEMINI_API_KEY}"
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-thinking-exp-01-21:generateContent?key={GEMINI_API_KEY}"
     headers = {"Content-Type": "application/json"}
     payload = {
         "contents": [
             {
                 "parts": [
-                    {"text": "あなたはこの世の森羅万象を知り尽くした天才です。"},
                     {
-                        "text": "雑学を一つ教えてください。\
-                            内容は、この世の森羅万象を対象に動物、昆虫、その他の生物、科学、物理、音楽、文学、カルチャーなどなど、何でも良いです。\
-                            難しい話ももちろんOKです。\
-                            文字数はだいたい日本語で200文字程度にしてください。\
-                            冒頭に「それでは一つ紹介しましょう」や「それでは、今日の雑学です」などの挨拶文は不要です。"
+                        "text": "あなたはあらゆる分野からランダムに興味深い雑学を紹介するエキスパートです。 \
+                        以下の分野から毎回ランダムに異なるテーマを選び、約400文字の日本語で雑学を1つ紹介してください。 \
+                        対象分野：動植物、生物学、宇宙、地理、歴史、哲学、科学、物理学、化学、数学、言語、文学、芸術、音楽、 \
+                        映画、カルチャー、食文化、スポーツ、テクノロジー、心理学、社会学、経済学、建築、医学、人体、民俗学、都市伝説など \
+                        紹介する雑学は毎回前回と異なる分野から選んでください。雑学の内容はマニアックであっても構いません。 \
+                        冒頭に挨拶や前置きは一切不要です。冒頭に分野を記載することも不要で、本文のみ記載してください。"
                     },
                 ]
             }
