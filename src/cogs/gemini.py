@@ -52,7 +52,9 @@ class Gemini(commands.Cog):
         embed.title = f"Q. {key}"
         embed.description = answer
         embed.color = discord.Color.dark_green()
-        embed.set_footer(text=f" Model: gemini-2.0-flash-thinking-exp-01-21\n🪀 キャラ設定: {character}")
+        embed.set_footer(
+            text=f" Model: gemini-2.0-flash-thinking-exp-01-21\n🪀 キャラ設定: {character}"
+        )
 
         await interaction.followup.send(embed=embed)
 
