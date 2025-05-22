@@ -91,7 +91,7 @@ class WTTasks(commands.Cog):
             embed = discord.Embed()
             embed.color = discord.Color.green()
             embed.title = f"{good_morning}{this_month}月{this_day}日 朝の7時です。"
-            embed.description = f"### 💡 今日はなんの日？\n{result}\n### 📚 今日の雑学\n{trivia}(Powered by [gemini-2.5-pro-exp-03-25](https://ai.google.dev/gemini-api/docs/models?hl=ja#gemini-2.5-pro-exp-03-25))\n### 💹 相場\n{market_text}\n### ⛅ 今日の天気\n{tokyo_weather}\n{yamagata_weather}"  # noqa: E501
+            embed.description = f"### 💡 今日はなんの日？\n{result}\n### 📚 今日の雑学\n{trivia}(Powered by [gemini-2.5-pro-preview-05-06](https://ai.google.dev/gemini-api/docs/models))\n### 💹 相場\n{market_text}\n### ⛅ 今日の天気\n{tokyo_weather}\n{yamagata_weather}"  # noqa: E501
             await channel.send(embed=embed)
 
     # デプロイ後Botが完全に起動してからタスクを回す
