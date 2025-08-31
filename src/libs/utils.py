@@ -5,10 +5,10 @@ from datetime import datetime, timedelta, timezone
 from random import randint
 from urllib import parse
 
-import httpx
 import requests
-import tenacity
 import yfinance as yf
+
+from libs.http_client import HTTPClient, APIError
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
@@ -103,21 +103,12 @@ async def get_trivia() -> str:
         ]
     }
 
-    @tenacity.retry(
-        stop=tenacity.stop_after_attempt(3),
-        retry=tenacity.retry_if_exception_type(httpx.HTTPError),
-    )
-    async def fetch_data():
-        async with httpx.AsyncClient() as client:
-            response = await client.post(url, headers=headers, json=payload, timeout=120)
-            response.raise_for_status()
-            return response.json()
-
     try:
-        res = await fetch_data()
+        client = HTTPClient()
+        res = await client.post(url, headers=headers, json=payload, timeout=120)
         answer = res["candidates"][0]["content"]["parts"][0]["text"]
         return answer
-    except tenacity.RetryError:
+    except (APIError, Exception):
         return "⚠GeminiのAPIリクエストでエラーが発生したので今日の雑学はなしです。"
 
 

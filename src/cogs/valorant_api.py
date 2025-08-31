@@ -5,6 +5,7 @@ import httpx
 from discord import app_commands
 from discord.ext import commands
 
+from libs.http_client import HTTPClient, APIError, handle_api_error
 from settings import GUILD_ID
 
 current_season = "e10a3"
@@ -30,19 +31,34 @@ class Valo(commands.Cog):
 
         async def send_request(url, name, tagline):
             headers = {"Authorization": VALORANT_TOKEN}
-            async with httpx.AsyncClient() as client:
-                res = await client.get(url, headers=headers, timeout=10)
+            client = HTTPClient()
 
-            data = res.json()
+            try:
+                data = await client.get(url, headers=headers, timeout=10)
+            except APIError as e:
+                # APIエラーの場合、レスポンスを確認
+                if e.response and "status" in e.response:
+                    embed = discord.Embed()
+                    embed.color = discord.Color.red()
+                    embed.title = "<:p01_pepebrim:951023068275421235>:warning: 入力が間違えているかもしれません。"
+                    embed.description = f"**あなたの入力:** {name}#{tagline}\n**Status Code:** {e.response['status']}\n"
+                    if "errors" in e.response and e.response["errors"]:
+                        embed.description += (
+                            f"**Error Msg:** {e.response['errors'][0]['message']}"
+                        )
+                    await interaction.followup.send(embed=embed)
+                    return None
+                else:
+                    raise  # その他のエラーは再発生させる
 
             # statusが200以外の場合はエラーを返す。
-            if data["status"] != 200:
+            if data.get("status") != 200:
                 embed = discord.Embed()
                 embed.color = discord.Color.red()
                 embed.title = "<:p01_pepebrim:951023068275421235>:warning: 入力が間違えているかもしれません。"
                 embed.description = (
                     f"**あなたの入力:** {name}#{tagline}\n**Status Code:** {data['status']}\n\
-                **Error Msg:** {data['errors'][0]['message']}"
+                **Error Msg:** {data.get('errors', [{}])[0].get('message', 'Unknown error')}"
                 )
                 await interaction.followup.send(embed=embed)
                 return None
@@ -75,10 +91,9 @@ class Valo(commands.Cog):
             if match_data is None:  # エラーチェック
                 return
 
-        except httpx.HTTPError as e:
-            await interaction.followup.send(
-                f"⚠ APIリクエストエラーが発生しました。時間を置いて試してみてください。: {e}"
-            )
+        except Exception as e:
+            await handle_api_error(interaction, e, "Valorant API")
+            return
 
         # APIから必要な基本情報の値を取得
         currenttierpatched = data["data"]["current_data"]["currenttierpatched"]

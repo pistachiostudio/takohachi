@@ -1,15 +1,13 @@
 import logging
 import os
 from datetime import datetime, timedelta, timezone
-from typing import Any
 
 import discord
-import httpx
 from discord import app_commands
 from discord.ext import commands
 
 from settings import GUILD_ID
-
+from libs.http_client import HTTPClient, handle_api_error
 from libs.logging import DiscordBotHandler
 
 LOG_TEXT_CHANNEL_ID = os.environ["LOG_TEXT_CHANNEL_ID"]
@@ -72,14 +70,14 @@ class ApexTracker(commands.Cog):
         headers = {"Authorization": apex_api_key}
         params = {"player": user_id, "platform": platform}
 
-        res = httpx.get(url, headers=headers, params=params)
-
-        if res.status_code != httpx.codes.OK:
-            logger.error(res.json())
-            await interaction.response.send_message("ランクポイントの取得に失敗しました...")
+        try:
+            client = HTTPClient()
+            data = await client.get(url, headers=headers, params=params)
+        except Exception as e:
+            logger.error(f"Failed to fetch Apex rank: {e}")
+            await handle_api_error(interaction, e, "Apex Legends API")
             return
 
-        data: dict[str, Any] = res.json()
         rank = data["global"]["rank"]
 
         rank_name: str = rank.get("rankName")

@@ -1,10 +1,10 @@
 import os
 
 import discord
-import httpx
 from discord import app_commands
 from discord.ext import commands
 
+from libs.http_client import HTTPClient, handle_api_error
 from settings import GUILD_ID
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
@@ -31,20 +31,11 @@ class Gemini(commands.Cog):
         payload = {"contents": [{"parts": [{"text": character}, {"text": key}]}]}
 
         try:
-            async with httpx.AsyncClient() as client:
-                res = await client.post(url, headers=headers, json=payload, timeout=120)
-                res.raise_for_status()
-                json = res.json()
-                answer = json["candidates"][0]["content"]["parts"][0]["text"]
-        except httpx.HTTPError as e:
-            await interaction.followup.send(
-                f"⚠ APIリクエストエラーが発生しました。時間を置いて試してみてください。: {e}"
-            )
-            return
+            client = HTTPClient()
+            response = await client.post(url, json=payload, headers=headers, timeout=120)
+            answer = response["candidates"][0]["content"]["parts"][0]["text"]
         except Exception as e:
-            await interaction.followup.send(
-                f"⚠ 予期せぬエラーが発生しました。時間を置いて試してみてください。: {e}"
-            )
+            await handle_api_error(interaction, e, "Gemini API")
             return
 
         if character == self.default_character:
