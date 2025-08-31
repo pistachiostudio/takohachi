@@ -4,6 +4,8 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
+from settings import GUILD_ID
+
 from .api import get_trigger_repository
 
 DIC_KEY = os.environ["DIC_KEY"]
@@ -46,4 +48,4 @@ class Trigger(commands.Cog):
 
 
 async def setup(bot: commands.Bot):
-    await bot.add_cog(Trigger(bot), guilds=[discord.Object(id=731366036649279518)])
+    await bot.add_cog(Trigger(bot), guilds=[discord.Object(id=GUILD_ID)])

@@ -4,6 +4,8 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
+from settings import GUILD_ID
+
 
 class HappyNewYear(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -55,4 +57,4 @@ class HappyNewYear(commands.Cog):
 
 
 async def setup(bot: commands.Bot):
-    await bot.add_cog(HappyNewYear(bot), guilds=[discord.Object(id=731366036649279518)])
+    await bot.add_cog(HappyNewYear(bot), guilds=[discord.Object(id=GUILD_ID)])

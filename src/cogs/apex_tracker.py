@@ -8,6 +8,8 @@ import httpx
 from discord import app_commands
 from discord.ext import commands
 
+from settings import GUILD_ID
+
 from libs.logging import DiscordBotHandler
 
 LOG_TEXT_CHANNEL_ID = os.environ["LOG_TEXT_CHANNEL_ID"]
@@ -114,4 +116,4 @@ class ApexTracker(commands.Cog):
 
 
 async def setup(bot: commands.Bot):
-    await bot.add_cog(ApexTracker(bot), guilds=[discord.Object(id=731366036649279518)])
+    await bot.add_cog(ApexTracker(bot), guilds=[discord.Object(id=GUILD_ID)])

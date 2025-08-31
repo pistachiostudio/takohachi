@@ -6,6 +6,8 @@ import gspread
 from discord import app_commands
 from discord.ext import commands
 
+from settings import GUILD_ID
+
 # ServiceAccountCredentials：Googleの各サービスへアクセスできるservice変数を生成。
 from oauth2client.service_account import ServiceAccountCredentials
 
@@ -76,4 +78,4 @@ class CardList(commands.Cog):
 
 
 async def setup(bot: commands.Bot):
-    await bot.add_cog(CardList(bot), guilds=[discord.Object(id=731366036649279518)])
+    await bot.add_cog(CardList(bot), guilds=[discord.Object(id=GUILD_ID)])

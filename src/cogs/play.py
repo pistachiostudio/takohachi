@@ -4,6 +4,8 @@ import discord
 from discord import app_commands, message
 from discord.ext import commands
 
+from settings import GUILD_ID
+
 
 class Play(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -134,4 +136,4 @@ class Play(commands.Cog):
 
 
 async def setup(bot: commands.Bot):
-    await bot.add_cog(Play(bot), guilds=[discord.Object(id=731366036649279518)])
+    await bot.add_cog(Play(bot), guilds=[discord.Object(id=GUILD_ID)])

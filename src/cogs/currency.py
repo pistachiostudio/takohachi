@@ -5,6 +5,8 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
+from settings import GUILD_ID
+
 DB_DIRECTORY = "/data/takohachi.db"
 BONUS_VALUE = 3000
 
@@ -702,4 +704,4 @@ class Currency(commands.Cog):
 
 
 async def setup(bot: commands.Bot):
-    await bot.add_cog(Currency(bot), guilds=[discord.Object(id=731366036649279518)])
+    await bot.add_cog(Currency(bot), guilds=[discord.Object(id=GUILD_ID)])

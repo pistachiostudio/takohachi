@@ -10,6 +10,8 @@ from bs4 import BeautifulSoup
 from discord import app_commands
 from discord.ext import commands
 
+from settings import GUILD_ID
+
 # ServiceAccountCredentials：Googleの各サービスへアクセスできるservice変数を生成。
 from oauth2client.service_account import ServiceAccountCredentials
 
@@ -97,4 +99,4 @@ class SSLAdd(commands.Cog):
 
 
 async def setup(bot: commands.Bot):
-    await bot.add_cog(SSLAdd(bot), guilds=[discord.Object(id=731366036649279518)])
+    await bot.add_cog(SSLAdd(bot), guilds=[discord.Object(id=GUILD_ID)])

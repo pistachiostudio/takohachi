@@ -2,6 +2,8 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
+from settings import GUILD_ID
+
 
 class Bath(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -30,4 +32,4 @@ class Bath(commands.Cog):
 
 
 async def setup(bot: commands.Bot):
-    await bot.add_cog(Bath(bot), guilds=[discord.Object(id=731366036649279518)])
+    await bot.add_cog(Bath(bot), guilds=[discord.Object(id=GUILD_ID)])

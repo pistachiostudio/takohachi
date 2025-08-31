@@ -5,6 +5,8 @@ import httpx
 from discord import app_commands
 from discord.ext import commands
 
+from settings import GUILD_ID
+
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 
@@ -58,4 +60,4 @@ class Gemini(commands.Cog):
 
 
 async def setup(bot: commands.Bot):
-    await bot.add_cog(Gemini(bot), guilds=[discord.Object(id=731366036649279518)])
+    await bot.add_cog(Gemini(bot), guilds=[discord.Object(id=GUILD_ID)])

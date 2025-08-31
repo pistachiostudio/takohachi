@@ -5,7 +5,12 @@ from logging.handlers import TimedRotatingFileHandler
 import discord
 from discord.ext import commands
 
-from settings import ADD_SSL_CLIENT_SECRETS_PATH, CLIENT_SECRETS_PATH
+from settings import (
+    ADD_SSL_CLIENT_SECRETS_PATH,
+    CLIENT_SECRETS_PATH,
+    GUILD_ID,
+    REBOOT_LOG_CHANNEL_ID,
+)
 
 logging.basicConfig(
     level=logging.INFO,
@@ -23,8 +28,8 @@ logging.basicConfig(
 
 TOKEN = os.environ["TOKEN"]
 PREFIX = os.environ["PREFIX"]
-guild_id = 731366036649279518
-reboot_log_channel_id = 901373361618296862
+guild_id = GUILD_ID
+reboot_log_channel_id = REBOOT_LOG_CHANNEL_ID
 
 
 def init():

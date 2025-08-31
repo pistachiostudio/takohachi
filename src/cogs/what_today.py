@@ -4,6 +4,8 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
+from settings import GUILD_ID
+
 from libs.utils import get_what_today
 
 
@@ -35,4 +37,4 @@ class WhatToday(commands.Cog):
 
 
 async def setup(bot: commands.Bot):
-    await bot.add_cog(WhatToday(bot), guilds=[discord.Object(id=731366036649279518)])
+    await bot.add_cog(WhatToday(bot), guilds=[discord.Object(id=GUILD_ID)])
