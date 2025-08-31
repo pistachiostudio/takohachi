@@ -3,7 +3,6 @@ HTTPクライアント関連の共通処理を提供するモジュール
 """
 
 import logging
-from typing import Any, Dict, Optional
 
 import httpx
 import tenacity
@@ -16,7 +15,7 @@ class APIError(Exception):
     """API関連のエラーの基底クラス"""
 
     def __init__(
-        self, message: str, status_code: Optional[int] = None, response: Optional[Dict] = None
+        self, message: str, status_code: int | None = None, response: dict | None = None
     ):
         super().__init__(message)
         self.status_code = status_code
@@ -29,7 +28,7 @@ class HTTPClient:
     DEFAULT_TIMEOUT = 30.0
     DEFAULT_RETRY_ATTEMPTS = 3
 
-    def __init__(self, base_url: Optional[str] = None, headers: Optional[Dict[str, str]] = None):
+    def __init__(self, base_url: str | None = None, headers: dict[str, str] | None = None):
         self.base_url = base_url
         self.headers = headers or {}
 
@@ -42,10 +41,10 @@ class HTTPClient:
     async def get(
         self,
         url: str,
-        params: Optional[Dict[str, Any]] = None,
-        headers: Optional[Dict[str, str]] = None,
-        timeout: Optional[float] = None,
-    ) -> Dict[str, Any]:
+        params: dict | None = None,
+        headers: dict[str, str] | None = None,
+        timeout: float | None = None,
+    ) -> dict:
         """GET リクエストを送信"""
         full_url = f"{self.base_url}{url}" if self.base_url else url
         request_headers = {**self.headers, **(headers or {})}
@@ -81,11 +80,11 @@ class HTTPClient:
     async def post(
         self,
         url: str,
-        json: Optional[Dict[str, Any]] = None,
-        data: Optional[Dict[str, Any]] = None,
-        headers: Optional[Dict[str, str]] = None,
-        timeout: Optional[float] = None,
-    ) -> Dict[str, Any]:
+        json: dict | None = None,
+        data: dict | None = None,
+        headers: dict[str, str] | None = None,
+        timeout: float | None = None,
+    ) -> dict:
         """POST リクエストを送信"""
         full_url = f"{self.base_url}{url}" if self.base_url else url
         request_headers = {**self.headers, **(headers or {})}

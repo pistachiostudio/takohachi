@@ -4,6 +4,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
+from libs.embed import create_embed
 from libs.http_client import HTTPClient, handle_api_error
 from settings import GUILD_ID
 
@@ -41,11 +42,12 @@ class Gemini(commands.Cog):
         if character == self.default_character:
             character = "Default"
 
-        embed = discord.Embed()
-        embed.title = f"Q. {key}"
-        embed.description = answer
-        embed.color = discord.Color.dark_green()
-        embed.set_footer(text=f" Model: gemini-2.5-pro-exp-03-25\n🪀 キャラ設定: {character}")
+        embed = create_embed(
+            title=f"Q. {key}",
+            description=answer,
+            color=discord.Color.dark_green(),
+            footer_text=f" Model: gemini-2.5-pro-exp-03-25\n🪀 キャラ設定: {character}",
+        )
 
         await interaction.followup.send(embed=embed)
 
