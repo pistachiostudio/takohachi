@@ -7,7 +7,7 @@ authors = [
     { name = "zztkm", email = "zztkm@tsurutatakumi.info" }
 ]
 dependencies = [
-    "discord.py[voice]~=2.5.1",
+    "discord.py[voice]~=2.6.3",
     "gspread~=6.1.4",
     "requests~=2.32.3",
     "beautifulsoup4~=4.12.2",
