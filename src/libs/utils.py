@@ -5,7 +5,7 @@ from datetime import datetime, timedelta, timezone
 from random import randint
 from urllib import parse
 
-import requests
+import httpx
 import yfinance as yf
 
 from libs.http_client import HTTPClient, APIError
@@ -32,7 +32,7 @@ def get_what_today(this_month: int, this_day: int) -> str:
     base_url = "https://ja.wikipedia.org/wiki/Wikipedia:"
     uri = f"今日は何の日_{this_month}月"
 
-    res = requests.get(base_url + parse.quote(uri))
+    res = httpx.get(base_url + parse.quote(uri))
     html = res.text
     today_idx = html.index(f'id="{this_month}月{this_day}日"')
     ul_start_idx = html.index("ul", today_idx)
@@ -50,7 +50,7 @@ def get_weather(citycode: str):
     # citycode一覧"https://weather.tsukumijima.net/primary_area.xml"
     params = {"city": citycode}
 
-    res = requests.get(url, params=params)
+    res = httpx.get(url, params=params)
     json = res.json()
 
     # date = json["forecasts"][0]["date"]
@@ -73,7 +73,7 @@ def get_exchange_rate():
     # demoに制限が出てくれば、無料のAPIキーを取得する。
     url = "https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=USD&to_currency=JPY&apikey=demo"
 
-    result = requests.get(url)
+    result = httpx.get(url)
     json = result.json()
 
     usd_jpy = float(json["Realtime Currency Exchange Rate"]["5. Exchange Rate"])

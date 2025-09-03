@@ -3,7 +3,7 @@ import re
 import socket
 from collections import OrderedDict
 
-import requests
+import httpx
 import urllib3
 
 """
@@ -33,7 +33,7 @@ class Auth:
             }
         )
 
-        session = requests.session()
+        session = httpx.Client()
         session.headers = headers
 
         data = {
@@ -121,18 +121,18 @@ def get_bundles(skins_data, bundles_data, weapons_data):
 
 
 def get_data(user_id, headers, region):
-    skins_data = requests.get(
+    skins_data = httpx.get(
         f"https://pd.{region}.a.pvp.net/store/v2/storefront/{user_id}", headers=headers
     )
     skins_data = skins_data.json()
 
-    bundles_data = requests.get("https://valorant-api.com/v1/bundles")
+    bundles_data = httpx.get("https://valorant-api.com/v1/bundles")
     bundles_data = bundles_data.json()["data"]
 
-    weapons_data = requests.get("https://valorant-api.com/v1/weapons/skinlevels")
+    weapons_data = httpx.get("https://valorant-api.com/v1/weapons/skinlevels")
     weapons_data = weapons_data.json()["data"]
 
-    offers_data = requests.get(f"https://pd.{region}.a.pvp.net/store/v1/offers", headers=headers)
+    offers_data = httpx.get(f"https://pd.{region}.a.pvp.net/store/v1/offers", headers=headers)
     offers_data = offers_data.json()["Offers"]
 
     return skins_data, bundles_data, weapons_data, offers_data

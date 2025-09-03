@@ -5,7 +5,7 @@ from urllib.parse import urlparse
 
 import discord
 import gspread
-import requests
+import httpx
 from bs4 import BeautifulSoup
 from discord import app_commands
 from discord.ext import commands
@@ -32,9 +32,9 @@ class SSLAdd(commands.Cog):
 
         # httpから始まる文字列の場合は処理をすすめる
         else:
-            session = requests.Session()
+            session = httpx.Client()
             session.trust_env = False
-            response = requests.get(add_url)
+            response = httpx.get(add_url)
             soup = BeautifulSoup(response.content, "html.parser")
             # タイトルをゲットし、前後の空白や改行をすべて取る
             # （ナオトインティライミのHPは前後に空白が16個ずつも入っていた！ふざけるな！）
