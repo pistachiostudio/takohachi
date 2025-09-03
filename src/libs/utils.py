@@ -35,7 +35,7 @@ def get_what_today(this_month: int, this_day: int) -> str:
     app_name = "takohachi"
     app_version = "1.0.0"
     app_url = "https://github.com/pistachiostudio/takohachi"
-    app_contact = "zztkm@tsurutatakumi.info"
+    app_contact = "info@pistachiostudio.net"
     user_agent = f"{app_name}/{app_version} (+{app_url}; {app_contact})"
 
     base_url = "https://ja.wikipedia.org/wiki/Wikipedia:"
