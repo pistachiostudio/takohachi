@@ -18,3 +18,5 @@
   - @zztkm
 - [UPDATE] requests の利用をやめて httpx に統一する
   - @zztkm
+- [UPDATE] wikipedia への HTTP リクエスト時に User-Agent をつけるようにする
+  - @zztkm

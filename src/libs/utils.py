@@ -29,10 +29,22 @@ def get_what_today(this_month: int, this_day: int) -> str:
     Returns:
         str: 今日は何の日の取得結果
     """
+    # Wikimedia Foundation User-Agent Policy 準拠の User-Agent
+    # 参考: https://foundation.wikimedia.org/wiki/Policy:Wikimedia_Foundation_User-Agent_Policy
+    # TODO(zztkm): ここの値はアプリの定数値としてどこかに適切な場所に定義することを検討する
+    app_name = "takohachi"
+    app_version = "1.0.0"
+    app_url = "https://github.com/pistachiostudio/takohachi"
+    app_contact = "zztkm@tsurutatakumi.info"
+    user_agent = f"{app_name}/{app_version} (+{app_url}; {app_contact})"
+
     base_url = "https://ja.wikipedia.org/wiki/Wikipedia:"
     uri = f"今日は何の日_{this_month}月"
 
-    res = httpx.get(base_url + parse.quote(uri))
+    res = httpx.get(
+        base_url + parse.quote(uri),
+        headers={"User-Agent": user_agent},
+    )
     html = res.text
     today_idx = html.index(f'id="{this_month}月{this_day}日"')
     ul_start_idx = html.index("ul", today_idx)
