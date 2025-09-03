@@ -18,4 +18,3 @@
   - @zztkm
 - [UPDATE] requests の利用をやめて httpx に統一する
   - @zztkm
-
