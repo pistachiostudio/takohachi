@@ -96,7 +96,7 @@ def get_exchange_rate():
 
 async def get_trivia() -> str:
     """Gemini APIを使用して雑学を取得する。"""
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro-preview-05-06:generateContent?key={GEMINI_API_KEY}"
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent?key={GEMINI_API_KEY}"
     headers = {"Content-Type": "application/json"}
     payload = {
         "contents": [
