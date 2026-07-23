@@ -1,6 +1,10 @@
 FROM python:3.12-slim-bookworm
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
+# Railwayのようにコンテナのstdout/stderrをログとして収集する環境で
+# print/loggingの出力がバッファに溜まって見えなくなるのを防ぐ
+ENV PYTHONUNBUFFERED=1
+
 # ローカルマシン(日本) のときは効果あるかも
 # RUN sed -i 's@archive.ubuntu.com@ftp.jaist.ac.jp/pub/Linux@g' /etc/apt/sources.list
 #一旦play.pyの導入は見送るのでとりあえずffmpegはコメントアウト
