@@ -73,12 +73,12 @@ class MyBot(commands.Bot):
 
         # コマンド系じゃないdevで読み込むと競合してややこしいcogs
         self.initial_extensions_only_production = [
-            # "cogs.autodelete",
+            "cogs.autodelete",
             "cogs.card_count",
             "cogs.save_image",
             "cogs.vc_role",
             "cogs.vcwhite",
-            # "cogs.wt_task",
+            "cogs.wt_task",
             "cogs.vl_rank_task",
         ]
 
