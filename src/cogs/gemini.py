@@ -9,6 +9,7 @@ from libs.http_client import HTTPClient, handle_api_error
 from settings import GUILD_ID
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+GEMINI_MODEL = "gemini-2.5-flash"
 
 
 class Gemini(commands.Cog):
@@ -27,7 +28,7 @@ class Gemini(commands.Cog):
 
         await interaction.response.defer()
 
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent?key={GEMINI_API_KEY}"
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent?key={GEMINI_API_KEY}"
         headers = {"Content-Type": "application/json"}
         payload = {"contents": [{"parts": [{"text": character}, {"text": key}]}]}
 
@@ -46,7 +47,7 @@ class Gemini(commands.Cog):
             title=f"Q. {key}",
             description=answer,
             color=discord.Color.dark_green(),
-            footer_text=f" Model: gemini-2.5-pro-exp-03-25\n🪀 キャラ設定: {character}",
+            footer_text=f" Model: {GEMINI_MODEL}\n🪀 キャラ設定: {character}",
         )
 
         await interaction.followup.send(embed=embed)
