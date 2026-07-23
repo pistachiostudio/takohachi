@@ -15,5 +15,7 @@ COPY src/ ./src/
 
 RUN uv sync --frozen
 
+RUN mkdir -p /data /logs
+
 ENTRYPOINT ["uv", "run", "python", "src/main.py"]
 CMD []
