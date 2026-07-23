@@ -57,41 +57,32 @@ class WTTasks(commands.Cog):
                 ("9023.T", "東京地下鉄", "円", ":metro:"),
             ]
 
-            stock_results = {}
-            # 各銘柄のデータを取得（リクエスト間に遅延を入れる）
+            # 市場データのテキスト生成（リクエスト間に遅延を入れる）
+            market_lines = []
             for ticker, name, unit, icon in market_data:
                 try:
                     day_before_ratio, stock_today = get_stock_price(ticker)
-                    stock_results[ticker] = (day_before_ratio, stock_today, name, unit, icon)
+                    market_lines.append(
+                        f"- {icon} **{name}:** {round(stock_today, 1):,}{unit} ({day_before_ratio})"
+                    )
                     # APIリクエスト制限回避のために遅延を入れる
                     time.sleep(0.5)
                 except YFRateLimitError:
                     print(f"Rate limit exceeded for ticker: {ticker}")
+                    market_lines.append(f"- {icon} **{name}:** データ取得失敗")
                     continue
                 except Exception as e:
                     print(f"Failed to get stock price for ticker: {ticker}")
                     print("Error message:", e)
+                    market_lines.append(f"- {icon} **{name}:** データ取得失敗")
                     continue
-
-            # 市場データのテキスト生成
-            market_lines = []
-            for ticker, (
-                day_before_ratio,
-                stock_today,
-                name,
-                unit,
-                icon,
-            ) in stock_results.items():
-                market_lines.append(
-                    f"- {icon} **{name}:** {round(stock_today, 1):,}{unit} ({day_before_ratio})"
-                )
 
             market_text = "\n".join(market_lines) + "\n※()内は前日比。"
 
             embed = discord.Embed()
-            embed.color = discord.Color.green()
+            embed.color = discord.Color(0x00FF00)
             embed.title = f"{good_morning}{this_month}月{this_day}日 朝の7時です。"
-            embed.description = f"### 💡 今日はなんの日？\n{result}\n### 📚 今日の雑学\n{trivia}(Powered by [gemini-2.5-pro-preview-05-06](https://ai.google.dev/gemini-api/docs/models))\n### 💹 相場\n{market_text}\n### ⛅ 今日の天気\n{tokyo_weather}\n{yamagata_weather}"  # noqa: E501
+            embed.description = f"### 💡 今日はなんの日？\n{result}\n\n### 📚 今日の雑学\n{trivia}\n(Powered by [Gemini](https://ai.google.dev/gemini-api/docs/models))\n\n### 💹 相場\n{market_text}\n\n### ⛅ 今日の天気\n{tokyo_weather}\n{yamagata_weather}"  # noqa: E501
             await channel.send(embed=embed)
 
     # デプロイ後Botが完全に起動してからタスクを回す
