@@ -30,8 +30,6 @@ class AutoDelete(commands.Cog):
             1033285774503841862: 600,  # 沈黙の恐竜
             924924594706583562: 86400,  # 茂林塾
             923469139597721610: 86400,  # moderator
-            1069935021282045982: 1,  # purge-test-1-1sec
-            1069935102844477480: 1,  # purge-test-2-1sec
         }
 
         # UNIX時間の現在時刻を取得
@@ -41,6 +39,9 @@ class AutoDelete(commands.Cog):
         for channel_id in channel_list.keys():
             # チャンネルを取得
             channel = self.bot.get_channel(channel_id)
+            if channel is None:
+                logging.warning(f"Channel not found, skipping: {channel_id}")
+                continue
 
             # チャンネルのメッセージを古い順に取得
             purge_count = 0
