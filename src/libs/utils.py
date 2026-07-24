@@ -41,19 +41,29 @@ def get_what_today(this_month: int, this_day: int) -> str:
     base_url = "https://ja.wikipedia.org/wiki/Wikipedia:"
     uri = f"今日は何の日_{this_month}月"
 
-    res = httpx.get(
-        base_url + parse.quote(uri),
-        headers={"User-Agent": user_agent},
-    )
-    html = res.text
-    today_idx = html.index(f'id="{this_month}月{this_day}日"')
-    ul_start_idx = html.index("ul", today_idx)
-    ul_end_idx = html.index("/ul", ul_start_idx)
-    ul = html[ul_start_idx:ul_end_idx].replace("\n", "")
-    ul_match_list = re.findall(r"<li>.+?<\/li>", ul)
-    ul_match_sub_list = [re.sub("<.+?>", "", s) for s in ul_match_list]
-    result = ul_match_sub_list[randint(0, len(ul_match_sub_list) - 1)]
-    return result
+    fallback = f"{this_month}月{this_day}日です。"
+
+    try:
+        res = httpx.get(
+            base_url + parse.quote(uri),
+            headers={"User-Agent": user_agent},
+        )
+        html = res.text
+        today_idx = html.index(f'id="{this_month}月{this_day}日"')
+        ul_start_idx = html.index("ul", today_idx)
+        ul_end_idx = html.index("/ul", ul_start_idx)
+        ul = html[ul_start_idx:ul_end_idx].replace("\n", "")
+        ul_match_list = re.findall(r"<li>.+?<\/li>", ul)
+        ul_match_sub_list = [re.sub("<.+?>", "", s) for s in ul_match_list]
+    except (ValueError, httpx.HTTPError) as e:
+        print(f"Failed to fetch/parse 'what today' page: {e}")
+        return fallback
+
+    if not ul_match_sub_list:
+        print("項目が見つかりませんでした")
+        return fallback
+
+    return ul_match_sub_list[randint(0, len(ul_match_sub_list) - 1)]
 
 
 def get_weather(citycode: str):
