@@ -53,7 +53,7 @@ def get_what_today(this_month: int, this_day: int) -> str:
         ul_start_idx = html.index("ul", today_idx)
         ul_end_idx = html.index("/ul", ul_start_idx)
         ul = html[ul_start_idx:ul_end_idx].replace("\n", "")
-        ul_match_list = re.findall(r"<li>.+?<\/li>", ul)
+        ul_match_list = re.findall(r"<li[^>]*>.+?<\/li>", ul)
         ul_match_sub_list = [re.sub("<.+?>", "", s) for s in ul_match_list]
     except (ValueError, httpx.HTTPError) as e:
         print(f"Failed to fetch/parse 'what today' page: {e}")
