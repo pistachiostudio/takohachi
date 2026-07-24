@@ -75,6 +75,7 @@ class MyBot(commands.Bot):
         self.initial_extensions_only_production = [
             "cogs.autodelete",
             "cogs.card_count",
+            "cogs.daily_restart",
             "cogs.save_image",
             "cogs.vc_role",
             "cogs.vcwhite",
