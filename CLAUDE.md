@@ -23,6 +23,7 @@ Takohachi (たこ八) は、Discordサーバー「ピスタチオゲーム部親
 - 本番環境は **Railway** にデプロイされている。
 - `main` ブランチへの push をトリガーに Railway 側の連携で自動ビルド・デプロイされる。
 - Lightsail 時代の SSH デプロイ用ワークフロー(`.github/workflows/deploy.yml`)は Railway 移行に伴い削除済み。
+- PR Environments を検証中（動作確認のための無害な変更）。
 
 ## 開発コマンド
 
