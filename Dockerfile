@@ -17,9 +17,7 @@ WORKDIR /app
 COPY pyproject.toml uv.lock README.md ./
 COPY src/ ./src/
 
-RUN uv sync --frozen
-
-RUN mkdir -p /data /logs
+RUN uv sync --frozen && mkdir -p /data /logs
 
 ENTRYPOINT ["uv", "run", "python", "src/main.py"]
 CMD []

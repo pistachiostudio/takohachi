@@ -7,7 +7,6 @@
 
 <p align="center">
 <a href="https://github.com/search?q=repo%3Apistachiostudio%2Ftakohachi++language%3APython&type=code"><img alt="GitHub top language" src="https://img.shields.io/github/languages/top/pistachiostudio/takohachi"></a>
-<a href="https://github.com/pistachiostudio/takohachi/actions/workflows/deploy.yml"><img alt="GitHub Workflow Status" src="https://github.com/pistachiostudio/takohachi/actions/workflows/deploy.yml/badge.svg"></a>
 <a href="https://github.com/pistachiostudio/takohachi/actions/workflows/ci.yml"><img alt="GitHub Workflow Status" src="https://github.com/pistachiostudio/takohachi/actions/workflows/ci.yml/badge.svg"></a>
 <a href="https://github.com/charliermarsh/ruff"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v2.json" alt="Ruff" style="max-width:100%;"></a>
 <a href="https://github.com/pistachiostudio/takohachi/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues/pistachiostudio/takohachi"></a>
@@ -36,129 +35,48 @@ https://github.com/pistachiostudio/takohachi/tree/main/src/cogs
 $ uv sync
 ```
 
-## 🏭 Auto deployment by GitHub Actions
+## 🚄 Auto deployment on Railway
 
-現在停止中
+Takohachi は現在 [Railway](https://railway.app/) にデプロイされている。
 
-- [.github/workflows/deploy.yml](https://github.com/pistachiostudio/takohachi/blob/master/.github/workflows/deploy.yml)
-- Required secrets:
-  - Server IP
-  - Server Port
-  - Server User
-  - Sever SSH Key
-  - Directory to deploy
-
-## 🌊 Takohachi inhabits Lightsail
-
-### Now
+- `main` ブランチへの push をトリガーに、Railway 側の連携によって自動でビルド・デプロイされる。
+- ビルドはリポジトリの [Dockerfile](./Dockerfile) を使用。
+- 環境変数は Railway プロジェクトの Variables で管理する（詳細は下記「Create `.env` file」を参照）。
 
 ```mermaid
 flowchart LR
 
 Z(Codes)
-A(Docker)
 B(main<br>branch)
-C(Docker)
+C(Docker Build)
 D[(SQLite)]
-F(Codes)
-G[(SQLite)]
-H(.env)
-I(.env)
+I(Env Vars)
 J(((Discord)))
 
-subgraph Host Machine
+subgraph Local
 Z
-G
-A
-H
 end
 
 subgraph GitHub
 B
 end
 
-subgraph AWS Lightsail
-subgraph Ubuntu
+subgraph Railway
 C
 D
-F
 I
 end
-end
 
-Z o--o H
-H -- run --> A
 Z -- Push --> B
-A o--o G
-B -- Auto<br>deploy --> F
-F o--o I
-I -- run --> C
-C o--o  D
+B -- Auto deploy --> C
+I -- inject --> C
+C o--o D
 C <--> J
 ```
 
-### Future Enchantment
+## 🐳 Local Development with Docker
 
-```mermaid
-
-flowchart LR
-
-Z(Codes)
-A(Docker)
-B(main<br>branch)
-C(Docker)
-D[(SQLite)]
-F(Codes)
-G[(SQLite)]
-H(.env)
-I(.env)
-J[(SQLite)]
-K(((Discord)))
-
-
-
-subgraph Host Machine
-Z
-G
-A
-H
-end
-
-subgraph GitHub
-B
-end
-
-subgraph AWS Lightsail
-subgraph Ubuntu
-C
-D
-F
-I
-end
-end
-
-subgraph Enchantment
-subgraph AWS-S3
-J
-end
-end
-style Enchantment fill:forestgreen
-style AWS-S3 fill:forestgreen
-
-Z o--o H
-H -- run --> A
-Z -- Push --> B
-A o--o J
-B -- Auto<br>deploy --> F
-F o--o I
-I -- run --> C
-C o--o  D
-D -- mirror --> J
-A x-.-x G
-C <--> K
-```
-
-## 🐳 Docker
+Railway 上の本番環境とは別に、ローカルでも同じ Dockerfile を使って動作確認ができる。
 
 ### 1. Clone this repository
 
