@@ -1,0 +1,27 @@
+name: Cleanup PR environment records
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    permissions:
+      deployments: write
+    steps:
+      - name: Delete GitHub deployments and environment for this PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          ENV_NAME: takohachi / takohachi-pr-${{ github.event.pull_request.number }}
+        run: |
+          set -e
+
+          ids=$(gh api "repos/${REPO}/deployments" --paginate --jq ".[] | select(.environment == \"${ENV_NAME}\") | .id")
+
+          for id in $ids; do
+            echo "Deactivating and deleting deployment $id"
+            gh api "repos/${REPO}/deployments/${id}/statuses" -f state=inactive >/dev/null
+            gh api -X DELETE "repos/${REPO}/deployments/${id}"
+          done
