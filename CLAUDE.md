@@ -35,6 +35,8 @@ PR を作成すると、Railway が自動でテスト用の環境を立ち上げ
 - `TOKEN` 以外の変数(`GUILD_ID` や各チャンネル/VC ID 等)は本番と共通のため、テスト用 Bot は本番と同じ Discord サーバー・チャンネルで動く
   - `pr-base` の `TOKEN` を更新した場合、既存の PR 環境には反映されない（環境作成時にコピーされるだけのため）。反映するには PR 環境を作り直す（PR を close → reopen、または PR 環境を手動削除して再生成）
 - wt_task や autodelete などの定期実行タスクは PR 環境でも動作し、本番と重複投稿する可能性がある(現時点では許容している)
+- Railway 側のインフラは PR クローズ時に自動削除されるが、GitHub 側の Deployments レコード（`takohachi / takohachi-pr-{PR番号}` という environment 名で作られる）は残り続けて蓄積する
+  - `.github/workflows/cleanup-pr-environment.yml` が PR クローズ(マージ含む)をトリガーに、対応する deployment を inactive 化した上で削除する
 
 ## 開発コマンド
 
