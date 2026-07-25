@@ -74,6 +74,15 @@ C o--o D
 C <--> J
 ```
 
+## 🔍 PR Environments (プレビュー環境)
+
+Pull Request を作成すると、Railway が自動でテスト用の環境とテスト用 Bot を立ち上げる。PR をクローズ/マージすると環境は自動で削除される。
+
+- PR 環境の環境変数は `pr-base` 環境（`production` を複製し、`TOKEN` のみテスト用 Bot のトークンに差し替えたテンプレート環境）をベースにコピーされる。
+- `TOKEN` 以外（`GUILD_ID` やチャンネル/VC ID 等）は本番と共通のため、テスト用 Bot は本番と同じ Discord サーバー・チャンネルで動作する。
+- `pr-base` の変数を更新しても、既存の PR 環境には反映されない（コピーはPR環境の作成時のみ行われる）。反映するには PR 環境を作り直す（PR を close → reopen 等）。
+- wt_task や autodelete などの定期実行タスクは PR 環境でも動作し、本番と重複投稿する可能性がある(現時点では許容)。
+
 ## 🐳 Local Development with Docker
 
 Railway 上の本番環境とは別に、ローカルでも同じ Dockerfile を使って動作確認ができる。

@@ -23,6 +23,18 @@ Takohachi (たこ八) は、Discordサーバー「ピスタチオゲーム部親
 - 本番環境は **Railway** にデプロイされている。
 - `main` ブランチへの push をトリガーに Railway 側の連携で自動ビルド・デプロイされる。
 - Lightsail 時代の SSH デプロイ用ワークフロー(`.github/workflows/deploy.yml`)は Railway 移行に伴い削除済み。
+- 旧2代目サービス(`nidaime-takohachi`)は削除済み。`takohachi`サービスのみが本番。
+
+### PR Environments (プレビュー環境)
+
+PR を作成すると、Railway が自動でテスト用の環境を立ち上げ、テスト用 Bot が Discord 上にオンラインになる。PR をクローズ/マージすると環境は自動で削除される。
+
+- Railway の Project Settings > Environments > PR Environments が有効
+- Base Environment に `pr-base`(`production` を複製し、`TOKEN` のみテスト用 Bot のトークンに差し替えた環境)を指定している
+  - `pr-base` 自体は変数のテンプレートとしてのみ存在し、Auto Deploy は無効化・デプロイは Remove 済み（実際に Bot として起動させない）
+- `TOKEN` 以外の変数(`GUILD_ID` や各チャンネル/VC ID 等)は本番と共通のため、テスト用 Bot は本番と同じ Discord サーバー・チャンネルで動く
+  - `pr-base` の `TOKEN` を更新した場合、既存の PR 環境には反映されない（環境作成時にコピーされるだけのため）。反映するには PR 環境を作り直す（PR を close → reopen、または PR 環境を手動削除して再生成）
+- wt_task や autodelete などの定期実行タスクは PR 環境でも動作し、本番と重複投稿する可能性がある(現時点では許容している)
 
 ## 開発コマンド
 
