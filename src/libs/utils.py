@@ -1,4 +1,3 @@
-import json
 import os
 import re
 from datetime import datetime, timedelta, timezone
@@ -145,12 +144,19 @@ async def get_trivia() -> str:
 def get_stock_price(ticker_symbol: str):
     index = yf.Ticker(ticker_symbol)
 
-    data = index.history(period="2d")
-    data_json_with_date = data.to_json(orient="split", date_format="iso")
-    data_json = json.loads(data_json_with_date)
+    # "2d" だと当日分の Close が未確定 (NaN) だったり、行自体が1件しか
+    # 返らないことがある（特に日本時間早朝の指数系ティッカーで発生しやすい）。
+    # 直近5日分から NaN を除いた末尾2件を使うことで、取得失敗を避ける。
+    data = index.history(period="5d")
+    closes = data["Close"].dropna()
 
-    stock_yesterday = data_json["data"][0][3]
-    stock_today = data_json["data"][1][3]
+    if len(closes) < 2:
+        raise ValueError(
+            f"Not enough valid close prices for {ticker_symbol}: got {len(closes)} row(s)"
+        )
+
+    stock_yesterday = closes.iloc[-2]
+    stock_today = closes.iloc[-1]
     day_before_ratio = round(stock_today - stock_yesterday, 1)
 
     if day_before_ratio > 0:
