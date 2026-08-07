@@ -1,5 +1,5 @@
 import logging
-import sys
+import os
 from datetime import datetime, timedelta, timezone
 
 from discord.ext import commands, tasks
@@ -24,10 +24,12 @@ class DailyRestart(commands.Cog):
             logging.info(
                 f"Scheduled daily restart triggered at {now.isoformat()}. Exiting process."
             )
-            await self.bot.close()
-            # Railwayのrestart policy(ON_FAILURE)によって自動的に再起動されるよう、
-            # 意図的に非ゼロの終了コードでプロセスを終了する。
-            sys.exit(1)
+            # bot.close()はcog_unload()経由でこのタスク自身をcancelしてしまい、
+            # 後続処理が実行されなくなるため使わない。
+            # os._exit()はPythonの終了処理(例外伝播やatexit)を一切介さず
+            # 即座にプロセスを終了するため、Railwayのrestart policyに
+            # 非ゼロ終了コードを確実に渡せる。
+            os._exit(1)
 
     @checker.before_loop
     async def before_checker(self):
