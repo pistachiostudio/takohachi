@@ -37,33 +37,42 @@ class AutoDelete(commands.Cog):
 
         # 辞書のキーをループで回していく。キーはチャンネルID
         for channel_id in channel_list.keys():
-            # チャンネルを取得
-            channel = self.bot.get_channel(channel_id)
-            if channel is None:
-                logging.warning(f"Channel not found, skipping: {channel_id}")
-                continue
+            try:
+                # チャンネルを取得
+                channel = self.bot.get_channel(channel_id)
+                if channel is None:
+                    logging.warning(f"Channel not found, skipping: {channel_id}")
+                    continue
 
-            # チャンネルのメッセージを古い順に取得
-            purge_count = 0
-            pinned_count = 0
-            async for message in channel.history(oldest_first=True):
-                message_time = int(message.created_at.timestamp())
-                if now - message_time > channel_list[channel_id]:
-                    purge_count += 1
-                    if message.pinned:
-                        pinned_count += 1
+                # チャンネルのメッセージを古い順に取得
+                purge_count = 0
+                pinned_count = 0
+                async for message in channel.history(oldest_first=True):
+                    message_time = int(message.created_at.timestamp())
+                    if now - message_time > channel_list[channel_id]:
+                        purge_count += 1
+                        if message.pinned:
+                            pinned_count += 1
 
-            # 現在時間から指定した時間を引いた時間を取得
-            del_time = datetime.datetime.fromtimestamp(now - channel_list[channel_id])
+                # 現在時間から指定した時間を引いた時間を取得
+                del_time = datetime.datetime.fromtimestamp(now - channel_list[channel_id])
 
-            # checkを定義
-            def is_not_pinned(message):
-                return not message.pinned
+                # checkを定義
+                def is_not_pinned(message):
+                    return not message.pinned
 
-            deleted = await channel.purge(limit=purge_count, check=is_not_pinned, before=del_time)
-            logging.info(
-                f"Purged {len(deleted)} messages in {channel.name} (pinned: {pinned_count})"
-            )
+                deleted = await channel.purge(
+                    limit=purge_count, check=is_not_pinned, before=del_time
+                )
+                logging.info(
+                    f"Purged {len(deleted)} messages in {channel.name} (pinned: {pinned_count})"
+                )
+            except Exception:
+                # discord.HTTPException(Discord側の一時的な503等)はtasks.loopの
+                # 自動リトライ対象外で、ここで捕まえないとループ自体が停止し、
+                # 二度と自動削除が動かなくなる。1チャンネルの失敗で全体を
+                # 止めないためにもチャンネル単位でcatchする。
+                logging.exception(f"Failed to purge messages in channel {channel_id}")
 
         logging.info("Message purge task is finished.")
 

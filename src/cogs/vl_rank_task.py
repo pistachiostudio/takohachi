@@ -1,4 +1,5 @@
 import asyncio
+import logging
 import os
 import sqlite3
 from datetime import datetime, timedelta, timezone
@@ -63,10 +64,20 @@ class RankTasks(commands.Cog):
         now_minute = now.minute
 
         if now_hour == 7 and 0 <= now_minute <= 9:
-            db_path = "/data/takohachi.db"
+            try:
+                await self._post_daily_ranking(channel)
+            except Exception:
+                # discord.HTTPExceptionなどtasks.loopの自動リトライ対象外の例外が
+                # ここで発生するとループ自体が停止し、二度と朝の投稿が行われなく
+                # なるため、ここで捕まえて次回ループを継続させる。
+                logging.exception("Failed to post daily valorant ranking")
 
-            # データベースに接続とカーソルの取得
-            conn = sqlite3.connect(db_path)
+    async def _post_daily_ranking(self, channel):
+        db_path = "/data/takohachi.db"
+
+        # データベースに接続とカーソルの取得
+        conn = sqlite3.connect(db_path)
+        try:
             cur = conn.cursor()
 
             # レコードを全て取得し、yesterday_eloで降順にソート
@@ -230,7 +241,7 @@ class RankTasks(commands.Cog):
                 embed.title = "みんなの昨日の活動です。"
                 embed.description = msg
                 await channel.send(embed=embed)
-
+        finally:
             conn.close()
 
     # デプロイ後Botが完全に起動してからタスクを回す
