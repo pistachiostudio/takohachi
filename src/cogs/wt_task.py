@@ -46,7 +46,9 @@ class WTTasks(commands.Cog):
 
                 # Geminiで雑学を取得
                 trivia = await get_trivia()
-                good_morning = random.choice(["おざし。", "おざす。", "お。", "おはようございます。"])
+                good_morning = random.choice(
+                    ["おざし。", "おざす。", "お。", "おはようございます。"]
+                )
 
                 # 市場データの設定
                 # (ticker_symbol, 表示名, 単位, アイコン)
