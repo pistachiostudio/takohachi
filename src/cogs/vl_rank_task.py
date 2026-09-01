@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import os
+import random
 import sqlite3
 from datetime import datetime, timedelta, timezone
 
@@ -8,7 +9,32 @@ import discord
 import httpx
 from discord.ext import commands, tasks
 
-from cogs.valorant_api import current_season, season_txt
+from cogs import valorant_api
+
+# fetch()の戻り値のうち、前日の基準(yesterday_season)がまだ記録されていない
+# ため差分計算ができなかったことを示すセンチネル。
+# デプロイ直後やプレイヤー新規追加時に発生し、この状態は「誰もプレイしていない」
+# とは異なるため、「誰もプレイしていない」メッセージの判定から除外する。
+NO_BASELINE = object()
+
+# fetch()の戻り値のうち、前日の基準はあったが1試合もプレイしていなかったことを
+# 示すセンチネル。API取得失敗時のNoneとは異なり、こちらは「誰もプレイしていない」
+# 判定に使ってよい(=状況が明確に分かっている)。
+NO_PLAY = object()
+
+# 前日誰もプレイしていなかった日に、ランダムで1つ選んで投稿するメッセージ
+NO_PLAY_MESSAGES: list[str] = [
+    "🦎 しーん...\n\n今日はVALORANT、誰もプレイしてなかったみたいです。\nみんなどこ行っちゃったのかな...\n\nまた明日待ってますね。",
+    "🐹💨 シーン...\n\n今日も誰も来ないのかな。\nボッチ、一人で待ってますよ...\n\n(泣)",
+    "💔 今日は誰もプレイしてなかったみたい...寂しいな。",
+    "🌙 昨日の夜、誰もVALORANTを起動しなかったようです。\nみんな元気にしてるかな...?",
+    "📭 今日の戦績、空っぽでした。\nまた遊んでくれるの待ってますね...",
+    "🍃 静かな一日でした。\n誰もランクを回さなかったみたい。\nたまにはそんな日もありますよね。",
+    "👻 …だれもいない。\nVALORANT部屋、閑古鳥が鳴いています。",
+    "🎮💤 コントローラーがお昼寝していました。\n昨日は誰も対戦しなかったみたいです。",
+    "🕯️ 今日は戦績報告、お休みです。\n誰もプレイしなかったので…また今度。",
+    "🐾 誰かの足跡を探しましたが、見つかりませんでした。\n今日はみんなお休みだったみたいですね。",
+]
 
 # ランクに合わせてバッジを表示するための辞書
 rank_badge_dict: dict[str, str] = {
@@ -45,7 +71,6 @@ VALORANT_TOKEN = os.environ["VALORANT_TOKEN"]
 
 class RankTasks(commands.Cog):
     def __init__(self, bot: commands.Bot):
-        self.index = 0
         self.bot = bot
         self.printer.start()
 
@@ -73,6 +98,9 @@ class RankTasks(commands.Cog):
                 logging.exception("Failed to post daily valorant ranking")
 
     async def _post_daily_ranking(self, channel):
+        # 投稿の度にシーズン(Act)情報を最新化する
+        await valorant_api.update_current_season()
+
         db_path = "/data/takohachi.db"
 
         # データベースに接続とカーソルの取得
@@ -80,20 +108,34 @@ class RankTasks(commands.Cog):
         try:
             cur = conn.cursor()
 
+            # yesterday_seasonカラムが無ければ追加する(マイグレーション)
+            cur.execute("PRAGMA table_info(val_puuids)")
+            columns = {row[1] for row in cur.fetchall()}
+            if "yesterday_season" not in columns:
+                cur.execute("ALTER TABLE val_puuids ADD COLUMN yesterday_season TEXT")
+                conn.commit()
+
             # レコードを全て取得し、yesterday_eloで降順にソート
-            cur.execute("SELECT * FROM val_puuids ORDER BY yesterday_elo DESC")
+            cur.execute(
+                "SELECT puuid, region, name, tag, yesterday_elo, yesterday_win, "
+                "yesterday_lose, d_uid, yesterday_season FROM val_puuids "
+                "ORDER BY yesterday_elo DESC"
+            )
             rows = cur.fetchall()
 
             async def fetch(row):
+                # region, name, tagはDB保存値だが、API呼び出しで最新のapi_region/
+                # api_name/api_tagを取得し直すためここでは使わない
                 (
                     puuid,
-                    region,
-                    name,
-                    tag,
+                    _region,
+                    _name,
+                    _tag,
                     yesterday_elo,
                     yesterday_win,
                     yesterday_lose,
                     d_uid,
+                    yesterday_season,
                 ) = row
 
                 headers = {"Authorization": VALORANT_TOKEN}
@@ -106,7 +148,9 @@ class RankTasks(commands.Cog):
                             account_url, headers=headers, timeout=60
                         )
                 except httpx.HTTPError:
-                    return
+                    # API取得失敗時はNoneを返す。この人の状況は不明なため、
+                    # 「誰もプレイしていない」の判定(NO_PLAY)には使わない。
+                    return None
 
                 # jsonから必要な値を取得
                 account_data = name_tag_response.json()
@@ -122,7 +166,9 @@ class RankTasks(commands.Cog):
                     async with httpx.AsyncClient() as client:
                         response = await client.get(url, headers=headers, timeout=60)
                 except httpx.HTTPError:
-                    return
+                    # API取得失敗時はNoneを返す。この人の状況は不明なため、
+                    # 「誰もプレイしていない」の判定(NO_PLAY)には使わない。
+                    return None
 
                 # jsonから必要な値を取得
                 data = response.json()
@@ -133,18 +179,52 @@ class RankTasks(commands.Cog):
                 # 新シーズンになって1試合もやってない場合は
                 # アクトごとのレスポンス部分はKeyErrorが発生するのでその判定を行う
                 try:
-                    current_season_data = data["data"]["by_season"][current_season]
+                    current_season_data = data["data"]["by_season"][valorant_api.current_season]
                     final_rank_patched: str = current_season_data.get(
                         "final_rank_patched", "Unrated"
                     )
                     number_of_games: int = current_season_data.get("number_of_games", 0)
                     # 正確なwinsを取得するために変更
-                    wins: int = len(data["data"]["by_season"][current_season]["act_rank_wins"])
+                    wins: int = len(
+                        data["data"]["by_season"][valorant_api.current_season]["act_rank_wins"]
+                    )
                     loses: int = number_of_games - wins
                 except KeyError:
                     wins = 0
                     loses = 0
                     final_rank_patched = "Unrated"
+
+                def update_db():
+                    cur.execute(
+                        "UPDATE val_puuids SET region=?, name=?, tag=?, yesterday_elo=?, yesterday_win=?, yesterday_lose=?, yesterday_season=? WHERE puuid=?",  # noqa: E501
+                        (
+                            api_region,
+                            api_name,
+                            api_tag,
+                            elo,
+                            wins,
+                            loses,
+                            valorant_api.current_season,
+                            puuid,
+                        ),
+                    )
+                    conn.commit()
+
+                # yesterday_seasonが未記録(マイグレーション直後や新規追加プレイヤー)の
+                # 場合、前日の基準が存在しないため差分計算ができない。
+                # DBに現在の値を書き込んで投稿対象からは除外し、翌日以降から
+                # 正しい差分が計算できるようにする。
+                if yesterday_season is None:
+                    update_db()
+                    return NO_BASELINE
+
+                # シーズンが切り替わっていたら、前日のelo/勝敗は前シーズンのものなので
+                # 差分計算に使わず基準なし扱いにする(そうしないと新シーズン開始直後に
+                # 大きくマイナス、あるいは大きくプラスの戦績になってしまう)
+                season_changed = yesterday_season != valorant_api.current_season
+                if season_changed:
+                    yesterday_win = 0
+                    yesterday_lose = 0
 
                 # ランクがUnratedの場合はELOなども一旦0にする。
                 # Unratedではなくランクがついている場合は通常の処理。
@@ -155,7 +235,7 @@ class RankTasks(commands.Cog):
                     elo = 0
                 else:
                     current_rank_info = f"{currenttierpatched} (+{ranking_in_tier})"
-                    todays_elo: int = elo - yesterday_elo
+                    todays_elo = 0 if season_changed else elo - yesterday_elo
 
                 # ELOに合わせて絵文字を取得
                 conditions = [
@@ -182,6 +262,11 @@ class RankTasks(commands.Cog):
                 daily_wins: int = wins - yesterday_win
                 daily_loses: int = loses - yesterday_lose
 
+                # 前日1試合もプレイしていない場合は投稿対象から除外する
+                if daily_wins <= 0 and daily_loses <= 0:
+                    update_db()
+                    return NO_PLAY
+
                 # これまでのランクすべてのWLを取得
                 total_act_rank_wins = 0
                 total_number_of_games = 0
@@ -195,52 +280,41 @@ class RankTasks(commands.Cog):
                 total_act_rank_loses: int = total_number_of_games - total_act_rank_wins
 
                 # フォーマットに合わせて整形
-                result_string = f"{emoji} <@{d_uid}> {rank_emoji}\n- Name: `{api_name}#{api_tag}`\n- {current_rank_info}\n- Daily changes: {plusminus}{todays_elo}\n- Daily matches: {daily_wins}W/{daily_loses}L\n- Current act: {wins}W/{loses}L\n- Lifetime: {total_act_rank_wins}W/{total_act_rank_loses}L\n\n"  # noqa: E501
+                result_string = f"{emoji} <@{d_uid}> {rank_emoji}\n- Name: `{api_name}#{api_tag}`\n- {current_rank_info}\n- Daily changes: {plusminus}{todays_elo}\n- Daily matches: {daily_wins}W/{daily_loses}L\n- Current act: {wins}W/{loses}L\n- Lifetime: {total_act_rank_wins}W/{total_act_rank_loses}L"  # noqa: E501
 
                 # DBの情報を今日の取得内容で更新
-                cur.execute(
-                    "UPDATE val_puuids SET region=?, name=?, tag=?, yesterday_elo=?, yesterday_win=?, yesterday_lose=? WHERE puuid=?",  # noqa: E501
-                    (api_region, api_name, api_tag, elo, wins, loses, puuid),
-                )
-                conn.commit()
+                update_db()
 
                 return result_string
 
-            async def main():
-                tasks = [fetch(row) for row in rows]
-                output = await asyncio.gather(*tasks)
+            fetch_tasks = [fetch(row) for row in rows]
+            output = await asyncio.gather(*fetch_tasks)
 
-                # 分割されたメッセージのリストを初期化
-                messages = []
-                current_message = ""
-                for player_info in output:
-                    # 現在のメッセージと追加するプレイヤー情報を合わせた長さを確認
-                    if len(current_message) + len(player_info) > 4096:
-                        # 現在のメッセージをリストに追加して、新しいメッセージを開始
-                        messages.append(current_message)
-                        current_message = player_info
-                    else:
-                        current_message += player_info
+            # 前日プレイしていた人(文字列の結果)のみ抽出
+            player_infos = [info for info in output if isinstance(info, str)]
+            # 前日の状況が明確に分かった人(プレイした人、または基準ありで
+            # プレイしなかった人=NO_PLAY)が1人でもいれば、「誰もプレイしていない」
+            # という判定は正しいとみなせる。
+            # 基準なし(NO_BASELINE)やAPI取得失敗(None)しかない場合は、実態が
+            # 不明なため誤って「誰もプレイしていない」と投稿しない。
+            had_baseline = any(isinstance(info, str) or info is NO_PLAY for info in output)
 
-                # 最後のメッセージをリストに追加
-                if current_message:
-                    messages.append(current_message)
-
-                return messages
-
-            # main関数を実行してメッセージのリストを取得
-            messages = await main()
-
-            # 各メッセージを順番に送信
-            for msg in messages:
+            def build_embed(description: str) -> discord.Embed:
                 embed = discord.Embed()
-                embed.set_footer(
-                    text=f"{season_txt}\n※ WLはランクのみの集計です。\n※ 引き分けは負けとしてカウントされます。\nchr: {len(msg)}"  # noqa: E501
-                )
+                embed.set_footer(text=valorant_api.season_txt)
                 embed.color = discord.Color.purple()
-                embed.title = "みんなの昨日の活動です。"
-                embed.description = msg
-                await channel.send(embed=embed)
+                embed.description = description
+                return embed
+
+            if not player_infos:
+                if had_baseline:
+                    # 前日誰もプレイしていなかった場合は、その旨を1件だけ投稿する
+                    await channel.send(embed=build_embed(random.choice(NO_PLAY_MESSAGES)))
+                return
+
+            # プレイヤーごとに1投稿ずつ送信
+            for player_info in player_infos:
+                await channel.send(embed=build_embed(player_info))
         finally:
             conn.close()
 
@@ -249,6 +323,7 @@ class RankTasks(commands.Cog):
     async def before_printer(self):
         print("waiting until bot booting")
         await self.bot.wait_until_ready()
+        await valorant_api.update_current_season()
 
 
 async def setup(bot: commands.Bot):
