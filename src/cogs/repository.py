@@ -60,6 +60,27 @@ class TriggerRepository:
 
             return embed_dict
 
+    def list_triggers(self) -> List[str]:
+        """登録されている trigger / alias01 / alias02 の値を一覧で返します。
+        Returns:
+            List[str]: 登録済みキーワードの一覧(空文字は除く)
+        """
+        trigger_columns = ["trigger", "alias01", "alias02"]
+        col_indexes = [
+            index
+            for col in trigger_columns
+            if (index := self._get_index(self.header_list, col)) is not None
+        ]
+
+        all_values = self.worksheet.get_all_values()
+        keywords: List[str] = []
+        for row in all_values[2:]:
+            for col_index in col_indexes:
+                if col_index < len(row) and row[col_index]:
+                    keywords.append(row[col_index])
+
+        return keywords
+
     def _get_index(self, target: List[str], value: str) -> Optional[int]:
         """value が target の何番目かを取得する関数です。value が存在しない場合は None を返します。
         Args:
