@@ -69,64 +69,19 @@ class Spotify(commands.Cog):
             # track url
             trackurl = trackinfo["external_urls"]["spotify"]
 
-            # 曲のidをfeatureに渡した
-            feature = spo.audio_features(song_id)
-            for item in feature:
-                loudness = round(item["loudness"], 1)
-                key = item["key"]
-                bpm = round(item["tempo"], 1)
-                time_signature = item["time_signature"]
-                danceability = round(item["danceability"] * 100, 1)
-                energy = round(item["energy"] * 100, 1)
-                acousticness = round(item["acousticness"] * 100, 1)
-                liveness = round(item["liveness"] * 100, 1)
-                inst = round(item["instrumentalness"] * 100, 1)
-                # duration_ms = item["duration_ms"]
-                # duration = duration_ms / 60000
-                mode = item["mode"]
-
-            # key変換
-            keydic = {
-                0: "C",
-                1: "C#",
-                2: "D",
-                3: "D#",
-                4: "E",
-                5: "F",
-                6: "F#",
-                7: "G",
-                8: "G#",
-                9: "A",
-                10: "A#",
-                11: "B",
-            }
-            keys = keydic[key]
-
-            # mojor, minor変換
-            modedic = {0: "Minor", 1: "Major"}
-            majmin = modedic[mode]
-
             # embed
+            # NOTE: Spotifyは2024年11月にAudio Features/Analysis APIへの
+            # 一般アプリのアクセスを廃止したため、BPM等の分析情報は取得不可。
             embed = discord.Embed()
             JST = timezone(timedelta(hours=+9), "JST")
             embed.timestamp = datetime.now(JST)
-            embed.title = "Spotify song analyser..."
+            embed.title = "Spotify song search"
             embed.color = discord.Color.red()
             embed.description = (
                 f"**Track:** {songname}\n**Artist:** {arname}\n[Listen this track!]({trackurl})"
             )
             embed.set_thumbnail(url=imageurl)
             embed.add_field(name="Popularity", value=f"```{popularities}```")
-            embed.add_field(name="Key", value=f"```{keys}```")
-            embed.add_field(name="Mode", value=f"```{majmin}```")
-            embed.add_field(name="BPM", value=f"```{bpm}```")
-            embed.add_field(name="TS", value=f"```{time_signature}/4```")
-            embed.add_field(name="Loudness", value=f"```{loudness}db```")
-            embed.add_field(name="Danceability", value=f"```{danceability}%```")
-            embed.add_field(name="Energy", value=f"```{energy}%```")
-            embed.add_field(name="Acousticness", value=f"```{acousticness}%```")
-            embed.add_field(name="Liveness", value=f"```{liveness}%```")
-            embed.add_field(name="Instrumentalness", value=f"```{inst}%```")
             await interaction.followup.send(embed=embed)
 
         # Artistの検索の場合
