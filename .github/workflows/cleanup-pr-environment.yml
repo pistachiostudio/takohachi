@@ -25,3 +25,28 @@ jobs:
             gh api "repos/${REPO}/deployments/${id}/statuses" -f state=inactive >/dev/null
             gh api -X DELETE "repos/${REPO}/deployments/${id}"
           done
+
+      - name: Clear dev bot's guild slash commands
+        env:
+          DEV_BOT_TOKEN: ${{ secrets.DEV_BOT_TOKEN }}
+          GUILD_ID: ${{ secrets.GUILD_ID }}
+        run: |
+          set -e
+
+          # PR環境は同一のdevボット(同一トークン)を使い回しているため、
+          # PRを閉じてもDiscord側にはそのPRで登録したギルドコマンドが残り続ける。
+          # そのままだと「オフラインのはずのdevボットのコマンドが候補に出続ける」ため、
+          # PRクローズ時に明示的に空配列でbulk overwriteして消す。
+          # Discordのapplication_idはBotユーザーIDと同一の値のため、
+          # Bot Tokenで利用できない /applications/@me ではなく /users/@me から取得する。
+          application_id=$(curl -sf -H "Authorization: Bot ${DEV_BOT_TOKEN}" \
+            "https://discord.com/api/v10/users/@me" | jq -r .id)
+
+          curl -sf -X PUT \
+            -H "Authorization: Bot ${DEV_BOT_TOKEN}" \
+            -H "Content-Type: application/json" \
+            -d '[]' \
+            "https://discord.com/api/v10/applications/${application_id}/guilds/${GUILD_ID}/commands" \
+            >/dev/null
+
+          echo "Cleared guild commands for application ${application_id} in guild ${GUILD_ID}"
