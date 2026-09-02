@@ -52,11 +52,9 @@ class MyBot(commands.Bot):
         # コマンド系のいつも読み込むcogs
         self.initial_extensions = [
             "cogs.addssl",
-            "cogs.apex_tracker",
             "cogs.bath",
             "cogs.card_list",
             "cogs.currency",
-            "cogs.dice",
             "cogs.gakigo",
             # "cogs.happy_new_year",
             "cogs.marimo",
@@ -67,7 +65,6 @@ class MyBot(commands.Bot):
             "cogs.spotify",
             "cogs.text_channel",
             "cogs.trigger",
-            "cogs.valorant_api",
             "cogs.what_today",
         ]
 

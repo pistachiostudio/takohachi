@@ -7,12 +7,6 @@
 - {URL}の情報を指定のスプレッドシートに登録します。
 - このスプレッドシートの内容は[SSL Checker](https://github.com/pistachiostudio/main/blob/main/docs/sslchecker.md)に使われます。
 
-## apex_tracker.py
-
-`/apexrank {platform} {user_id}`
-
-- Apex Trackerから指定のプレイヤーのランクを取得します。
-
 ## autodelete.py
 
 - チャンネルと時間を指定し、その時間が経過したメッセージをしていきます。
@@ -75,16 +69,6 @@ pisという架空の通貨機能一式です。
   - 1: ボーナスを受け取っている
 - サーバー管理者のみ実行可能。
 
-## delete_image.py
-
-- WIP
-
-## dice.py
-
-`/dice`
-
-- Valorantのマップをランダムに返します。
-
 ## gakigo.py
 
 - スラッシュコマンドではなく指定したサーバー内の絵文字のみの投稿をすると決まったレスポンスをします。
@@ -119,14 +103,6 @@ pisという架空の通貨機能一式です。
 
 - Botの応答速度を返します。
 
-## play.py
-
-`/play`
-
-- 指定したディレクトリに保存したmp3ファイルをffmpegを使ってVC内で再生します。
-- スラッシュコマンド切り替わりのタイミングで実装がイマイチになったので、現在は切り離して使用していません。
-- 使用するためにはDockerfileのコメントアウトを外してください。
-
 ## purge.py
 
 `/purge {amount}`
@@ -144,13 +120,6 @@ pisという架空の通貨機能一式です。
 - SpotifyのAPIを使って検索を行い、結果を返します。
 - 特に曲情報はフロントには公開されていない細かい情報が取れます。
 
-## store.py
-
-`/store`
-
-- ValorantのStoreのアイテムを返します。
-- ユーザーのRiotのパスワードなどをDBで保つ必要があり、セキュリティ上の自信がないので、現在は切り離して使用していません。
-
 ## text_channel.py
 
 `/top`
@@ -166,9 +135,8 @@ pisという架空の通貨機能一式です。
 
 ## valorant_api.py
 
-`/vr {name} {tagline}`
-
-- 指定したユーザーのValorantのシーズンごとのコンペティティブの戦績などを返します。
+- スラッシュコマンドは持たず、Valorantの現在のシーズン(Act)情報を取得・保持する
+  共有ロジックのみを提供します。`vl_rank_task.py`から利用されています。
 
 ## vc_role.py
 
