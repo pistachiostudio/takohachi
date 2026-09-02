@@ -97,11 +97,12 @@ class TriggerRepository:
         trigger_columns = ["trigger", "alias01", "alias02"]
         for trigger_column in trigger_columns:
             index = self._get_index(header_list, trigger_column)
-            if not index:
+            if index is None:
                 # header_list に trigger_column が存在しない場合
                 continue
             else:
-                trigger_cell = self.worksheet.find(trigger, in_column=index, case_sensitive=False)
+                # gspread の find(in_column=...) は 1-based のためインデックスを +1 する
+                trigger_cell = self.worksheet.find(trigger, in_column=index + 1, case_sensitive=False)
                 if not trigger_cell:
                     # trigger column に trigger が存在しない場合
                     continue
