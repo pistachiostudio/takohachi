@@ -70,7 +70,9 @@ class TriggerRepository:
             return []
 
         all_values = self.worksheet.get_all_values()
-        return [row[col_index] for row in all_values[2:] if col_index < len(row) and row[col_index]]
+        return [
+            row[col_index] for row in all_values[2:] if col_index < len(row) and row[col_index]
+        ]
 
     def _get_index(self, target: List[str], value: str) -> Optional[int]:
         """value が target の何番目かを取得する関数です。value が存在しない場合は None を返します。
@@ -102,7 +104,9 @@ class TriggerRepository:
                 continue
             else:
                 # gspread の find(in_column=...) は 1-based のためインデックスを +1 する
-                trigger_cell = self.worksheet.find(trigger, in_column=index + 1, case_sensitive=False)
+                trigger_cell = self.worksheet.find(
+                    trigger, in_column=index + 1, case_sensitive=False
+                )
                 if not trigger_cell:
                     # trigger column に trigger が存在しない場合
                     continue

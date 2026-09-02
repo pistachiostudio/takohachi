@@ -1,12 +1,8 @@
-import logging
 import os
-from typing import List
 
 import discord
 from discord import app_commands
 from discord.ext import commands
-
-logger = logging.getLogger(__name__)
 
 from settings import GUILD_ID
 
@@ -53,16 +49,10 @@ class Trigger(commands.Cog):
     @trigger.autocomplete("keyword")
     async def trigger_autocomplete(
         self, interaction: discord.Interaction, current: str
-    ) -> List[app_commands.Choice[str]]:
-        logger.info(f"trigger_autocomplete called with current={current!r}")
-        try:
-            keywords = self.trigger_repo.list_triggers()
-            matched = [k for k in keywords if current.lower() in k.lower()]
-            logger.info(f"trigger_autocomplete matched {len(matched)} of {len(keywords)}")
-            return [app_commands.Choice(name=k, value=k) for k in matched[:25]]
-        except Exception:
-            logger.exception("trigger_autocomplete failed")
-            return []
+    ) -> list[app_commands.Choice[str]]:
+        keywords = self.trigger_repo.list_triggers()
+        matched = [k for k in keywords if current.lower() in k.lower()]
+        return [app_commands.Choice(name=k, value=k) for k in matched[:25]]
 
 
 async def setup(bot: commands.Bot):
