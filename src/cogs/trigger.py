@@ -46,6 +46,14 @@ class Trigger(commands.Cog):
                 embed.color = discord.Color.dark_blue()
                 await interaction.followup.send(embed=embed)
 
+    @trigger.autocomplete("keyword")
+    async def trigger_autocomplete(
+        self, interaction: discord.Interaction, current: str
+    ) -> list[app_commands.Choice[str]]:
+        keywords = self.trigger_repo.list_triggers()
+        matched = [k for k in keywords if current.lower() in k.lower()]
+        return [app_commands.Choice(name=k, value=k) for k in matched[:25]]
+
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(Trigger(bot), guilds=[discord.Object(id=GUILD_ID)])

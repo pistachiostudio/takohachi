@@ -60,6 +60,20 @@ class TriggerRepository:
 
             return embed_dict
 
+    def list_triggers(self) -> List[str]:
+        """登録されている trigger の値を一覧で返します。
+        Returns:
+            List[str]: 登録済みキーワードの一覧(空文字は除く)
+        """
+        col_index = self._get_index(self.header_list, "trigger")
+        if col_index is None:
+            return []
+
+        all_values = self.worksheet.get_all_values()
+        return [
+            row[col_index] for row in all_values[2:] if col_index < len(row) and row[col_index]
+        ]
+
     def _get_index(self, target: List[str], value: str) -> Optional[int]:
         """value が target の何番目かを取得する関数です。value が存在しない場合は None を返します。
         Args:
@@ -85,11 +99,14 @@ class TriggerRepository:
         trigger_columns = ["trigger", "alias01", "alias02"]
         for trigger_column in trigger_columns:
             index = self._get_index(header_list, trigger_column)
-            if not index:
+            if index is None:
                 # header_list に trigger_column が存在しない場合
                 continue
             else:
-                trigger_cell = self.worksheet.find(trigger, in_column=index, case_sensitive=False)
+                # gspread の find(in_column=...) は 1-based のためインデックスを +1 する
+                trigger_cell = self.worksheet.find(
+                    trigger, in_column=index + 1, case_sensitive=False
+                )
                 if not trigger_cell:
                     # trigger column に trigger が存在しない場合
                     continue
