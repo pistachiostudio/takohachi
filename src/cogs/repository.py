@@ -61,11 +61,11 @@ class TriggerRepository:
             return embed_dict
 
     def list_triggers(self) -> List[str]:
-        """登録されている trigger / alias01 / alias02 の値を一覧で返します。
+        """登録されている trigger / alias01 の値を一覧で返します。
         Returns:
             List[str]: 登録済みキーワードの一覧(空文字は除く)
         """
-        trigger_columns = ["trigger", "alias01", "alias02"]
+        trigger_columns = ["trigger", "alias01"]
         col_indexes = [
             index
             for col in trigger_columns
