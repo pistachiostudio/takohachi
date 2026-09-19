@@ -20,20 +20,28 @@
 
 これは[ピスタチオゲーム部親睦会](https://discord.gg/pistachiogaming)というDiscordサーバーのためのユースレスBotです。
 
+Python 3.12 と [discord.py](https://github.com/Rapptz/discord.py) で作られていて、依存関係は [uv](https://docs.astral.sh/uv/) で管理しています。
+
 ## ⚙ Functions
 
-https://github.com/pistachiostudio/takohachi/tree/main/src/cogs
+コマンドと機能の一覧は [src/cogs/README.md](./src/cogs/README.md) を参照してください。
 
-## 🪂 installing Packages & Dependencies
+## 🛠 Development
 
-### With uv🌾
-
-[An extremely fast Python package and project manager, written in Rust.](https://docs.astral.sh/uv/)
-
+[uv](https://docs.astral.sh/uv/)(An extremely fast Python package and project manager, written in Rust.)を使います。
 
 ```bash
+# 依存関係のインストール
 $ uv sync
+
+# テスト
+$ uv run pytest tests
+
+# Lint / Format (ruff など)
+$ uv run pre-commit run --all-files
 ```
+
+`main` への push と Pull Request では、[CI](./.github/workflows/ci.yml) が `pre-commit` と `pytest` を実行します。
 
 ## 🚄 Auto deployment on Railway
 
@@ -41,7 +49,7 @@ Takohachi は現在 [Railway](https://railway.app/) にデプロイされてい�
 
 - `main` ブランチへの push をトリガーに、Railway 側の連携によって自動でビルド・デプロイされる。
 - ビルドはリポジトリの [Dockerfile](./Dockerfile) を使用。
-- 環境変数は Railway プロジェクトの Variables で管理する（詳細は下記「Create `.env` file」を参照）。
+- 環境変数は Railway プロジェクトの Variables で管理する（一覧は下記「Create `.env` file」を参照）。
 
 ```mermaid
 flowchart LR
@@ -82,6 +90,7 @@ Pull Request を作成すると、Railway が自動でテスト用の環境と�
 - `TOKEN` 以外（`GUILD_ID` やチャンネル/VC ID 等）は本番と共通のため、テスト用 Bot は本番と同じ Discord サーバー・チャンネルで動作する。
 - `pr-base` の変数を更新しても、既存の PR 環境には反映されない（コピーはPR環境の作成時のみ行われる）。反映するには PR 環境を作り直す（PR を close → reopen 等）。
 - wt_task や autodelete などの定期実行タスクは PR 環境でも動作し、本番と重複投稿する可能性がある(現時点では許容)。
+- PR クローズ時に、GitHub 側に残る Deployments レコードを [cleanup-pr-environment.yml](./.github/workflows/cleanup-pr-environment.yml) が自動で inactive 化・削除する。
 
 ## 🐳 Local Development with Docker
 
@@ -96,25 +105,29 @@ $ git clone https://github.com/pistachiostudio/takohachi.git
 ### 2. Create `.env` file on the root directory
 
 ```bash
-OPENAI_API_KEY=''
+# Discord
 TOKEN=''
-PREFIX='!!'
-CARDCOUNT_KEY=''
-CLIENT_SECRET=''
-DATABASE_URL=''
-DIC_KEY=''
-DRIVE_FOLDER_ID=''
-GOOGLE_APPLICATION_CREDENTIALS=''
+PREFIX='!!'                 # '!!' のときだけ本番用 Cog(定期実行タスクなど)を読み込む
+GUILD_ID=''
+REBOOT_LOG_CHANNEL_ID=''    # 起動時に "Rebooting..." を投稿するチャンネル
 INU_VC_ID=''
 NEKO_VC_ID=''
 KAME_VC_ID=''
 KYORYU_VC_ID=''
-LOG_TEXT_CHANNEL_ID=''
+
+# Google (スプレッドシート / Drive)
+CLIENT_SECRET=''            # Drive 用の認証情報 JSON の中身
+TAKOHACHI_JSON=''           # addssl / trigger 用の認証情報 JSON の中身
+DRIVE_FOLDER_ID=''
+CARDCOUNT_KEY=''
+DIC_KEY=''
+SSLADD_KEY=''
+
+# External APIs
+GEMINI_API_KEY=''
 SPOTIFY_CLIENT_ID=''
 SPOTIFY_CLIENT_SECRET=''
-SSLADD_KEY=''
-TAKOHACHI_JSON=''
-TRN_API_KEY=''
+VALORANT_TOKEN=''           # HenrikDev API
 ```
 
 ### 3. Run
@@ -122,6 +135,10 @@ TRN_API_KEY=''
 ```bash
 $ docker compose up -d
 ```
+
+SQLite のDBとログは、それぞれ `./data/` と `./logs/` に保存される。
+
+[Makefile](./Makefile) に `make up`(再ビルドして起動)、`make logs`、`make restart` などのショートカットもある。
 
 🔫 Yeah_bot_is_on_ready!!
 
