@@ -4,7 +4,9 @@ import logging
 import os
 from typing import NamedTuple
 
-from libs.http_client import HTTPClient
+from tenacity import retry, retry_if_exception, stop_after_attempt, wait_exponential
+
+from libs.http_client import APIError, HTTPClient
 
 logger = logging.getLogger(__name__)
 
@@ -22,6 +24,9 @@ MAX_ATTEMPTS = 3
 # 実際の出力を見ながら調整する想定の初期値。
 REJECT_THRESHOLD = 0.5
 
+# 一時的な障害として再試行するHTTPステータス(レート制限・過負荷・一時利用不可)
+TRANSIENT_STATUS_CODES = {429, 503, 529}
+
 FALLBACK_MESSAGE = "⚠雑学の取得でエラーが発生したので今日の雑学はなしです。"
 
 
@@ -34,6 +39,26 @@ class Trivia(NamedTuple):
     @property
     def verified(self) -> bool:
         return self.truth is not None
+
+
+def _is_transient(error: BaseException) -> bool:
+    return isinstance(error, APIError) and error.status_code in TRANSIENT_STATUS_CODES
+
+
+_retry_transient = retry(
+    retry=retry_if_exception(_is_transient),
+    stop=stop_after_attempt(3),
+    wait=wait_exponential(multiplier=1, min=2, max=10),
+    reraise=True,
+)
+
+
+def format_trivia_section(trivia: Trivia) -> str:
+    """投稿用に、雑学の本文とクレジット行(検証済みならJevのスコア付き)を組み立てる。"""
+    credit = "Powered by [Gemini](https://ai.google.dev/gemini-api/docs/models)"
+    if trivia.truth is not None:
+        credit += f" / [Jev](https://typesafe.ai) truthfulness score: {trivia.truth:.0%}"
+    return f"{trivia.text}\n({credit})"
 
 
 TRIVIA_PROMPT = (
@@ -82,6 +107,7 @@ CHECK_QUESTIONS = {
 }
 
 
+@_retry_transient
 async def generate_trivia() -> str:
     """Gemini APIで雑学を1つ生成する。"""
     res = await HTTPClient().post(
@@ -99,6 +125,7 @@ async def generate_trivia() -> str:
     return candidate["content"]["parts"][0]["text"].strip()
 
 
+@_retry_transient
 async def check_trivia(trivia: str) -> dict[str, float]:
     """TypeSafeで雑学を検証し、質問IDごとの「問題がある確率」を返す。"""
     res = await HTTPClient().post(

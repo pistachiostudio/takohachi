@@ -2,8 +2,10 @@ import asyncio
 from unittest.mock import AsyncMock, patch
 
 import pytest
+from tenacity import wait_none
 
 from libs import trivia
+from libs.http_client import APIError
 
 
 def _noul(**values):
@@ -108,3 +110,36 @@ def test_low_truth_is_still_accepted():
 
     assert result.text == "雑学"
     assert result.truth == pytest.approx(0.55)
+
+
+def test_format_section_with_score():
+    text = trivia.format_trivia_section(trivia.Trivia("本文", truth=0.97))
+
+    assert text.startswith("本文\n(Powered by [Gemini]")
+    assert "truthfulness score: 97%" in text
+
+
+def test_format_section_without_score():
+    text = trivia.format_trivia_section(trivia.Trivia("本文"))
+
+    assert "Powered by [Gemini]" in text
+    assert "truthfulness score" not in text
+    assert "Trivia(" not in text
+
+
+def test_transient_typesafe_error_is_retried(monkeypatch):
+    monkeypatch.setattr(trivia.check_trivia.retry, "wait", wait_none())
+
+    result, post = _run([_gemini("雑学"), APIError("overloaded", status_code=529), _noul()])
+
+    assert result == trivia.Trivia("雑学", truth=1.0)
+    assert post.await_count == 3
+
+
+def test_non_transient_error_is_not_retried(monkeypatch):
+    monkeypatch.setattr(trivia.check_trivia.retry, "wait", wait_none())
+
+    result, post = _run([_gemini("雑学"), APIError("unauthorized", status_code=401)])
+
+    assert result == trivia.Trivia("雑学")
+    assert post.await_count == 2
