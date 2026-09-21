@@ -22,7 +22,7 @@ Takohachi (たこ八) は、Discordサーバー「ピスタチオゲーム部親
 
 - 本番環境は **Railway** にデプロイされている。
 - `main` ブランチへの push をトリガーに Railway 側の連携で自動ビルド・デプロイされる。
-- GitHub の push イベントが取りこぼされ、CI も Railway のデプロイも動かないことがあった(#270 のマージ時)。**マージ後は、本番デプロイが `main` の最新コミットになっているか確認する**(`gh api repos/pistachiostudio/takohachi/deployments` の最新 `production` の sha が `main` の先頭と一致するか)。一致しなければ、Railway の画面から最新コミットを手動でデプロイする(CI は Actions の画面から手動実行できる)。
+- GitHub の push 通知が遅れ、CI も Railway のデプロイも約8分遅れて動いたことがあった(#270 のマージ時。通常は数秒)。**マージ後は、本番デプロイが `main` の最新コミットになっているか確認する**(`gh api repos/pistachiostudio/takohachi/deployments` の最新 `production` の sha が `main` の先頭と一致するか)。反映されていなくても、すぐに「動いていない」と判断せず、10分ほど待ってから再確認する。それでも一致しなければ、Railway の画面から最新コミットを手動でデプロイする(CI は Actions の画面から手動実行できる)。
 - Lightsail 時代の SSH デプロイ用ワークフロー(`.github/workflows/deploy.yml`)は Railway 移行に伴い削除済み。
 - 旧2代目サービス(`nidaime-takohachi`)は削除済み。`takohachi`サービスのみが本番。
 
