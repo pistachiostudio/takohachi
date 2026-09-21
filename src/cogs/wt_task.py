@@ -7,7 +7,8 @@ import discord
 from discord.ext import commands, tasks
 from yfinance.exceptions import YFRateLimitError
 
-from libs.utils import get_stock_price, get_trivia, get_weather, get_what_today
+from libs.trivia import format_trivia_section, get_trivia
+from libs.utils import get_stock_price, get_weather, get_what_today
 
 
 class WTTasks(commands.Cog):
@@ -44,8 +45,8 @@ class WTTasks(commands.Cog):
                 citycode = "060010"
                 yamagata_weather = get_weather(citycode)
 
-                # Geminiで雑学を取得
-                trivia = await get_trivia()
+                # Geminiで雑学を生成し、TypeSafeで検証して取得
+                trivia_section = format_trivia_section(await get_trivia())
                 good_morning = random.choice(
                     ["おざし。", "おざす。", "お。", "おはようございます。"]
                 )
@@ -86,7 +87,7 @@ class WTTasks(commands.Cog):
                 embed = discord.Embed()
                 embed.color = discord.Color(0x00FF00)
                 embed.title = f"{good_morning}{this_month}月{this_day}日 朝の7時です。"
-                embed.description = f"### 💡 今日はなんの日？\n{result}\n\n### 📚 今日の雑学\n{trivia}\n(Powered by [Gemini](https://ai.google.dev/gemini-api/docs/models))\n\n### 💹 相場\n{market_text}\n\n### ⛅ 今日の天気\n{tokyo_weather}\n{yamagata_weather}"  # noqa: E501
+                embed.description = f"### 💡 今日はなんの日？\n{result}\n\n### 📚 今日の雑学\n{trivia_section}\n\n### 💹 相場\n{market_text}\n\n### ⛅ 今日の天気\n{tokyo_weather}\n{yamagata_weather}"  # noqa: E501
                 await channel.send(embed=embed)
             except Exception:
                 # discord.HTTPExceptionなどtasks.loopの自動リトライ対象外の例外が
