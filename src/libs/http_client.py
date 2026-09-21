@@ -5,7 +5,6 @@ HTTPクライアント関連の共通処理を提供するモジュール
 import logging
 
 import httpx
-import tenacity
 from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
 
 logger = logging.getLogger(__name__)
@@ -110,24 +109,3 @@ class HTTPClient:
             except Exception as e:
                 logger.error(f"Unexpected error: {e}")
                 raise APIError(f"Unexpected error occurred: {str(e)}")
-
-
-async def handle_api_error(interaction, error: Exception, service_name: str = "API"):
-    """Discord interaction用の共通エラーハンドリング"""
-    if isinstance(error, APIError):
-        if error.status_code:
-            message = f"⚠ {service_name}でエラーが発生しました (Status: {error.status_code})"
-        else:
-            message = f"⚠ {service_name}でエラーが発生しました: {str(error)}"
-    elif isinstance(error, tenacity.RetryError):
-        message = (
-            f"⚠ {service_name}への接続が複数回失敗しました。時間を置いて再度お試しください。"
-        )
-    else:
-        message = f"⚠ 予期せぬエラーが発生しました: {str(error)}"
-
-    # interaction.response.defer() が既に呼ばれているか確認
-    if interaction.response.is_done():
-        await interaction.followup.send(message)
-    else:
-        await interaction.response.send_message(message, ephemeral=True)

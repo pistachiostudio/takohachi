@@ -50,10 +50,9 @@ class WTTasks(commands.Cog):
                 trivia_credit = (
                     "Powered by [Gemini](https://ai.google.dev/gemini-api/docs/models)"
                 )
-                if trivia.verified:
+                if trivia.truth is not None:
                     trivia_credit += (
-                        f" / ✅ Checked by [Jev](https://typesafe.ai)"
-                        f" (truthfulness score: {trivia.truth:.0%})"
+                        f" / [Jev](https://typesafe.ai) truthfulness score: {trivia.truth:.0%}"
                     )
                 good_morning = random.choice(
                     ["おざし。", "おざす。", "お。", "おはようございます。"]
@@ -95,7 +94,7 @@ class WTTasks(commands.Cog):
                 embed = discord.Embed()
                 embed.color = discord.Color(0x00FF00)
                 embed.title = f"{good_morning}{this_month}月{this_day}日 朝の7時です。"
-                embed.description = f"### 💡 今日はなんの日？\n{result}\n\n### 📚 今日の雑学\n{trivia}\n(Powered by [Gemini](https://ai.google.dev/gemini-api/docs/models))\n\n### 💹 相場\n{market_text}\n\n### ⛅ 今日の天気\n{tokyo_weather}\n{yamagata_weather}"  # noqa: E501
+                embed.description = f"### 💡 今日はなんの日？\n{result}\n\n### 📚 今日の雑学\n{trivia.text}\n({trivia_credit})\n\n### 💹 相場\n{market_text}\n\n### ⛅ 今日の天気\n{tokyo_weather}\n{yamagata_weather}"  # noqa: E501
                 await channel.send(embed=embed)
             except Exception:
                 # discord.HTTPExceptionなどtasks.loopの自動リトライ対象外の例外が

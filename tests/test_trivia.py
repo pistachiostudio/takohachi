@@ -100,3 +100,11 @@ def test_truth_is_inverse_of_factual_error_probability():
 
     assert result.verified
     assert result.truth == pytest.approx(0.8)
+
+
+def test_low_truth_is_still_accepted():
+    # 却下閾値未満なら採用し、スコアはそのまま(隠さず)返す
+    result, _ = _run([_gemini("雑学"), _noul(has_factual_error=0.45)])
+
+    assert result.text == "雑学"
+    assert result.truth == pytest.approx(0.55)
