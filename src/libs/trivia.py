@@ -5,9 +5,8 @@ import os
 import random
 from typing import NamedTuple
 
-from tenacity import retry, retry_if_exception, stop_after_attempt, wait_exponential
-
-from libs.http_client import APIError, HTTPClient
+from libs import typesafe
+from libs.http_client import HTTPClient, retry_transient
 
 logger = logging.getLogger(__name__)
 
@@ -16,17 +15,11 @@ GEMINI_API_URL = (
     f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent"
 )
 
-TYPESAFE_API_URL = "https://api.typesafe.ai/v1/systemone"
-TYPESAFE_MODEL = "jev-latest"
-
 # 検証に通らなかった場合に雑学を作り直す最大回数(初回を含む)
 MAX_ATTEMPTS = 3
 # Noulの確率(yesである確率)がこの値以上なら「問題あり」として却下する。
 # 実際の出力を見ながら調整する想定の初期値。
 REJECT_THRESHOLD = 0.5
-
-# 一時的な障害として再試行するHTTPステータス(レート制限・過負荷・一時利用不可)
-TRANSIENT_STATUS_CODES = {429, 503, 529}
 
 FALLBACK_MESSAGE = "⚠雑学の取得でエラーが発生したので今日の雑学はなしです。"
 
@@ -36,18 +29,6 @@ class Trivia(NamedTuple):
     # TypeSafe(Jev)の検証を通過した場合のみ設定される「事実誤認がない確率」(0〜1)。
     # 検証のスキップ・失敗時やフォールバック時はNone。
     truth: float | None = None
-
-
-def _is_transient(error: BaseException) -> bool:
-    return isinstance(error, APIError) and error.status_code in TRANSIENT_STATUS_CODES
-
-
-_retry_transient = retry(
-    retry=retry_if_exception(_is_transient),
-    stop=stop_after_attempt(3),
-    wait=wait_exponential(multiplier=1, min=2, max=10),
-    reraise=True,
-)
 
 
 def format_trivia_section(trivia: Trivia) -> str:
@@ -114,7 +95,7 @@ CHECK_QUESTIONS = {
 }
 
 
-@_retry_transient
+@retry_transient
 async def generate_trivia() -> str:
     """Gemini APIで雑学を1つ生成する。"""
     prompt = TRIVIA_PROMPT.format(category=random.choice(TRIVIA_CATEGORIES))
@@ -138,16 +119,10 @@ async def generate_trivia() -> str:
     return text
 
 
-@_retry_transient
 async def check_trivia(trivia: str) -> dict[str, float]:
     """TypeSafeで雑学を検証し、質問IDごとの「問題がある確率」を返す。"""
-    res = await HTTPClient().post(
-        TYPESAFE_API_URL,
-        headers={"Authorization": f"Bearer {os.environ['TYPESAFE_API_KEY']}"},
-        json={"state": trivia, "model": TYPESAFE_MODEL, "questions": CHECK_QUESTIONS},
-        timeout=30,
-    )
-    probabilities = {q: res["answers"][q]["noul"] for q in CHECK_QUESTIONS}
+    answers = await typesafe.system_one(trivia, CHECK_QUESTIONS)
+    probabilities = {q: answers[q]["noul"] for q in CHECK_QUESTIONS}
     # 閾値を実データで調整するため、通った場合も含めて毎回確率を残す。
     logger.info(
         "Trivia check: %s (threshold=%.2f) head=%r",
@@ -168,7 +143,7 @@ async def get_trivia() -> Trivia:
         logger.error("GEMINI_API_KEY is not set")
         return Trivia(FALLBACK_MESSAGE)
 
-    verify = bool(os.getenv("TYPESAFE_API_KEY"))
+    verify = typesafe.is_configured()
     if not verify:
         logger.warning("TYPESAFE_API_KEY is not set; skipping trivia verification")
 
