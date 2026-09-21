@@ -143,3 +143,45 @@ def test_non_transient_error_is_not_retried(monkeypatch):
 
     assert result == trivia.Trivia("雑学")
     assert post.await_count == 2
+
+
+def test_thought_parts_are_excluded():
+    response = {
+        "candidates": [
+            {
+                "content": {
+                    "parts": [
+                        {"text": "思考の内容", "thought": True},
+                        {"text": "本文です。"},
+                    ]
+                },
+                "finishReason": "STOP",
+            }
+        ]
+    }
+
+    result, _ = _run([response, _noul()])
+
+    assert result.text == "本文です。"
+
+
+def test_empty_body_is_retried():
+    empty = {"candidates": [{"content": {"parts": [{"text": "思考", "thought": True}]}}]}
+
+    result, _ = _run([empty, _gemini("本文"), _noul()])
+
+    assert result.text == "本文"
+
+
+def test_prompt_uses_randomly_chosen_category():
+    with patch("libs.trivia.random.choice", return_value="宇宙"):
+        _, post = _run([_gemini("雑学"), _noul()])
+
+    sent = post.await_args_list[0].kwargs["json"]["contents"][0]["parts"][0]["text"]
+    assert "「宇宙」" in sent
+    assert "{category}" not in sent
+
+
+def test_every_category_fills_the_prompt():
+    for category in trivia.TRIVIA_CATEGORIES:
+        assert f"「{category}」" in trivia.TRIVIA_PROMPT.format(category=category)

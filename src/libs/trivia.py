@@ -2,6 +2,7 @@
 
 import logging
 import os
+import random
 from typing import NamedTuple
 
 from tenacity import retry, retry_if_exception, stop_after_attempt, wait_exponential
@@ -10,7 +11,7 @@ from libs.http_client import APIError, HTTPClient
 
 logger = logging.getLogger(__name__)
 
-GEMINI_MODEL = "gemini-2.5-flash"
+GEMINI_MODEL = "gemini-3.8-flash"
 GEMINI_API_URL = (
     f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent"
 )
@@ -57,14 +58,24 @@ def format_trivia_section(trivia: Trivia) -> str:
     return f"{trivia.text}\n({credit})"
 
 
+# 毎回独立した呼び出しでは「前回と違う分野」を守れないため、分野はコード側でランダムに選ぶ。
+TRIVIA_CATEGORIES = [
+    "動植物", "生物学", "宇宙", "地理", "歴史", "哲学", "科学", "物理学", "化学", "数学",
+    "言語", "文学", "芸術", "音楽", "映画", "カルチャー", "食文化", "スポーツ", "テクノロジー",
+    "心理学", "社会学", "経済学", "建築", "医学", "人体", "民俗学", "都市伝説",
+]  # fmt: skip
+
 TRIVIA_PROMPT = (
-    "あなたはあらゆる分野からランダムに興味深い雑学を紹介するエキスパートです。\n"
-    "以下の分野から毎回ランダムに異なるテーマを選び、約400文字の日本語で雑学を1つ紹介してください。\n"
-    "対象分野：動植物、生物学、宇宙、地理、歴史、哲学、科学、物理学、化学、数学、言語、文学、芸術、音楽、"
-    "映画、カルチャー、食文化、スポーツ、テクノロジー、心理学、社会学、経済学、建築、医学、人体、民俗学、"
-    "都市伝説など\n"
-    "紹介する雑学は毎回前回と異なる分野から選んでください。雑学の内容はマニアックであっても構いません。\n"
-    "冒頭に挨拶や前置きは一切不要です。冒頭に分野を記載することも不要で、本文のみ記載してください。"
+    "あなたは、正確さを重んじる雑学の専門家です。\n"
+    "今回のテーマ分野は「{category}」です。この分野から、あまり知られていないが興味深い雑学を"
+    "1つ選び、約400文字の日本語で紹介してください。\n"
+    "条件:\n"
+    "- 確実に裏付けのある事実だけを書くこと。数字・年号・固有名詞は確信があるものだけを使い、"
+    "不確かな点は書かないこと。\n"
+    "- 俗説・都市伝説・諸説ある話は、その旨を本文中で明示すること"
+    "(例:「〜と言われている」「俗説だが」)。\n"
+    "- マニアックな内容でも構わないが、専門用語には短い説明を添え、誰でも読める言葉で書くこと。\n"
+    "- 挨拶・前置き・分野名・見出し・締めの一言は書かず、雑学の本文のみを出力すること。"
 )
 
 # yes(=1に近い)が「問題あり」を意味するNoul質問。回答は質問IDごとに返る。
@@ -106,19 +117,25 @@ CHECK_QUESTIONS = {
 @_retry_transient
 async def generate_trivia() -> str:
     """Gemini APIで雑学を1つ生成する。"""
+    prompt = TRIVIA_PROMPT.format(category=random.choice(TRIVIA_CATEGORIES))
     res = await HTTPClient().post(
         GEMINI_API_URL,
         headers={
             "x-goog-api-key": os.environ["GEMINI_API_KEY"],
             "Content-Type": "application/json",
         },
-        json={"contents": [{"parts": [{"text": TRIVIA_PROMPT}]}]},
+        json={"contents": [{"parts": [{"text": prompt}]}]},
         timeout=120,
     )
     candidate = res["candidates"][0]
     if candidate.get("finishReason") == "MAX_TOKENS":
         raise ValueError("Geminiの出力がMAX_TOKENSで途切れました")
-    return candidate["content"]["parts"][0]["text"].strip()
+    # 思考(thought)パートが混ざる場合に備え、本文のテキストだけを連結する。
+    parts = candidate["content"]["parts"]
+    text = "".join(p.get("text", "") for p in parts if not p.get("thought")).strip()
+    if not text:
+        raise ValueError("Geminiの出力に本文がありません")
+    return text
 
 
 @_retry_transient
