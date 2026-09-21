@@ -5,7 +5,13 @@ HTTPクライアント関連の共通処理を提供するモジュール
 import logging
 
 import httpx
-from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
+from tenacity import (
+    retry,
+    retry_if_exception,
+    retry_if_exception_type,
+    stop_after_attempt,
+    wait_exponential,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -109,3 +115,20 @@ class HTTPClient:
             except Exception as e:
                 logger.error(f"Unexpected error: {e}")
                 raise APIError(f"Unexpected error occurred: {str(e)}")
+
+
+# 一時的な障害として再試行するHTTPステータス(レート制限・過負荷・一時利用不可)
+TRANSIENT_STATUS_CODES = {429, 503, 529}
+
+
+def _is_transient(error: BaseException) -> bool:
+    return isinstance(error, APIError) and error.status_code in TRANSIENT_STATUS_CODES
+
+
+# 一時障害(TRANSIENT_STATUS_CODES)のときだけ、指数バックオフで最大3回まで再試行するデコレータ。
+retry_transient = retry(
+    retry=retry_if_exception(_is_transient),
+    stop=stop_after_attempt(3),
+    wait=wait_exponential(multiplier=1, min=2, max=10),
+    reraise=True,
+)

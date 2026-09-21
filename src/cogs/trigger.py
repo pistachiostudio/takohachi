@@ -1,15 +1,21 @@
+import asyncio
+import logging
 import os
 
 import discord
 from discord import app_commands
 from discord.ext import commands
 
+from libs import dic_search
 from settings import GUILD_ID
+from views.dic import DicMessage, DicSuggestView, build_message, send_kwargs
 
 from .api import get_trigger_repository
 
 DIC_KEY = os.environ["DIC_KEY"]
 PREFIX = os.environ["PREFIX"]
+
+logger = logging.getLogger(__name__)
 
 
 class Trigger(commands.Cog):
@@ -26,25 +32,44 @@ class Trigger(commands.Cog):
         trigger: str = keyword
         data = self.trigger_repo.select(trigger)
 
-        if not data:
-            await interaction.followup.send(f":warning: 「{trigger}」は登録されていません。")
+        if data:
+            await interaction.followup.send(**send_kwargs(build_message(keyword, data)))
             return
-        else:
-            if data["response"]:
-                await interaction.followup.send(f"{data['response']}")
-            else:
-                embed = discord.Embed()
-                embed.set_footer(text=f"Keyword: {keyword}")
-                if data["title"]:
-                    embed.title = f"{data['title']}"
-                if data["description"]:
-                    embed.description = f"{data['description']}\n\n[Check DB](https://docs.google.com/spreadsheets/d/15QCsHsmtZAs1FtiCplLmybU80WyxWw4C7G6ESf2b9f4/edit#gid=1264027664&range=A1)"
-                if data["right_small_image_URL"]:
-                    embed.set_thumbnail(url=f"{data['right_small_image_URL']}")
-                if data["big_image_URL"]:
-                    embed.set_image(url=f"{data['big_image_URL']}")
-                embed.color = discord.Color.dark_blue()
-                await interaction.followup.send(embed=embed)
+
+        not_found = f":warning: 「{trigger}」は登録されていません。"
+        suggestions = await self._suggest(trigger)
+        if not suggestions:
+            await interaction.followup.send(not_found)
+            return
+
+        # 完全一致しなかった場合は、Jevが選んだ候補を、本人にだけ見えるボタンで提示する。
+        # 最初に公開で出した「考え中」の表示は、非公開のメッセージに切り替えられない
+        # 可能性があるため、いったん消してから送る。
+        try:
+            await interaction.delete_original_response()
+        except discord.HTTPException:
+            logger.exception("Failed to delete the deferred dic response")
+        view = DicSuggestView(interaction.user.id, suggestions, self._fetch)
+        message = await interaction.followup.send(
+            f"{not_found}\nもしかして…", view=view, ephemeral=True, wait=True
+        )
+        view.message = message
+        # 実際に非公開になったかで、ボタンを押したあとの動きを切り替える(公開になった場合は
+        # そのメッセージを結果に置き換える)。
+        view.ephemeral = bool(message.flags.ephemeral)
+        logger.info("dic suggestions sent (ephemeral=%s)", view.ephemeral)
+
+    async def _suggest(self, keyword: str) -> list[str]:
+        try:
+            entries = await asyncio.to_thread(self.trigger_repo.list_entries)
+        except Exception:
+            logger.exception("Failed to load dic entries for fuzzy search")
+            return []
+        return await dic_search.suggest(keyword, entries)
+
+    async def _fetch(self, keyword: str) -> DicMessage | None:
+        data = await asyncio.to_thread(self.trigger_repo.select, keyword)
+        return build_message(keyword, data) if data else None
 
     @trigger.autocomplete("keyword")
     async def trigger_autocomplete(

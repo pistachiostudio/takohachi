@@ -1,4 +1,5 @@
 import os
+import time
 from pathlib import Path
 from typing import Dict, List, Optional
 
@@ -6,6 +7,9 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
 DIC_KEY = os.environ["DIC_KEY"]
+
+# 一覧(オートコンプリート・あいまい検索用)のキャッシュ期間。追加した項目が反映されるまでの最大遅延。
+ROWS_CACHE_TTL_SECONDS = 300
 
 
 class TriggerRepository:
@@ -24,6 +28,9 @@ class TriggerRepository:
 
         # ヘッダー行をスプレッドシートから取得
         self.header_list: List[str] = self.worksheet.row_values(2)
+
+        self._rows_cache: Optional[List[List[str]]] = None
+        self._rows_cached_at = 0.0
 
     def select(self, trigger: str) -> Optional[Dict[str, str]]:
         # trigger 文字列が含まれる列番号を取得
@@ -69,10 +76,38 @@ class TriggerRepository:
         if col_index is None:
             return []
 
-        all_values = self.worksheet.get_all_values()
         return [
-            row[col_index] for row in all_values[2:] if col_index < len(row) and row[col_index]
+            row[col_index] for row in self._get_rows() if col_index < len(row) and row[col_index]
         ]
+
+    def list_entries(self) -> List[Dict[str, str]]:
+        """あいまい検索の手がかりとして、登録済みの各項目を辞書のリストで返します。
+        Returns:
+            List[Dict[str, str]]: trigger / alias01 / alias02 / title / description を持つ辞書
+                (trigger が空の行は除く)
+        """
+        columns = ["trigger", "alias01", "alias02", "title", "description"]
+        indexes = {name: self._get_index(self.header_list, name) for name in columns}
+        if indexes["trigger"] is None:
+            return []
+
+        entries: List[Dict[str, str]] = []
+        for row in self._get_rows():
+            entry = {
+                name: row[i] if i is not None and i < len(row) else ""
+                for name, i in indexes.items()
+            }
+            if entry["trigger"]:
+                entries.append(entry)
+        return entries
+
+    def _get_rows(self) -> List[List[str]]:
+        """データ行(3行目以降)を返します。Sheets APIの呼び出しを減らすため一定時間キャッシュします。"""
+        now = time.monotonic()
+        if self._rows_cache is None or now - self._rows_cached_at >= ROWS_CACHE_TTL_SECONDS:
+            self._rows_cache = self.worksheet.get_all_values()[2:]
+            self._rows_cached_at = now
+        return self._rows_cache
 
     def _get_index(self, target: List[str], value: str) -> Optional[int]:
         """value が target の何番目かを取得する関数です。value が存在しない場合は None を返します。

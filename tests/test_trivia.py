@@ -4,7 +4,7 @@ from unittest.mock import AsyncMock, patch
 import pytest
 from tenacity import wait_none
 
-from libs import trivia
+from libs import trivia, typesafe
 from libs.http_client import APIError
 
 
@@ -128,7 +128,7 @@ def test_format_section_without_score():
 
 
 def test_transient_typesafe_error_is_retried(monkeypatch):
-    monkeypatch.setattr(trivia.check_trivia.retry, "wait", wait_none())
+    monkeypatch.setattr(typesafe.system_one.retry, "wait", wait_none())
 
     result, post = _run([_gemini("雑学"), APIError("overloaded", status_code=529), _noul()])
 
@@ -137,7 +137,7 @@ def test_transient_typesafe_error_is_retried(monkeypatch):
 
 
 def test_non_transient_error_is_not_retried(monkeypatch):
-    monkeypatch.setattr(trivia.check_trivia.retry, "wait", wait_none())
+    monkeypatch.setattr(typesafe.system_one.retry, "wait", wait_none())
 
     result, post = _run([_gemini("雑学"), APIError("unauthorized", status_code=401)])
 
