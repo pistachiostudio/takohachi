@@ -139,3 +139,29 @@ def test_fetch_builds_message_or_returns_none():
 
     assert found == {"content": "燃えるごみは月木", "embed": None}
     assert missing is None
+
+
+def test_send_failure_after_deleting_thinking_message_falls_back_to_warning():
+    repo = MagicMock()
+    repo.select.return_value = None
+    repo.list_entries.return_value = [{"trigger": "gomi"}]
+    error = discord.HTTPException(MagicMock(status=500, reason="error"), "boom")
+
+    async def scenario():
+        interaction = _interaction()
+        interaction.followup.send.side_effect = [error, None]
+        with (
+            patch("cogs.trigger.get_trigger_repository", return_value=repo),
+            patch("cogs.trigger.dic_search.suggest", new=AsyncMock(return_value=["gomi"])),
+        ):
+            cog = Trigger(bot=MagicMock())
+            await Trigger.trigger.callback(cog, interaction, "ごみ捨て")
+        return interaction
+
+    interaction = asyncio.run(scenario())
+
+    # 1回目は候補つき(失敗)、2回目は従来の警告。何も残らない状態にはならない
+    assert interaction.followup.send.await_count == 2
+    assert interaction.followup.send.await_args_list[1].args == (
+        ":warning: 「ごみ捨て」は登録されていません。",
+    )

@@ -50,9 +50,15 @@ class Trigger(commands.Cog):
         except discord.HTTPException:
             logger.exception("Failed to delete the deferred dic response")
         view = DicSuggestView(interaction.user.id, suggestions, self._fetch)
-        message = await interaction.followup.send(
-            f"{not_found}\nもしかして…", view=view, ephemeral=True, wait=True
-        )
+        try:
+            message = await interaction.followup.send(
+                f"{not_found}\nもしかして…", view=view, ephemeral=True, wait=True
+            )
+        except discord.HTTPException:
+            # 「考え中」を消したあとに送れなかった場合は、何も残らないことがないよう警告を返す。
+            logger.exception("Failed to send the dic suggestions")
+            await interaction.followup.send(not_found)
+            return
         view.message = message
         # 実際に非公開になったかで、ボタンを押したあとの動きを切り替える(公開になった場合は
         # そのメッセージを結果に置き換える)。

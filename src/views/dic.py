@@ -1,6 +1,9 @@
+import logging
 from collections.abc import Awaitable, Callable
 
 import discord
+
+logger = logging.getLogger(__name__)
 
 # Discordに送る/編集するメッセージの中身。使わない側はNone。
 DicMessage = dict[str, str | discord.Embed | None]
@@ -47,6 +50,8 @@ class DicSuggestView(discord.ui.View):
         self.message: discord.Message | None = None
         # このメッセージが本人にだけ見える(ephemeral)か。送信後に呼び出し側が実際の状態を設定する。
         self.ephemeral = False
+        # いずれかのボタンが押されて処理を始めたか(二重押し対策)。
+        self._handled = False
         for keyword in keywords:
             # ボタンのラベルは80文字まで。
             button = discord.ui.Button(label=keyword[:80], style=discord.ButtonStyle.primary)
@@ -61,10 +66,33 @@ class DicSuggestView(discord.ui.View):
             return False
         return True
 
+    async def _publish(self, interaction: discord.Interaction, message: DicMessage) -> None:
+        """結果をチャンネルに公開で送る。"""
+        channel = interaction.channel
+        if channel is not None:
+            try:
+                await channel.send(**send_kwargs(message))
+                return
+            except discord.Forbidden:
+                # Botにそのチャンネルの送信権限がない場合でも、コマンドへの返信としては送れる。
+                logger.warning("No permission to send in the channel; using followup instead")
+        await interaction.followup.send(**send_kwargs(message))
+
     def _make_callback(self, keyword: str):
         async def callback(interaction: discord.Interaction):
+            # 2回目以降の押下も、「応答なし」にならないよう必ず応答だけは返す。
             await interaction.response.defer()
-            message = await self.fetch(keyword)
+            # 取得中にもう一度押されても、結果が二重に公開されないようにする。
+            if self._handled:
+                return
+            self._handled = True
+
+            try:
+                message = await self.fetch(keyword)
+            except Exception:
+                logger.exception("Failed to fetch dic entry %r", keyword)
+                message = None
+
             if message is None:
                 await interaction.edit_original_response(
                     content=f":warning: 「{keyword}」を取得できませんでした。",
@@ -74,11 +102,7 @@ class DicSuggestView(discord.ui.View):
             elif self.ephemeral:
                 # 非公開メッセージを編集しても本人にしか見えないので、結果はチャンネルに公開で送り、
                 # ボタン付きのメッセージは簡単な表示に置き換える。
-                channel = interaction.channel
-                if channel is not None:
-                    await channel.send(**send_kwargs(message))
-                else:
-                    await interaction.followup.send(**send_kwargs(message))
+                await self._publish(interaction, message)
                 await interaction.edit_original_response(
                     content=f"「{keyword}」を表示しました。", embed=None, view=None
                 )

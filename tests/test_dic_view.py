@@ -155,3 +155,71 @@ def test_ephemeral_view_does_not_publish_a_failed_lookup():
     assert (
         "取得できませんでした" in interaction.edit_original_response.await_args.kwargs["content"]
     )
+
+
+def _forbidden():
+    return discord.Forbidden(MagicMock(status=403, reason="Forbidden"), "missing permissions")
+
+
+def test_ephemeral_view_uses_followup_when_channel_send_is_forbidden():
+    fetch = AsyncMock(return_value={"content": "結果", "embed": None})
+
+    async def scenario():
+        view = DicSuggestView(1, ["gomi"], fetch)
+        view.ephemeral = True
+        interaction = _interaction(user_id=1)
+        interaction.channel.send.side_effect = _forbidden()
+        await view.children[0].callback(interaction)
+        return interaction
+
+    interaction = _run(scenario)
+
+    interaction.followup.send.assert_awaited_once_with(content="結果")
+    interaction.edit_original_response.assert_awaited_once_with(
+        content="「gomi」を表示しました。", embed=None, view=None
+    )
+
+
+def test_double_press_publishes_only_once():
+    gate = asyncio.Event()
+
+    async def slow_fetch(keyword):
+        await gate.wait()
+        return {"content": "結果", "embed": None}
+
+    async def scenario():
+        view = DicSuggestView(1, ["gomi", "genkai"], slow_fetch)
+        view.ephemeral = True
+        first, second = _interaction(user_id=1), _interaction(user_id=1)
+        # 1回目が取得待ちの間に、もう一度(別のボタンでも)押される
+        task1 = asyncio.create_task(view.children[0].callback(first))
+        await asyncio.sleep(0)
+        task2 = asyncio.create_task(view.children[1].callback(second))
+        await asyncio.sleep(0)
+        gate.set()
+        await asyncio.gather(task1, task2)
+        return first, second
+
+    first, second = _run(scenario)
+
+    first.channel.send.assert_awaited_once()
+    second.channel.send.assert_not_awaited()
+    # 2回目も「応答なし」にならないよう、応答だけは返している
+    second.response.defer.assert_awaited_once()
+    second.edit_original_response.assert_not_awaited()
+
+
+def test_fetch_error_shows_warning_instead_of_hanging():
+    async def scenario():
+        view = DicSuggestView(1, ["gomi"], AsyncMock(side_effect=RuntimeError("sheets down")))
+        view.ephemeral = True
+        interaction = _interaction(user_id=1)
+        await view.children[0].callback(interaction)
+        return interaction
+
+    interaction = _run(scenario)
+
+    interaction.channel.send.assert_not_awaited()
+    assert (
+        "取得できませんでした" in interaction.edit_original_response.await_args.kwargs["content"]
+    )
