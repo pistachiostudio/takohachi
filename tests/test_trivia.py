@@ -100,7 +100,7 @@ def test_fallback_without_gemini_key(monkeypatch):
 def test_truth_is_inverse_of_factual_error_probability():
     result, _ = _run([_gemini("雑学"), _noul(has_factual_error=0.2)])
 
-    assert result.verified
+    assert result.truth is not None
     assert result.truth == pytest.approx(0.8)
 
 

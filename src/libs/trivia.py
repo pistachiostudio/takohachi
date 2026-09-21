@@ -36,10 +36,6 @@ class Trivia(NamedTuple):
     # 検証のスキップ・失敗時やフォールバック時はNone。
     truth: float | None = None
 
-    @property
-    def verified(self) -> bool:
-        return self.truth is not None
-
 
 def _is_transient(error: BaseException) -> bool:
     return isinstance(error, APIError) and error.status_code in TRANSIENT_STATUS_CODES
