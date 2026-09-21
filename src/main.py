@@ -59,7 +59,6 @@ class MyBot(commands.Bot):
             # "cogs.happy_new_year",
             "cogs.marimo",
             "cogs.message_count",
-            "cogs.gemini",
             "cogs.ping",
             "cogs.purge",
             "cogs.spotify",

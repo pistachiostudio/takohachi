@@ -124,7 +124,8 @@ DIC_KEY=''
 SSLADD_KEY=''
 
 # External APIs
-GEMINI_API_KEY=''
+GEMINI_API_KEY=''           # 朝の雑学の生成 (Gemini)
+TYPESAFE_API_KEY=''         # 朝の雑学の検証 (TypeSafe。未設定なら検証をスキップ)
 SPOTIFY_CLIENT_ID=''
 SPOTIFY_CLIENT_SECRET=''
 VALORANT_TOKEN=''           # HenrikDev API

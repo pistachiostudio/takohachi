@@ -7,7 +7,8 @@ import discord
 from discord.ext import commands, tasks
 from yfinance.exceptions import YFRateLimitError
 
-from libs.utils import get_stock_price, get_trivia, get_weather, get_what_today
+from libs.trivia import get_trivia
+from libs.utils import get_stock_price, get_weather, get_what_today
 
 
 class WTTasks(commands.Cog):
@@ -44,8 +45,16 @@ class WTTasks(commands.Cog):
                 citycode = "060010"
                 yamagata_weather = get_weather(citycode)
 
-                # Geminiで雑学を取得
+                # Geminiで雑学を生成し、TypeSafeで検証して取得
                 trivia = await get_trivia()
+                trivia_credit = (
+                    "Powered by [Gemini](https://ai.google.dev/gemini-api/docs/models)"
+                )
+                if trivia.verified:
+                    trivia_credit += (
+                        f" / ✅ Checked by [Jev](https://typesafe.ai)"
+                        f" (truthfulness score: {trivia.truth:.0%})"
+                    )
                 good_morning = random.choice(
                     ["おざし。", "おざす。", "お。", "おはようございます。"]
                 )

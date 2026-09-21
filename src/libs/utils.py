@@ -1,4 +1,3 @@
-import os
 import re
 from datetime import datetime, timedelta, timezone
 from random import randint
@@ -8,10 +7,6 @@ import httpx
 import yfinance as yf
 from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
 from yfinance.exceptions import YFRateLimitError
-
-from libs.http_client import HTTPClient, APIError
-
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 
 def get_now_timestamp_jst() -> datetime:
@@ -103,36 +98,6 @@ def get_exchange_rate():
     round_usd_jpy = round(usd_jpy, 2)
 
     return round_usd_jpy
-
-
-async def get_trivia() -> str:
-    """Gemini APIを使用して雑学を取得する。"""
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={GEMINI_API_KEY}"
-    headers = {"Content-Type": "application/json"}
-    payload = {
-        "contents": [
-            {
-                "parts": [
-                    {
-                        "text": "あなたはあらゆる分野からランダムに興味深い雑学を紹介するエキスパートです。 \
-                        以下の分野から毎回ランダムに異なるテーマを選び、約400文字の日本語で雑学を1つ紹介してください。 \
-                        対象分野：動植物、生物学、宇宙、地理、歴史、哲学、科学、物理学、化学、数学、言語、文学、芸術、音楽、 \
-                        映画、カルチャー、食文化、スポーツ、テクノロジー、心理学、社会学、経済学、建築、医学、人体、民俗学、都市伝説など \
-                        紹介する雑学は毎回前回と異なる分野から選んでください。雑学の内容はマニアックであっても構いません。 \
-                        冒頭に挨拶や前置きは一切不要です。冒頭に分野を記載することも不要で、本文のみ記載してください。"
-                    },
-                ]
-            }
-        ]
-    }
-
-    try:
-        client = HTTPClient()
-        res = await client.post(url, headers=headers, json=payload, timeout=120)
-        answer = res["candidates"][0]["content"]["parts"][0]["text"]
-        return answer
-    except (APIError, Exception):
-        return "⚠GeminiのAPIリクエストでエラーが発生したので今日の雑学はなしです。"
 
 
 @retry(
