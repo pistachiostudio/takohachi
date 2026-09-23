@@ -108,9 +108,14 @@ async def generate_trivia() -> tuple[str, str]:
     """Gemini APIで雑学を1つ生成する。(本文, 実際に使ったモデル名) を返す。
 
     GEMINI_MODELS の先頭から順に1回ずつ試し、最初に成功したものを返す。
-    同じモデルへの多重リトライはしない(一時障害の再試行は libs.http_client.retry_transient
-    が担うが、429はここでは対象にしない設計にしている。理由は GEMINI_MODELS の説明を参照)。
+    retry_transient(libs.http_client)はこのパスには適用していない。同じモデルへの
+    多重リトライは、失敗のたびに次のモデルへ切り替えるこの仕組みと二重にかかると、
+    短時間に大量のリクエストが飛んでクォータを消費してしまうため(過去に実際に発生した。
+    詳細は GEMINI_MODELS の説明を参照)。
     """
+    if not GEMINI_MODELS:
+        raise ValueError("GEMINI_MODELS が空です")
+
     last_error: Exception | None = None
     for model in GEMINI_MODELS:
         try:

@@ -228,3 +228,10 @@ def test_prompt_uses_randomly_chosen_category():
 def test_every_category_fills_the_prompt():
     for category in trivia.TRIVIA_CATEGORIES:
         assert f"「{category}」" in trivia.TRIVIA_PROMPT.format(category=category)
+
+
+def test_empty_model_list_raises_clear_error(monkeypatch):
+    monkeypatch.setattr(trivia, "GEMINI_MODELS", [])
+
+    with pytest.raises(ValueError, match="GEMINI_MODELS"):
+        asyncio.run(trivia.generate_trivia())
