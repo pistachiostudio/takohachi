@@ -6,14 +6,20 @@ import random
 from typing import NamedTuple
 
 from libs import typesafe
-from libs.http_client import HTTPClient, retry_transient
+from libs.http_client import HTTPClient
 
 logger = logging.getLogger(__name__)
 
-GEMINI_MODEL = "gemini-3.8-flash"
-GEMINI_API_URL = (
-    f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent"
-)
+# 主モデルが失敗したら、この順で次のモデルを1回だけ試す。
+# 429(クォータ超過)はモデルごと・1分単位の制限なので、同じモデルに再試行しても
+# 成功する見込みは薄く、クォータを追加で消費するだけになる。モデルを変えれば
+# 別のクォータ枠になるため、503(一時的な過負荷)にも429にも効く。
+#
+# 2026年9月時点、gemini-3.6/3.7/3.8-flash は新モデル特有の需要過多で503が頻発しており
+# (Google公式フォーラムで報告多数)、3.8が落ちていると3.6も道連れで落ちていることがある。
+# 3.5-flash-lite は軽量モデルで別のGPU枠のため影響を受けにくく、2.5-flashは実績のある
+# 最後の砦として残す。
+GEMINI_MODELS = ["gemini-3.8-flash", "gemini-3.5-flash-lite", "gemini-2.5-flash"]
 
 # 検証に通らなかった場合に雑学を作り直す最大回数(初回を含む)
 MAX_ATTEMPTS = 3
@@ -26,16 +32,19 @@ FALLBACK_MESSAGE = "⚠雑学の取得でエラーが発生したので今日の
 
 class Trivia(NamedTuple):
     text: str
+    # 実際に生成できたGeminiのモデル名。生成できなかった(フォールバック文言の)場合はNone。
+    model: str | None = None
     # TypeSafe(Jev)の検証を通過した場合のみ設定される「事実誤認がない確率」(0〜1)。
     # 検証のスキップ・失敗時やフォールバック時はNone。
     truth: float | None = None
 
 
 def format_trivia_section(trivia: Trivia) -> str:
-    """投稿用に、雑学の本文とクレジット行(検証済みならJevのスコア付き)を組み立てる。"""
-    credit = "Powered by [Gemini](https://ai.google.dev/gemini-api/docs/models)"
+    """投稿用に、雑学の本文とクレジット行(使用モデル・検証済みならJevのスコア付き)を組み立てる。"""
+    model = trivia.model or "Gemini"
+    credit = f"Powered by {model}"
     if trivia.truth is not None:
-        credit += f" / [Jev](https://typesafe.ai) truthfulness score: {trivia.truth:.0%}"
+        credit += f" / Jev truthfulness score: {trivia.truth:.0%}"
     return f"{trivia.text}\n({credit})"
 
 
@@ -95,12 +104,28 @@ CHECK_QUESTIONS = {
 }
 
 
-@retry_transient
-async def generate_trivia() -> str:
-    """Gemini APIで雑学を1つ生成する。"""
+async def generate_trivia() -> tuple[str, str]:
+    """Gemini APIで雑学を1つ生成する。(本文, 実際に使ったモデル名) を返す。
+
+    GEMINI_MODELS の先頭から順に1回ずつ試し、最初に成功したものを返す。
+    同じモデルへの多重リトライはしない(一時障害の再試行は libs.http_client.retry_transient
+    が担うが、429はここでは対象にしない設計にしている。理由は GEMINI_MODELS の説明を参照)。
+    """
+    last_error: Exception | None = None
+    for model in GEMINI_MODELS:
+        try:
+            return await _generate_with_model(model), model
+        except Exception as e:
+            last_error = e
+            logger.warning("Gemini(%s) failed, trying next model: %s", model, e)
+    raise last_error
+
+
+async def _generate_with_model(model: str) -> str:
     prompt = TRIVIA_PROMPT.format(category=random.choice(TRIVIA_CATEGORIES))
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
     res = await HTTPClient().post(
-        GEMINI_API_URL,
+        url,
         headers={
             "x-goog-api-key": os.environ["GEMINI_API_KEY"],
             "Content-Type": "application/json",
@@ -110,12 +135,12 @@ async def generate_trivia() -> str:
     )
     candidate = res["candidates"][0]
     if candidate.get("finishReason") == "MAX_TOKENS":
-        raise ValueError("Geminiの出力がMAX_TOKENSで途切れました")
+        raise ValueError(f"Geminiの出力がMAX_TOKENSで途切れました({model})")
     # 思考(thought)パートが混ざる場合に備え、本文のテキストだけを連結する。
     parts = candidate["content"]["parts"]
     text = "".join(p.get("text", "") for p in parts if not p.get("thought")).strip()
     if not text:
-        raise ValueError("Geminiの出力に本文がありません")
+        raise ValueError(f"Geminiの出力に本文がありません({model})")
     return text
 
 
@@ -149,23 +174,23 @@ async def get_trivia() -> Trivia:
 
     for attempt in range(1, MAX_ATTEMPTS + 1):
         try:
-            trivia = await generate_trivia()
+            text, model = await generate_trivia()
         except Exception:
             logger.exception("Failed to generate trivia (attempt %d)", attempt)
             continue
 
         if not verify:
-            return Trivia(trivia)
+            return Trivia(text, model)
 
         try:
-            probabilities = await check_trivia(trivia)
+            probabilities = await check_trivia(text)
         except Exception:
             logger.exception("Trivia verification failed; posting without verification")
-            return Trivia(trivia)
+            return Trivia(text, model)
 
         problems = [q for q, p in probabilities.items() if p >= REJECT_THRESHOLD]
         if not problems:
-            return Trivia(trivia, truth=1 - probabilities["has_factual_error"])
+            return Trivia(text, model, truth=1 - probabilities["has_factual_error"])
         logger.warning("Trivia rejected (attempt %d): %s", attempt, ", ".join(problems))
 
     return Trivia(FALLBACK_MESSAGE)
