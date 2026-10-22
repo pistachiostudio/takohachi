@@ -53,10 +53,8 @@ class SSLAdd(commands.Cog):
 
             # 認証情報設定
             # ダウンロードしたjsonファイル名をクレデンシャル変数に設定（秘密鍵、Pythonファイルから読み込みしやすい位置に置く）
-            addssl_json_keyfile = "addssl_client_secrets.json"
-            credentials = ServiceAccountCredentials.from_json_keyfile_name(
-                addssl_json_keyfile, scope
-            )
+            json_keyfile = "client_secrets.json"
+            credentials = ServiceAccountCredentials.from_json_keyfile_name(json_keyfile, scope)
 
             # OAuth2の資格情報を使用してGoogle APIにログインします。
             gc = gspread.authorize(credentials)
