@@ -6,7 +6,6 @@ import discord
 from discord.ext import commands
 
 from settings import (
-    ADD_SSL_CLIENT_SECRETS_PATH,
     CLIENT_SECRETS_PATH,
     GUILD_ID,
     REBOOT_LOG_CHANNEL_ID,
@@ -34,15 +33,10 @@ reboot_log_channel_id = REBOOT_LOG_CHANNEL_ID
 
 
 def init():
-    # GoogleDrive API のクレデンシャル情報を保持したファイルを生成する
+    # Google API(Drive / スプレッドシート)のクレデンシャル情報を保持したファイルを生成する
     client_secrets = os.environ["CLIENT_SECRET"]
     with open(CLIENT_SECRETS_PATH, "w") as f:
         f.write(client_secrets)
-
-    # addssl用のjsonファイルを生成
-    addssl_client_secrets = os.environ["TAKOHACHI_JSON"]
-    with open(ADD_SSL_CLIENT_SECRETS_PATH, "w") as f:
-        f.write(addssl_client_secrets)
 
 
 class MyBot(commands.Bot):

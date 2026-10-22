@@ -116,8 +116,7 @@ KAME_VC_ID=''
 KYORYU_VC_ID=''
 
 # Google (スプレッドシート / Drive)
-CLIENT_SECRET=''            # Drive 用の認証情報 JSON の中身
-TAKOHACHI_JSON=''           # addssl / trigger 用の認証情報 JSON の中身
+CLIENT_SECRET=''            # Drive / スプレッドシート用のサービスアカウント認証情報 JSON の中身
 DRIVE_FOLDER_ID=''
 CARDCOUNT_KEY=''
 DIC_KEY=''

@@ -13,14 +13,14 @@ ROWS_CACHE_TTL_SECONDS = 300
 
 
 class TriggerRepository:
-    def __init__(self, addssl_json_keyfile: Path):
+    def __init__(self, json_keyfile: Path):
         # 2つのAPIを記述しないとリフレッシュトークンを3600秒毎に発行し続けなければならないです！
         scope = [
             "https://spreadsheets.google.com/feeds",
             "https://www.googleapis.com/auth/drive",
         ]
         # 認証情報設定
-        credentials = ServiceAccountCredentials.from_json_keyfile_name(addssl_json_keyfile, scope)
+        credentials = ServiceAccountCredentials.from_json_keyfile_name(json_keyfile, scope)
         # OAuth2の資格情報を使用してGoogle APIにログインします。
         self.gc = gspread.authorize(credentials)
         # 共有設定したスプレッドシートのtriggerシートを開く
