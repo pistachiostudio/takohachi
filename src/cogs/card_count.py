@@ -3,9 +3,6 @@ import os
 import gspread
 from discord.ext import commands
 
-# ServiceAccountCredentials：Googleの各サービスへアクセスできるservice変数を生成。
-from oauth2client.service_account import ServiceAccountCredentials
-
 
 class CardCount(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -52,19 +49,8 @@ class CardCount(commands.Cog):
             # 環境変数を設定
             CARDCOUNT_KEY = os.environ["CARDCOUNT_KEY"]
 
-            # 2つのAPIを記述しないとリフレッシュトークンを3600秒毎に発行し続けなければならないです！
-            scope = [
-                "https://spreadsheets.google.com/feeds",
-                "https://www.googleapis.com/auth/drive",
-            ]
-
-            # 認証情報設定
-            # ダウンロードしたjsonファイル名をクレデンシャル変数に設定（秘密鍵、Pythonファイルから読み込みしやすい位置に置く）
-            json_keyfile = "client_secrets.json"
-            credentials = ServiceAccountCredentials.from_json_keyfile_name(json_keyfile, scope)
-
-            # OAuth2の資格情報を使用してGoogle APIにログインします。
-            gc = gspread.authorize(credentials)
+            # サービスアカウントの鍵ファイルで Google API(スプレッドシート / Drive)にログインする
+            gc = gspread.service_account(filename="client_secrets.json")
 
             # 共有設定したスプレッドシートのシート1を開く
             worksheet = gc.open_by_key(CARDCOUNT_KEY).sheet1
