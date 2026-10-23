@@ -4,7 +4,6 @@ from pathlib import Path
 from typing import Dict, List, Optional
 
 import gspread
-from oauth2client.service_account import ServiceAccountCredentials
 
 DIC_KEY = os.environ["DIC_KEY"]
 
@@ -14,15 +13,8 @@ ROWS_CACHE_TTL_SECONDS = 300
 
 class TriggerRepository:
     def __init__(self, json_keyfile: Path):
-        # 2つのAPIを記述しないとリフレッシュトークンを3600秒毎に発行し続けなければならないです！
-        scope = [
-            "https://spreadsheets.google.com/feeds",
-            "https://www.googleapis.com/auth/drive",
-        ]
-        # 認証情報設定
-        credentials = ServiceAccountCredentials.from_json_keyfile_name(json_keyfile, scope)
-        # OAuth2の資格情報を使用してGoogle APIにログインします。
-        self.gc = gspread.authorize(credentials)
+        # サービスアカウントの鍵ファイルで Google API(スプレッドシート / Drive)にログインする
+        self.gc = gspread.service_account(filename=json_keyfile)
         # 共有設定したスプレッドシートのtriggerシートを開く
         self.worksheet = self.gc.open_by_key(DIC_KEY).worksheet("trigger")
 
