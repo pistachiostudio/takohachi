@@ -118,6 +118,9 @@ KYORYU_VC_ID=''
 # Google (スプレッドシート / Drive)
 CLIENT_SECRET=''            # Drive / スプレッドシート用のサービスアカウント認証情報 JSON の中身
 DRIVE_FOLDER_ID=''
+DRIVE_OAUTH_CLIENT_ID=''       # save_image の Drive アップロード用 OAuth クライアント
+DRIVE_OAUTH_CLIENT_SECRET=''
+DRIVE_OAUTH_REFRESH_TOKEN=''   # scripts/get_drive_refresh_token.py で取得
 CARDCOUNT_KEY=''
 DIC_KEY=''
 SSLADD_KEY=''

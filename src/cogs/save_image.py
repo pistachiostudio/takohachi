@@ -4,9 +4,8 @@ from datetime import datetime, timedelta, timezone
 
 import discord
 from discord.ext import commands
-from oauth2client.service_account import ServiceAccountCredentials
-from pydrive2.auth import GoogleAuth
-from pydrive2.drive import GoogleDrive
+
+from libs import google_drive
 
 
 class SavaImage(commands.Cog):
@@ -41,7 +40,7 @@ class SavaImage(commands.Cog):
             filename = attachment.filename
             upload_filename = filename
             try:
-                await attachment.save(fp=filename)
+                content = await attachment.read()
 
                 # filename が デフォルトファイル名の場合はファイル名を変更する
                 if filename.split(".")[0] == "image0":
@@ -49,7 +48,12 @@ class SavaImage(commands.Cog):
                     upload_filename = uuid_name + "." + filename.split(".")[1]
 
                 # Google Drive へのアップロード処理
-                self._upload_img(filename, upload_filename)
+                await google_drive.upload_file(
+                    upload_filename,
+                    content,
+                    attachment.content_type or "application/octet-stream",
+                    os.environ["DRIVE_FOLDER_ID"],
+                )
 
                 embed.color = discord.Color.green()
                 embed.set_thumbnail(url=attachment.url)
@@ -76,27 +80,6 @@ class SavaImage(commands.Cog):
                 embed.description = ":warning: ファイルアップロードに失敗しました"
                 embed.add_field(name="file:", value=filename)
                 await channel.send(embed=embed)
-            finally:
-                os.remove(filename)
-
-    def _upload_img(self, filename, upload_filename):
-        scope = ["https://www.googleapis.com/auth/drive"]
-        json_keyfile = "client_secrets.json"
-        credentials = ServiceAccountCredentials.from_json_keyfile_name(json_keyfile, scope)
-        gauth = GoogleAuth()
-        gauth.credentials = credentials
-        drive = GoogleDrive(gauth)
-
-        folder_id = os.environ["DRIVE_FOLDER_ID"]
-
-        f = drive.CreateFile(
-            {
-                "title": upload_filename,
-                "parents": [{"kind": "drive#fileLink", "id": folder_id}],
-            }
-        )
-        f.SetContentFile(filename)
-        f.Upload()
 
     def _generate_uuid_filename(self):
         filename = str(uuid.uuid4())
