@@ -165,6 +165,8 @@ pisという架空の通貨機能一式です。データは SQLite(`/data/takoh
 ### save_image.py 🏭
 
 - 指定した絵文字で画像やファイルが添付されたチャットにリアクションすると、指定したGoogle Driveにそのファイルを保存します。
+- サービスアカウントは Drive の保存容量を持たないため、アップロードは保存先フォルダの持ち主の Google アカウントの OAuth で行います(`DRIVE_OAUTH_CLIENT_ID` / `DRIVE_OAUTH_CLIENT_SECRET` / `DRIVE_OAUTH_REFRESH_TOKEN`)。
+- リフレッシュトークンは `python scripts/get_drive_refresh_token.py` で取得します。OAuth 同意画面の公開ステータスが「テスト」のままだと、トークンが7日で失効するので「本番環境」にしておきます。
 
 ### vc_role.py 🏭
 
