@@ -3,13 +3,18 @@ import logging
 import os
 import random
 import sqlite3
-from datetime import datetime, timedelta, timezone
 
 import discord
 import httpx
 from discord.ext import commands, tasks
 
 from cogs import valorant_api
+from libs.utils import now_jst
+
+logger = logging.getLogger(__name__)
+
+CHANNEL_ID = 924924594706583562
+DB_PATH = "/data/takohachi.db"
 
 # fetch()の戻り値のうち、前日の基準(yesterday_season)がまだ記録されていない
 # ため差分計算ができなかったことを示すセンチネル。
@@ -79,32 +84,23 @@ class RankTasks(commands.Cog):
 
     @tasks.loop(seconds=600.0)
     async def printer(self):
-        channel = self.bot.get_channel(int("924924594706583562"))
-
-        # タイムゾーンの生成
-        JST = timezone(timedelta(hours=+9), "JST")
-        now = datetime.now(JST)
-
-        now_hour = now.hour
-        now_minute = now.minute
-
-        if now_hour == 7 and 0 <= now_minute <= 9:
+        now = now_jst()
+        if now.hour == 7 and now.minute <= 9:
             try:
-                await self._post_daily_ranking(channel)
+                await self._post_daily_ranking(self.bot.get_channel(CHANNEL_ID))
             except Exception:
                 # discord.HTTPExceptionなどtasks.loopの自動リトライ対象外の例外が
                 # ここで発生するとループ自体が停止し、二度と朝の投稿が行われなく
                 # なるため、ここで捕まえて次回ループを継続させる。
-                logging.exception("Failed to post daily valorant ranking")
+                logger.exception("Failed to post daily valorant ranking")
 
     async def _post_daily_ranking(self, channel):
         # 投稿の度にシーズン(Act)情報を最新化する
         await valorant_api.update_current_season()
 
-        db_path = "/data/takohachi.db"
-
         # データベースに接続とカーソルの取得
-        conn = sqlite3.connect(db_path)
+        conn = sqlite3.connect(DB_PATH)
+        http = httpx.AsyncClient(headers={"Authorization": VALORANT_TOKEN}, timeout=60)
         try:
             cur = conn.cursor()
 
@@ -138,40 +134,29 @@ class RankTasks(commands.Cog):
                     yesterday_season,
                 ) = row
 
-                headers = {"Authorization": VALORANT_TOKEN}
-
-                # 非同期でキャッシュをパージしてリクエスト。最新のnameとtagを取得する。
+                # キャッシュをパージして最新のnameとtagを取得し、そのregionでmmrを取得する。
+                # API取得失敗時はNoneを返す。この人の状況は不明なため、
+                # 「誰もプレイしていない」の判定(NO_PLAY)には使わない。
                 try:
-                    account_url = f"https://api.henrikdev.xyz/valorant/v1/by-puuid/account/{puuid}?force=true"
-                    async with httpx.AsyncClient() as client:
-                        name_tag_response = await client.get(
-                            account_url, headers=headers, timeout=60
-                        )
-                except httpx.HTTPError:
-                    # API取得失敗時はNoneを返す。この人の状況は不明なため、
-                    # 「誰もプレイしていない」の判定(NO_PLAY)には使わない。
-                    return None
+                    account = await http.get(
+                        f"https://api.henrikdev.xyz/valorant/v1/by-puuid/account/{puuid}",
+                        params={"force": "true"},
+                    )
+                    account.raise_for_status()
+                    account_data = account.json()["data"]
+                    api_name: str = account_data["name"]
+                    api_tag: str = account_data["tag"]
+                    api_region: str = account_data["region"]
 
-                # jsonから必要な値を取得
-                account_data = name_tag_response.json()
-                api_name: str = account_data["data"]["name"]
-                api_tag: str = account_data["data"]["tag"]
-                api_region: str = account_data["data"]["region"]
-
-                # mmrのエンドポイントを非同期でリクエスト
-                try:
-                    url = (
+                    response = await http.get(
                         f"https://api.henrikdev.xyz/valorant/v2/by-puuid/mmr/{api_region}/{puuid}"
                     )
-                    async with httpx.AsyncClient() as client:
-                        response = await client.get(url, headers=headers, timeout=60)
-                except httpx.HTTPError:
-                    # API取得失敗時はNoneを返す。この人の状況は不明なため、
-                    # 「誰もプレイしていない」の判定(NO_PLAY)には使わない。
+                    response.raise_for_status()
+                    data = response.json()
+                except (httpx.HTTPError, ValueError, KeyError):
+                    logger.exception("Failed to fetch valorant data for %s", puuid)
                     return None
 
-                # jsonから必要な値を取得
-                data = response.json()
                 currenttierpatched: str = data["data"]["current_data"]["currenttierpatched"]
                 ranking_in_tier: str = data["data"]["current_data"]["ranking_in_tier"]
                 elo: int = data["data"]["current_data"]["elo"]
@@ -316,12 +301,12 @@ class RankTasks(commands.Cog):
             for player_info in player_infos:
                 await channel.send(embed=build_embed(player_info))
         finally:
+            await http.aclose()
             conn.close()
 
     # デプロイ後Botが完全に起動してからタスクを回す
     @printer.before_loop
     async def before_printer(self):
-        print("waiting until bot booting")
         await self.bot.wait_until_ready()
         await valorant_api.update_current_season()
 

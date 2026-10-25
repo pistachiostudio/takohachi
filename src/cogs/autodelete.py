@@ -1,13 +1,27 @@
-import datetime
 import logging
-import time
+from datetime import UTC, datetime, timedelta
 
 from discord.ext import commands, tasks
+
+logger = logging.getLogger(__name__)
+
+# チャンネルIDと削除するまでの時間(秒)。例えば1時間で削除する場合は3600。
+CHANNEL_TTLS = {
+    762575939623452682: 43200,  # 犬
+    762576579507126273: 43200,  # 猫
+    780611197350576200: 43200,  # 亀
+    812312154371784704: 43200,  # 恐竜
+    811819005987913790: 600,  # 沈黙の犬
+    811810485929639976: 600,  # 沈黙の猫
+    811804248299143209: 600,  # 沈黙の亀
+    1033285774503841862: 600,  # 沈黙の恐竜
+    924924594706583562: 86400,  # 茂林塾
+    923469139597721610: 86400,  # moderator
+}
 
 
 class AutoDelete(commands.Cog):
     def __init__(self, bot: commands.Bot):
-        self.index = 0
         self.bot = bot
         self.printer.start()
 
@@ -16,70 +30,36 @@ class AutoDelete(commands.Cog):
 
     @tasks.loop(seconds=600.0)
     async def printer(self):
-        logging.info("Message purge task is running.")
+        logger.info("Message purge task is running.")
+        now = datetime.now(UTC)
 
-        # チャンネルIDと削除する時間(秒)を指定。例えば1時間ごとに削除する場合は3600。
-        channel_list = {
-            762575939623452682: 43200,  # 犬
-            762576579507126273: 43200,  # 猫
-            780611197350576200: 43200,  # 亀
-            812312154371784704: 43200,  # 恐竜
-            811819005987913790: 600,  # 沈黙の犬
-            811810485929639976: 600,  # 沈黙の猫
-            811804248299143209: 600,  # 沈黙の亀
-            1033285774503841862: 600,  # 沈黙の恐竜
-            924924594706583562: 86400,  # 茂林塾
-            923469139597721610: 86400,  # moderator
-        }
-
-        # UNIX時間の現在時刻を取得
-        now = int(time.time())
-
-        # 辞書のキーをループで回していく。キーはチャンネルID
-        for channel_id in channel_list.keys():
+        for channel_id, ttl in CHANNEL_TTLS.items():
             try:
-                # チャンネルを取得
                 channel = self.bot.get_channel(channel_id)
                 if channel is None:
-                    logging.warning(f"Channel not found, skipping: {channel_id}")
+                    logger.warning("Channel not found, skipping: %s", channel_id)
                     continue
 
-                # チャンネルのメッセージを古い順に取得
-                purge_count = 0
-                pinned_count = 0
-                async for message in channel.history(oldest_first=True):
-                    message_time = int(message.created_at.timestamp())
-                    if now - message_time > channel_list[channel_id]:
-                        purge_count += 1
-                        if message.pinned:
-                            pinned_count += 1
-
-                # 現在時間から指定した時間を引いた時間を取得
-                del_time = datetime.datetime.fromtimestamp(now - channel_list[channel_id])
-
-                # checkを定義
-                def is_not_pinned(message):
-                    return not message.pinned
-
+                # 指定した時間より前の、ピン留めされていないメッセージを削除する。
+                # 溜まっていても1回に見るのは100件までにして、残りは次回以降に回す。
                 deleted = await channel.purge(
-                    limit=purge_count, check=is_not_pinned, before=del_time
+                    limit=100,
+                    before=now - timedelta(seconds=ttl),
+                    check=lambda message: not message.pinned,
                 )
-                logging.info(
-                    f"Purged {len(deleted)} messages in {channel.name} (pinned: {pinned_count})"
-                )
+                logger.info("Purged %d messages in %s", len(deleted), channel.name)
             except Exception:
                 # discord.HTTPException(Discord側の一時的な503等)はtasks.loopの
                 # 自動リトライ対象外で、ここで捕まえないとループ自体が停止し、
                 # 二度と自動削除が動かなくなる。1チャンネルの失敗で全体を
                 # 止めないためにもチャンネル単位でcatchする。
-                logging.exception(f"Failed to purge messages in channel {channel_id}")
+                logger.exception("Failed to purge messages in channel %s", channel_id)
 
-        logging.info("Message purge task is finished.")
+        logger.info("Message purge task is finished.")
 
     # デプロイ後Botが完全に起動してからタスクを回す
     @printer.before_loop
     async def before_printer(self):
-        print("waiting until bot booting")
         await self.bot.wait_until_ready()
 
 

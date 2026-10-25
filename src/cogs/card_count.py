@@ -1,7 +1,44 @@
+import asyncio
 import os
 
-import gspread
+import discord
 from discord.ext import commands
+
+from libs import google_sheets
+
+# 絵文字 → カウントする列(A: 名前, B: イエロー, C: レッド, D: サイレン, E: 合計, F: ユーザーID)
+YELLOW_COL, RED_COL, SIREN_COL = 2, 3, 4
+CARD_COLUMNS = {
+    "<:p05_card_yellow:934125477424140308>": YELLOW_COL,
+    "<a:p00_card_yellow:934125609544745030>": YELLOW_COL,
+    "<:p05_card_red:934125543111131187>": RED_COL,
+    "<a:p00_card_red:934125658529988648>": RED_COL,
+    "<a:p00_siren:801424753419354133>": SIREN_COL,
+    "<a:p00_sirenblue:802091428057579521>": SIREN_COL,
+    "<a:p00_sirenpurple:805201572111974401>": SIREN_COL,
+    "<:p05_siren:801693375043862580>": SIREN_COL,
+}
+
+
+def count_card(author_name: str, user_id: int, column: int) -> None:
+    """author_name の行の column を1増やす(未登録なら行を追加する)。E列の合計で降順に並べ直す。"""
+    worksheet = google_sheets.open_first_sheet(os.environ["CARDCOUNT_KEY"])
+    cell = worksheet.find(author_name)
+
+    if cell is None:
+        counts = [1 if col == column else 0 for col in (YELLOW_COL, RED_COL, SIREN_COL)]
+        # RAW(既定)で書くので、ユーザー名が数式として解釈されることはない。
+        worksheet.append_row([author_name, *counts])
+        row = worksheet.find(author_name).row
+        worksheet.update_cell(row, 5, f"=SUM(B{row}:D{row})")
+        worksheet.update_cell(row, 6, str(user_id))
+    else:
+        # 名前の列(cell.col)から数えて、カードの種類ぶん右の列をカウントアップ
+        col = cell.col + column - 1
+        worksheet.update_cell(cell.row, col, int(worksheet.cell(cell.row, col).value) + 1)
+
+    # E列のTTLを降順でソートする
+    worksheet.sort((5, "des"))
 
 
 class CardCount(commands.Cog):
@@ -9,118 +46,17 @@ class CardCount(commands.Cog):
         self.bot = bot
 
     @commands.Cog.listener()
-    async def on_raw_reaction_add(self, payload):
-        # botのリアクションは無視する
-        if payload.member.bot:
+    async def on_raw_reaction_add(self, payload: discord.RawReactionActionEvent):
+        # botのリアクションとサーバー外(DM)のリアクションは無視する
+        if payload.member is None or payload.member.bot:
+            return
+        column = CARD_COLUMNS.get(str(payload.emoji))
+        if column is None:
             return
 
-        yellow_card = "<:p05_card_yellow:934125477424140308>"
-        red_card = "<:p05_card_red:934125543111131187>"
-        shake_yellow_card = "<a:p00_card_yellow:934125609544745030>"
-        shake_red_card = "<a:p00_card_red:934125658529988648>"
-        siren_red = "<a:p00_siren:801424753419354133>"
-        siren_blue = "<a:p00_sirenblue:802091428057579521>"
-        siren_purple = "<a:p00_sirenpurple:805201572111974401>"
-        siren_emoji = "<:p05_siren:801693375043862580>"
-
-        count_list = [
-            yellow_card,
-            red_card,
-            shake_yellow_card,
-            shake_red_card,
-            siren_red,
-            siren_blue,
-            siren_purple,
-            siren_emoji,
-        ]
-        yellow_list = [yellow_card, shake_yellow_card]
-        red_list = [red_card, shake_red_card]
-        siren_list = [siren_red, siren_blue, siren_purple, siren_emoji]
-
-        # count_list共通処理
-        if str(payload.emoji) not in count_list:
-            return
-        else:
-            channel = self.bot.get_channel(payload.channel_id)
-            message = await channel.fetch_message(payload.message_id)
-            author_name = message.author
-            user_id = message.author.id
-
-            # 環境変数を設定
-            CARDCOUNT_KEY = os.environ["CARDCOUNT_KEY"]
-
-            # サービスアカウントの鍵ファイルで Google API(スプレッドシート / Drive)にログインする
-            gc = gspread.service_account(filename="client_secrets.json")
-
-            # 共有設定したスプレッドシートのシート1を開く
-            worksheet = gc.open_by_key(CARDCOUNT_KEY).sheet1
-
-            # ワークシートからauthor_nameの文字列があるか検索。ある場合はセルの値を返す
-            cell = worksheet.find(str(author_name))
-
-            # ここから絵文字の種類で分岐
-            # 絵文字がイエローカードの場合
-            if str(payload.emoji) in yellow_list:
-                # author_nameが新規の場合
-                if cell is None:
-                    export_value = [str(author_name), 1, 0, 0]
-                    worksheet.append_row(export_value)
-                    add_cell = worksheet.find(str(author_name))
-                    add_sum = f"=SUM(B{add_cell.row}:D{add_cell.row})"
-                    worksheet.update_cell(int(add_cell.row), 5, add_sum)
-                    worksheet.update_cell(int(add_cell.row), 6, str(user_id))
-
-                # author_nameがすでにある場合はカウントアップ
-                else:
-                    update_col = int(cell.col) + 1
-                    cell_value = worksheet.cell(cell.row, update_col).value
-                    update_value = int(cell_value) + 1
-                    worksheet.update_cell(cell.row, update_col, update_value)
-
-            # E列のTTLを降順でソートする Sort sheet A -> Z by column 'E'
-            worksheet.sort((5, "des"))
-
-            # 絵文字がレッドカードの場合
-            if str(payload.emoji) in red_list:
-                # author_nameが新規の場合
-                if cell is None:
-                    export_value = [str(author_name), 0, 1, 0]
-                    worksheet.append_row(export_value)
-                    add_cell = worksheet.find(str(author_name))
-                    add_sum = f"=SUM(B{add_cell.row}:D{add_cell.row})"
-                    worksheet.update_cell(int(add_cell.row), 5, add_sum)
-                    worksheet.update_cell(int(add_cell.row), 6, str(user_id))
-
-                # author_nameがすでにある場合はカウントアップ
-                else:
-                    update_col = int(cell.col) + 2
-                    cell_value = worksheet.cell(cell.row, update_col).value
-                    update_value = int(cell_value) + 1
-                    worksheet.update_cell(cell.row, update_col, update_value)
-
-            # E列のTTLを降順でソートする Sort sheet A -> Z by column 'E'
-            worksheet.sort((5, "des"))
-
-            # 絵文字がパトランプの場合
-            if str(payload.emoji) in siren_list:
-                # author_nameが新規の場合
-                if cell is None:
-                    export_value = [str(author_name), 0, 0, 1]
-                    worksheet.append_row(export_value)
-                    add_cell = worksheet.find(str(author_name))
-                    add_sum = f"=SUM(B{add_cell.row}:D{add_cell.row})"
-                    worksheet.update_cell(int(add_cell.row), 5, add_sum)
-                    worksheet.update_cell(int(add_cell.row), 6, str(user_id))
-
-                # author_nameがすでにある場合はカウントアップ
-                else:
-                    update_col = int(cell.col) + 3
-                    cell_value = worksheet.cell(cell.row, update_col).value
-                    update_value = int(cell_value) + 1
-                    worksheet.update_cell(cell.row, update_col, update_value)
-
-            # E列のTTLを降順でソートする Sort sheet A -> Z by column 'E'
-            worksheet.sort((5, "des"))
+        channel = self.bot.get_channel(payload.channel_id)
+        message = await channel.fetch_message(payload.message_id)
+        await asyncio.to_thread(count_card, str(message.author), message.author.id, column)
 
 
 async def setup(bot: commands.Bot):

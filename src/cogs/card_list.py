@@ -1,12 +1,25 @@
+import asyncio
 import os
-from datetime import datetime, timedelta, timezone
 
 import discord
-import gspread
 from discord import app_commands
 from discord.ext import commands
 
+from libs import google_sheets
+from libs.utils import now_jst
 from settings import GUILD_ID
+
+YELLOW_CARD = "<:p05_card_yellow:934125477424140308>"
+RED_CARD = "<:p05_card_red:934125543111131187>"
+SIREN = "<:p05_siren:801693375043862580>"
+RANK_EMOJIS = [":one:", ":two:", ":three:", ":four:", ":five:"]
+DATABASE_URL = "https://docs.google.com/spreadsheets/d/1pDagY2BfCXA5ILOy_vXZUa31shsKhL-YpS-beyK12M0/edit?usp=sharing"  # noqa: E501
+
+
+def get_top_rows() -> list[list[str]]:
+    """上位の行(A〜F列: 名前, イエロー, レッド, サイレン, 合計, ユーザーID)を返す。"""
+    worksheet = google_sheets.open_first_sheet(os.environ["CARDCOUNT_KEY"])
+    return worksheet.get(f"A3:F{2 + len(RANK_EMOJIS)}")
 
 
 class CardList(commands.Cog):
@@ -14,51 +27,20 @@ class CardList(commands.Cog):
         self.bot = bot
 
     @app_commands.command(name="card", description="警告カードの上位5名を表示します。")
-    async def card(
-        self,
-        interaction: discord.Interaction,
-    ):
+    async def card(self, interaction: discord.Interaction):
         # interactionは3秒以内にレスポンスしないといけないとエラーになるのでこの処理を入れる。
         await interaction.response.defer()
 
-        yellow_card = "<:p05_card_yellow:934125477424140308>"
-        red_card = "<:p05_card_red:934125543111131187>"
-        siren_emoji = "<:p05_siren:801693375043862580>"
-        database_url = "[Check database](https://docs.google.com/spreadsheets/d/1pDagY2BfCXA5ILOy_vXZUa31shsKhL-YpS-beyK12M0/edit?usp=sharing)"
-
-        # 環境変数を設定
-        CARDCOUNT_KEY = os.environ["CARDCOUNT_KEY"]
-
-        # サービスアカウントの鍵ファイルで Google API(スプレッドシート / Drive)にログインする
-        gc = gspread.service_account(filename="client_secrets.json")
-
-        # 共有設定したスプレッドシートのシート1を開く
-        worksheet = gc.open_by_key(CARDCOUNT_KEY).sheet1
-
-        # ワークシートのデータが入っている行数ゲットする
-        row = worksheet.row_count
-
-        # A列のauthor_nameをリストで取得する
-        author_lists = worksheet.get(f"A3:F{row}")
-
-        first = f":one:<@{author_lists[0][5]}>:{yellow_card}x{author_lists[0][1]} \
-            {red_card}x{author_lists[0][2]} {siren_emoji}x{author_lists[0][3]}"
-        second = f":two:<@{author_lists[1][5]}>:{yellow_card}x{author_lists[1][1]} \
-            {red_card}x{author_lists[1][2]} {siren_emoji}x{author_lists[1][3]}"
-        third = f":three:<@{author_lists[2][5]}>:{yellow_card}x{author_lists[2][1]} \
-            {red_card}x{author_lists[2][2]} {siren_emoji}x{author_lists[2][3]}"
-        forth = f":four:<@{author_lists[3][5]}>:{yellow_card}x{author_lists[3][1]} \
-            {red_card}x{author_lists[3][2]} {siren_emoji}x{author_lists[3][3]}"
-        fifth = f":five:<@{author_lists[4][5]}>:{yellow_card}x{author_lists[4][1]} \
-            {red_card}x{author_lists[4][2]} {siren_emoji}x{author_lists[4][3]}"
-
-        embed = discord.Embed()
-        embed.title = "Top 5 Radiant"
-        JST = timezone(timedelta(hours=+9), "JST")
-        embed.timestamp = datetime.now(JST)
-        embed.color = discord.Color.dark_orange()
-        embed.description = (
-            f"{first}\n\n{second}\n\n{third}\n\n{forth}\n\n{fifth}\n\n{database_url}"
+        rows = await asyncio.to_thread(get_top_rows)
+        lines = [
+            f"{emoji}<@{row[5]}>:{YELLOW_CARD}x{row[1]} {RED_CARD}x{row[2]} {SIREN}x{row[3]}"
+            for emoji, row in zip(RANK_EMOJIS, rows)
+        ]
+        embed = discord.Embed(
+            title="Top 5 Radiant",
+            color=discord.Color.dark_orange(),
+            timestamp=now_jst(),
+            description="\n\n".join([*lines, f"[Check database]({DATABASE_URL})"]),
         )
         await interaction.followup.send(embed=embed)
 

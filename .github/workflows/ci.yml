@@ -10,6 +10,10 @@ on:
   # push イベントが取りこぼされて CI が走らなかった場合に、手動で再実行できるようにする。
   workflow_dispatch:
 
+# GITHUB_TOKEN の権限は読み取りだけにする
+permissions:
+  contents: read
+
 jobs:
   test:
     name: Python ${{ matrix.python-version }} on ${{ matrix.platform }}
@@ -23,15 +27,18 @@ jobs:
         python-version: ["3.12"]
 
     steps:
-    - uses: actions/checkout@v4
+    # 外部のアクションはタグではなくコミットSHAで固定する(タグの付け替えによる乗っ取り対策)
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      with:
+        persist-credentials: false
 
     - name: Install uv
-      uses: astral-sh/setup-uv@v5
+      uses: astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86 # v5.4.2
       with:
         python-version: ${{ matrix.python-version }}
 
     - name: Install the project
-      run: uv sync --all-extras --dev
+      run: uv sync --all-extras --dev --frozen
 
     - name: Run Check
       run: uv run pre-commit run --all-files

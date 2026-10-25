@@ -1,10 +1,21 @@
-from datetime import datetime, timedelta, timezone
-
 import discord
 from discord import app_commands
 from discord.ext import commands
 
+from libs.utils import now_jst
 from settings import GUILD_ID
+
+# 犬～恐竜_txt
+ANIMAL_CHANNEL_IDS = [
+    762575939623452682,  # 犬
+    762576579507126273,  # 猫
+    780611197350576200,  # 亀
+    812312154371784704,  # 恐竜
+]
+
+
+async def count_messages(channel: discord.abc.Messageable) -> int:
+    return sum([1 async for _ in channel.history(limit=None)])
 
 
 class MessageCount(commands.Cog):
@@ -14,24 +25,16 @@ class MessageCount(commands.Cog):
     @app_commands.command(
         name="count", description="このチャンネルの現在のメッセージ数を数えます。"
     )
-    async def count(
-        self,
-        interaction: discord.Interaction,
-    ):
+    async def count(self, interaction: discord.Interaction):
         # interactionは3秒以内にレスポンスしないといけないとエラーになるのでこの処理を入れる。
         await interaction.response.defer()
 
-        channel = interaction.channel
-        count = 0
-        async for _ in channel.history(limit=None):
-            count += 1
-            d_count = f"{count:,}"
-
-        embed = discord.Embed()
-        JST = timezone(timedelta(hours=+9), "JST")
-        embed.timestamp = datetime.now(JST)
-        embed.color = discord.Color.greyple()
-        embed.description = f"このチャンネルには現在 **{d_count}** 件のメッセージがあります。"
+        count = await count_messages(interaction.channel)
+        embed = discord.Embed(
+            color=discord.Color.greyple(),
+            timestamp=now_jst(),
+            description=f"このチャンネルには現在 **{count:,}** 件のメッセージがあります。",
+        )
         await interaction.followup.send(embed=embed)
 
     @app_commands.command(
@@ -41,32 +44,14 @@ class MessageCount(commands.Cog):
         # interactionは3秒以内にレスポンスしないといけないとエラーになるのでこの処理を入れる。
         await interaction.response.defer()
 
-        inu_id = self.bot.get_channel(762575939623452682)  # 犬
-        neko_id = self.bot.get_channel(762576579507126273)  # 猫
-        kame_id = self.bot.get_channel(780611197350576200)  # 亀
-        kyoryu_id = self.bot.get_channel(812312154371784704)  # 恐竜
-
-        all_counter = 0
-
-        async for _ in inu_id.history(limit=None):
-            all_counter += 1
-
-        async for _ in neko_id.history(limit=None):
-            all_counter += 1
-
-        async for _ in kame_id.history(limit=None):
-            all_counter += 1
-
-        async for _ in kyoryu_id.history(limit=None):
-            all_counter += 1
-
-        ttl_count = f"{all_counter:,}"
-
-        embed = discord.Embed()
-        JST = timezone(timedelta(hours=+9), "JST")
-        embed.timestamp = datetime.now(JST)
-        embed.color = discord.Color.blurple()
-        embed.description = f"犬～恐竜_txtには現在合計 **{ttl_count}** 件のメッセージがあります。"
+        total = 0
+        for channel_id in ANIMAL_CHANNEL_IDS:
+            total += await count_messages(self.bot.get_channel(channel_id))
+        embed = discord.Embed(
+            color=discord.Color.blurple(),
+            timestamp=now_jst(),
+            description=f"犬～恐竜_txtには現在合計 **{total:,}** 件のメッセージがあります。",
+        )
         await interaction.followup.send(embed=embed)
 
 

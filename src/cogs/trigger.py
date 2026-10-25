@@ -1,6 +1,5 @@
 import asyncio
 import logging
-import os
 
 import discord
 from discord import app_commands
@@ -10,10 +9,7 @@ from libs import dic_search
 from settings import GUILD_ID
 from views.dic import DicMessage, DicSuggestView, build_message, send_kwargs
 
-from .api import get_trigger_repository
-
-DIC_KEY = os.environ["DIC_KEY"]
-PREFIX = os.environ["PREFIX"]
+from .repository import get_trigger_repository
 
 logger = logging.getLogger(__name__)
 
@@ -29,15 +25,15 @@ class Trigger(commands.Cog):
         # interactionは3秒以内にレスポンスしないといけないとエラーになるのでこの処理で待たせる。
         await interaction.response.defer()
 
-        trigger: str = keyword
-        data = self.trigger_repo.select(trigger)
-
-        if data:
-            await interaction.followup.send(**send_kwargs(build_message(keyword, data)))
+        message = await self._fetch(keyword)
+        if message:
+            await interaction.followup.send(**send_kwargs(message))
             return
 
-        not_found = f":warning: 「{trigger}」は登録されていません。"
-        suggestions = await self._suggest(trigger)
+        not_found = (
+            f":warning: 「{discord.utils.escape_markdown(keyword)}」は登録されていません。"
+        )
+        suggestions = await self._suggest(keyword)
         if not suggestions:
             await interaction.followup.send(not_found)
             return
@@ -81,7 +77,7 @@ class Trigger(commands.Cog):
     async def trigger_autocomplete(
         self, interaction: discord.Interaction, current: str
     ) -> list[app_commands.Choice[str]]:
-        keywords = self.trigger_repo.list_triggers()
+        keywords = await asyncio.to_thread(self.trigger_repo.list_triggers)
         matched = [k for k in keywords if current.lower() in k.lower()]
         return [app_commands.Choice(name=k, value=k) for k in matched[:25]]
 

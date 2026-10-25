@@ -1,32 +1,35 @@
 import os
 
+import discord
 from discord.ext import commands
+
+# 通知を送るテキストチャンネル
+NOTIFY_CHANNEL_ID = 822096585429090324
 
 
 class Vcwhite(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
+        # 通知の対象とするVC(犬・猫・亀・恐竜)
+        self.vc_ids = {
+            int(os.environ[name])
+            for name in ("INU_VC_ID", "NEKO_VC_ID", "KAME_VC_ID", "KYORYU_VC_ID")
+        }
 
     @commands.Cog.listener()
-    async def on_voice_state_update(self, member, before, after):
-        # 通知の対象としたいチャンネルidを入力
-        INU_VC_ID = self.bot.get_channel(int(os.environ["INU_VC_ID"]))  # 犬
-        NEKO_VC_ID = self.bot.get_channel(int(os.environ["NEKO_VC_ID"]))  # 猫
-        KAME_VC_ID = self.bot.get_channel(int(os.environ["KAME_VC_ID"]))  # 亀
-        KYORYU_VC_ID = self.bot.get_channel(int(os.environ["KYORYU_VC_ID"]))  # 恐竜
+    async def on_voice_state_update(
+        self, member: discord.Member, before: discord.VoiceState, after: discord.VoiceState
+    ):
+        # 誰もいない対象のVCに、どこにも入っていなかった人が最初に入ったときだけ通知する
+        if before.channel is not None or after.channel is None:
+            return
+        if after.channel.id not in self.vc_ids or len(after.channel.members) != 1:
+            return
 
-        # 対象チャンネルかつlengthが1の場合メッセージを送る。
-        if after.channel in [INU_VC_ID, NEKO_VC_ID, KAME_VC_ID, KYORYU_VC_ID]:
-            if before.channel is None and after.channel and len(after.channel.members) == 1:
-                # メッセージを送るテキストチャンネルID
-                channel_id = 822096585429090324
-                text_channel = self.bot.get_channel(channel_id)
-                await text_channel.send(
-                    f"**{member.display_name}** が **{after.channel.name}** をはじめました！"
-                )
-
-        else:
-            pass
+        await self.bot.get_channel(NOTIFY_CHANNEL_ID).send(
+            f"**{discord.utils.escape_markdown(member.display_name)}** が "
+            f"**{after.channel.name}** をはじめました！"
+        )
 
 
 async def setup(bot: commands.Bot):

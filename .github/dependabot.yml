@@ -1,0 +1,7 @@
+version: 2
+updates:
+  # ワークフローのアクションはコミットSHAで固定しているので、更新はDependabotに任せる
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly

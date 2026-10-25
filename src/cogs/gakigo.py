@@ -1,12 +1,14 @@
-import logging
-from datetime import datetime, timedelta, timezone
+import asyncio
 
 import discord
 from discord.ext import commands
 
-from .api import get_trigger_repository
+from views.dic import build_message, send_kwargs
 
-logger = logging.getLogger(__name__)
+from .repository import get_trigger_repository
+
+NEKO_EMOJI = "<:p01_neko:863117588757872730>"
+TRIGGER = "dendou"
 
 
 class Gakigo(commands.Cog):
@@ -15,38 +17,13 @@ class Gakigo(commands.Cog):
         self.trigger_repo = get_trigger_repository()
 
     @commands.Cog.listener()
-    async def on_ready(self):
-        logger.info("on ready gakigo!")
-
-    @commands.Cog.listener()
-    async def on_message(self, message):
-        if message.author == self.bot.user:
+    async def on_message(self, message: discord.Message):
+        if message.author.bot or message.content != NEKO_EMOJI:
             return
 
-        if message.content != "<:p01_neko:863117588757872730>":
-            return
-
-        data = self.trigger_repo.select("dendou")
-
-        if not data:
-            return
-        else:
-            if data["response"]:
-                await message.channel.send(f"{data['response']}")
-            else:
-                embed = discord.Embed()
-                JST = timezone(timedelta(hours=+9), "JST")
-                embed.timestamp = datetime.now(JST)
-                if data["title"]:
-                    embed.title = f"{data['title']}"
-                if data["description"]:
-                    embed.description = f"{data['description']}\n\n[Check DB](https://docs.google.com/spreadsheets/d/15QCsHsmtZAs1FtiCplLmybU80WyxWw4C7G6ESf2b9f4/edit#gid=1264027664&range=A1)"
-                if data["right_small_image_URL"]:
-                    embed.set_thumbnail(url=f"{data['right_small_image_URL']}")
-                if data["big_image_URL"]:
-                    embed.set_image(url=f"{data['big_image_URL']}")
-                embed.color = discord.Color.dark_blue()
-                await message.channel.send(embed=embed)
+        data = await asyncio.to_thread(self.trigger_repo.select, TRIGGER)
+        if data:
+            await message.channel.send(**send_kwargs(build_message(TRIGGER, data)))
 
 
 async def setup(bot: commands.Bot):

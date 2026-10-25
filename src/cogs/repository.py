@@ -1,99 +1,61 @@
+import functools
 import os
 import time
-from pathlib import Path
-from typing import Dict, List, Optional
 
 import gspread
+
+from libs import google_sheets
 
 DIC_KEY = os.environ["DIC_KEY"]
 
 # 一覧(オートコンプリート・あいまい検索用)のキャッシュ期間。追加した項目が反映されるまでの最大遅延。
 ROWS_CACHE_TTL_SECONDS = 300
 
+# select() が返す列
+RESULT_COLUMNS = ["response", "title", "description", "right_small_image_URL", "big_image_URL"]
+# あいまい検索の手がかりとして list_entries() が返す列
+ENTRY_COLUMNS = ["trigger", "alias01", "alias02", "title", "description"]
+# select() で検索対象にする列(この順で探す)
+TRIGGER_COLUMNS = ["trigger", "alias01", "alias02"]
+
 
 class TriggerRepository:
-    def __init__(self, json_keyfile: Path):
-        # サービスアカウントの鍵ファイルで Google API(スプレッドシート / Drive)にログインする
-        self.gc = gspread.service_account(filename=json_keyfile)
+    def __init__(self, gc: gspread.Client):
         # 共有設定したスプレッドシートのtriggerシートを開く
-        self.worksheet = self.gc.open_by_key(DIC_KEY).worksheet("trigger")
+        self.worksheet = gc.open_by_key(DIC_KEY).worksheet("trigger")
 
         # ヘッダー行をスプレッドシートから取得
-        self.header_list: List[str] = self.worksheet.row_values(2)
+        self.header_list: list[str] = self.worksheet.row_values(2)
 
-        self._rows_cache: Optional[List[List[str]]] = None
+        self._rows_cache: list[list[str]] | None = None
         self._rows_cached_at = 0.0
 
-    def select(self, trigger: str) -> Optional[Dict[str, str]]:
-        # trigger 文字列が含まれる列番号を取得
-        row_num = self._find_trigger_row_number(trigger, self.header_list)
-
+    def select(self, trigger: str) -> dict[str, str] | None:
+        """trigger(または別名)に一致する行を、RESULT_COLUMNS の辞書で返します。"""
+        row_num = self._find_trigger_row_number(trigger)
         if not row_num:
             return None
-        else:
-            # トリガー行データをスプレッドシートから取得
-            trigger_value_list: List[str] = self.worksheet.row_values(row_num)
-            pad_len = len(self.header_list) - len(trigger_value_list)
-            pad_list = ["" for _ in range(pad_len)]
-            trigger_value_list.extend(pad_list)
+        return self._pick(self.worksheet.row_values(row_num), RESULT_COLUMNS)
 
-            # 取得対象のカラム名リスト
-            colomn_names = [
-                "response",
-                "title",
-                "description",
-                "right_small_image_URL",
-                "big_image_URL",
-            ]
+    def list_triggers(self) -> list[str]:
+        """登録されている trigger の値を一覧で返します(空文字は除く)。"""
+        return [e["trigger"] for e in self.list_entries()]
 
-            # 返却値を格納する辞書
-            embed_dict: Dict[str, str] = {}
-
-            for col_name in colomn_names:
-                col_index = self._get_index(self.header_list, col_name)
-                if col_index is None:
-                    value = ""
-                else:
-                    value = trigger_value_list[col_index]
-                embed_dict[col_name] = value
-
-            return embed_dict
-
-    def list_triggers(self) -> List[str]:
-        """登録されている trigger の値を一覧で返します。
-        Returns:
-            List[str]: 登録済みキーワードの一覧(空文字は除く)
+    def list_entries(self) -> list[dict[str, str]]:
+        """あいまい検索の手がかりとして、登録済みの各項目を ENTRY_COLUMNS の辞書で返します。
+        (trigger が空の行は除く)
         """
-        col_index = self._get_index(self.header_list, "trigger")
-        if col_index is None:
+        if "trigger" not in self.header_list:
             return []
+        entries = (self._pick(row, ENTRY_COLUMNS) for row in self._get_rows())
+        return [e for e in entries if e["trigger"]]
 
-        return [
-            row[col_index] for row in self._get_rows() if col_index < len(row) and row[col_index]
-        ]
+    def _pick(self, row: list[str], columns: list[str]) -> dict[str, str]:
+        """行から指定した列の値を取り出す。ヘッダーにない列や、値が足りない列は空文字にする。"""
+        values = dict(zip(self.header_list, row))
+        return {name: values.get(name, "") for name in columns}
 
-    def list_entries(self) -> List[Dict[str, str]]:
-        """あいまい検索の手がかりとして、登録済みの各項目を辞書のリストで返します。
-        Returns:
-            List[Dict[str, str]]: trigger / alias01 / alias02 / title / description を持つ辞書
-                (trigger が空の行は除く)
-        """
-        columns = ["trigger", "alias01", "alias02", "title", "description"]
-        indexes = {name: self._get_index(self.header_list, name) for name in columns}
-        if indexes["trigger"] is None:
-            return []
-
-        entries: List[Dict[str, str]] = []
-        for row in self._get_rows():
-            entry = {
-                name: row[i] if i is not None and i < len(row) else ""
-                for name, i in indexes.items()
-            }
-            if entry["trigger"]:
-                entries.append(entry)
-        return entries
-
-    def _get_rows(self) -> List[List[str]]:
+    def _get_rows(self) -> list[list[str]]:
         """データ行(3行目以降)を返します。Sheets APIの呼び出しを減らすため一定時間キャッシュします。"""
         now = time.monotonic()
         if self._rows_cache is None or now - self._rows_cached_at >= ROWS_CACHE_TTL_SECONDS:
@@ -101,41 +63,21 @@ class TriggerRepository:
             self._rows_cached_at = now
         return self._rows_cache
 
-    def _get_index(self, target: List[str], value: str) -> Optional[int]:
-        """value が target の何番目かを取得する関数です。value が存在しない場合は None を返します。
-        Args:
-            target (List[str]): index を調べたい対象のリスト
-            value (str): index を取得する対象文字列
-        Returns:
-            Optional[int]: 存在すれば index(int) を返し、存在しなければ None を返します。
-        """
-        try:
-            index = target.index(value)
-            return index
-        except ValueError:
-            return None
-
-    def _find_trigger_row_number(self, trigger: str, header_list: List[str]) -> Optional[int]:
-        """triggerが含まれている行番号を返します
-        Args:
-            trigger (str): trigger
-            header_list (List[str]): trigger db のヘッダーリスト
-        Returns:
-            Optional[int]: trigger が含まれている行番号
-        """
-        trigger_columns = ["trigger", "alias01", "alias02"]
-        for trigger_column in trigger_columns:
-            index = self._get_index(header_list, trigger_column)
-            if index is None:
-                # header_list に trigger_column が存在しない場合
+    def _find_trigger_row_number(self, trigger: str) -> int | None:
+        """trigger が含まれている行番号を返します。"""
+        for column in TRIGGER_COLUMNS:
+            if column not in self.header_list:
                 continue
-            else:
-                # gspread の find(in_column=...) は 1-based のためインデックスを +1 する
-                trigger_cell = self.worksheet.find(
-                    trigger, in_column=index + 1, case_sensitive=False
-                )
-                if not trigger_cell:
-                    # trigger column に trigger が存在しない場合
-                    continue
-                else:
-                    return trigger_cell.row
+            # gspread の find(in_column=...) は 1-based のためインデックスを +1 する
+            cell = self.worksheet.find(
+                trigger, in_column=self.header_list.index(column) + 1, case_sensitive=False
+            )
+            if cell:
+                return cell.row
+        return None
+
+
+@functools.cache
+def get_trigger_repository() -> TriggerRepository:
+    """/dic と gakigo で同じリポジトリ(シートへの接続・キャッシュ)を共有する。"""
+    return TriggerRepository(google_sheets.get_client())
