@@ -1,16 +1,31 @@
+import asyncio
+import logging
 import os
-import re
-from datetime import datetime, timedelta, timezone
-from urllib.parse import urlparse
+from urllib.parse import urlsplit
 
 import discord
-import gspread
 import httpx
-from bs4 import BeautifulSoup
 from discord import app_commands
 from discord.ext import commands
 
+from libs import google_sheets
+from libs.safe_http import UnsafeURLError, fetch_title
+from libs.utils import now_jst
 from settings import GUILD_ID
+
+logger = logging.getLogger(__name__)
+
+SSLC_DATABASE_URL = "https://docs.google.com/spreadsheets/d/1c25pvMyjQ89OBCvB9whCQQLM_BPXKyY7umsj5wmpP2k/edit?usp=sharing"  # noqa: E501
+
+
+def _register(url: str, title: str, domain: str) -> bool:
+    """スプレッドシートに登録する。C列(3行目以降)にドメインが登録済みならFalse。"""
+    worksheet = google_sheets.open_first_sheet(os.environ["SSLADD_KEY"])
+    if domain in worksheet.col_values(3)[2:]:
+        return False
+    # A, B, C列にappend。RAW(既定)で書くので、タイトルが数式として解釈されることはない。
+    worksheet.append_row([title, url, domain])
+    return True
 
 
 class SSLAdd(commands.Cog):
@@ -23,63 +38,34 @@ class SSLAdd(commands.Cog):
         # interactionは3秒以内にレスポンスしないといけないとエラーになるのでこの処理を入れる。
         await interaction.response.defer()
 
-        # 最初にaddssl引数がURLかを判断し、URL出ない場合はエラーを返す
-        if not add_url.startswith("http"):
-            await interaction.followup.send(":warning: URLを指定してください！", ephemeral=True)
+        try:
+            title = await fetch_title(add_url)
+        except UnsafeURLError as e:
+            await interaction.followup.send(f":warning: {e}")
+            return
+        except httpx.HTTPError:
+            logger.warning("addssl: failed to fetch %s", add_url, exc_info=True)
+            await interaction.followup.send(":warning: ページを取得できませんでした。")
+            return
+        if title is None:
+            await interaction.followup.send(":warning: ページのタイトルが見つかりませんでした。")
+            return
 
-        # httpから始まる文字列の場合は処理をすすめる
-        else:
-            session = httpx.Client()
-            session.trust_env = False
-            response = httpx.get(add_url)
-            soup = BeautifulSoup(response.content, "html.parser")
-            # タイトルをゲットし、前後の空白や改行をすべて取る
-            # （ナオトインティライミのHPは前後に空白が16個ずつも入っていた！ふざけるな！）
-            title = soup.find("title").text.strip()
-            # その後中盤に改行やTABが入っている場合は取る
-            plain_title = re.sub("\n|\t|", "", title)
+        domain = urlsplit(add_url).hostname
+        if not await asyncio.to_thread(_register, add_url, title[:200], domain):
+            await interaction.followup.send("このドメインはすでに登録されています！")
+            return
 
-            # 環境変数を設定
-            SSLADD_GSP_KEY = os.environ["SSLADD_KEY"]
-
-            # サービスアカウントの鍵ファイルで Google API(スプレッドシート / Drive)にログインする
-            gc = gspread.service_account(filename="client_secrets.json")
-
-            # 共有設定したスプレッドシートのシート1を開く
-            worksheet = gc.open_by_key(SSLADD_GSP_KEY).sheet1
-
-            # //C列に記載するドメインを抽出
-            out = urlparse(add_url)
-            domain = out.hostname
-
-            # ワークシートのデータが入っている行数ゲットする
-            row = worksheet.row_count
-
-            # C列の便宜的ドメインをリストでゲットする
-            domain_lists = worksheet.get(f"C3:C{row}")
-
-            # 今回登録したURLの便宜的ドメインが登録されているC列のドメインリストにないかチェック。
-            # すでに登録されていた場合はエラーを返す
-            for dlist in domain_lists:
-                if domain in dlist:
-                    await interaction.followup.send("このドメインはすでに登録されています！")
-                    break
-
-            else:
-                # 新規登録と判断できたらgspに書き込みを行う
-                # A, B, C列にappend
-                export_value = [plain_title, add_url, domain]
-                worksheet.append_row(export_value)
-
-                # その後レスポンスメッセージ
-                embed = discord.Embed()
-                JST = timezone(timedelta(hours=+9), "JST")
-                embed.timestamp = datetime.now(JST)
-                embed.color = discord.Color.green()
-                embed.description = f"**「{plain_title}」** を監視いたします。\
-                    \n\n[SSL Checker](https://ssl-checker.vercel.app/) | \
-                    [SSLC Database](https://docs.google.com/spreadsheets/d/1c25pvMyjQ89OBCvB9whCQQLM_BPXKyY7umsj5wmpP2k/edit?usp=sharing)"
-                await interaction.followup.send(embed=embed)
+        embed = discord.Embed(
+            color=discord.Color.green(),
+            timestamp=now_jst(),
+            description=(
+                f"**「{discord.utils.escape_markdown(title[:200])}」** を監視いたします。\n\n"
+                f"[SSL Checker](https://ssl-checker.vercel.app/) | "
+                f"[SSLC Database]({SSLC_DATABASE_URL})"
+            ),
+        )
+        await interaction.followup.send(embed=embed)
 
 
 async def setup(bot: commands.Bot):

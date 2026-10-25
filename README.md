@@ -116,7 +116,7 @@ KAME_VC_ID=''
 KYORYU_VC_ID=''
 
 # Google (スプレッドシート / Drive)
-CLIENT_SECRET=''            # Drive / スプレッドシート用のサービスアカウント認証情報 JSON の中身
+CLIENT_SECRET=''            # スプレッドシート用のサービスアカウント認証情報 JSON の中身(ファイルには書き出さず、メモリ上で読み込む)
 DRIVE_FOLDER_ID=''
 DRIVE_OAUTH_CLIENT_ID=''       # save_image の Drive アップロード用 OAuth クライアント
 DRIVE_OAUTH_CLIENT_SECRET=''

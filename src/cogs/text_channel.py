@@ -5,7 +5,6 @@ from discord import app_commands
 from discord.ext import commands
 
 from settings import GUILD_ID
-
 from views.button import LinkButton
 
 logger = logging.getLogger(__name__)
@@ -22,25 +21,22 @@ class TextChannel(commands.Cog):
         # interactionは3秒以内にレスポンスしないといけないとエラーになるのでこの処理を入れる。
         await interaction.response.defer()
 
-        logger.info(interaction.message)
-        ch = interaction.channel
-        url = ""
         try:
-            async for message in ch.history(limit=1, oldest_first=True):
-                url = message.jump_url
-        except discord.Forbidden as e:
-            msg = "メッセージ履歴を読み取る権限がありません!"
-            logger.error(msg, exc_info=True)
-            await interaction.followup.send(msg)
-            raise e
-        except discord.HTTPException as e:
-            msg = "メッセージ履歴の取得に失敗しました!"
-            logger.error(msg, exc_info=True)
-            await interaction.followup.send(msg)
-            raise e
+            first = [m async for m in interaction.channel.history(limit=1, oldest_first=True)]
+        except discord.Forbidden:
+            logger.exception("No permission to read the channel history")
+            await interaction.followup.send("メッセージ履歴を読み取る権限がありません!")
+            return
+        except discord.HTTPException:
+            logger.exception("Failed to read the channel history")
+            await interaction.followup.send("メッセージ履歴の取得に失敗しました!")
+            return
 
+        if not first:
+            await interaction.followup.send("このチャンネルにはまだメッセージがありません。")
+            return
         await interaction.followup.send(
-            "", view=LinkButton("Go to top on this channel", url), ephemeral=True
+            view=LinkButton("Go to top on this channel", first[0].jump_url), ephemeral=True
         )
 
 

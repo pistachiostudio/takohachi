@@ -1,7 +1,4 @@
 import os
-from pathlib import Path
-
-CLIENT_SECRETS_PATH = Path("/app/client_secrets.json").resolve()
 
 # Discord設定
 # 設定できていない場合はエラーになってほしいので environ["HOGEHOGE"] を使っている

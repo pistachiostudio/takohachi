@@ -1,160 +1,114 @@
+import asyncio
+import functools
 import os
-from datetime import datetime, timedelta, timezone
 
 import discord
 import spotipy
 from discord import app_commands
 from discord.ext import commands
 
+from libs.utils import now_jst
 from settings import GUILD_ID
+
+SEARCH_TYPES = {"song": "track", "artist": "artist", "album": "album"}
+
+
+@functools.cache
+def _client() -> spotipy.Spotify:
+    credentials = spotipy.oauth2.SpotifyClientCredentials(
+        os.environ["SPOTIFY_CLIENT_ID"], os.environ["SPOTIFY_CLIENT_SECRET"]
+    )
+    return spotipy.Spotify(client_credentials_manager=credentials, language="ja")
+
+
+def _song_embed(track: dict) -> discord.Embed:
+    # 検索結果より詳しい情報(Popularityなど)を取るため、改めて曲情報を取得する
+    track = _client().track(track["id"])
+    artists = ", ".join(a["name"] for a in track["artists"])
+    # NOTE: Spotifyは2024年11月にAudio Features/Analysis APIへの
+    # 一般アプリのアクセスを廃止したため、BPM等の分析情報は取得不可。
+    embed = discord.Embed(
+        title="Spotify song search",
+        color=discord.Color.red(),
+        timestamp=now_jst(),
+        description=(
+            f"**Track:** {track['name']}\n**Artist:** {artists}\n"
+            f"[Listen this track!]({track['external_urls']['spotify']})"
+        ),
+    )
+    embed.set_thumbnail(url=track["album"]["images"][0]["url"])
+    embed.add_field(name="Popularity", value=f"```{track['popularity']}```")
+    return embed
+
+
+def _artist_embed(artist: dict) -> discord.Embed:
+    artist = _client().artist(artist["id"])
+    embed = discord.Embed(
+        title=f"{artist['name']}'s Profile",
+        color=discord.Color.green(),
+        timestamp=now_jst(),
+        description=(
+            f"**Popularity:** {artist['popularity']}\n"
+            f"**Followers:** {artist['followers']['total']:,}\n"
+            f"**Genre:** {', '.join(artist['genres'])}\n"
+            f"[Listen this artist!]({artist['external_urls']['spotify']})"
+        ),
+    )
+    if artist["images"]:
+        embed.set_image(url=artist["images"][0]["url"])
+    return embed
+
+
+def _album_embed(album: dict) -> discord.Embed:
+    artist = album["artists"][0]
+    embed = discord.Embed(
+        title=album["name"],
+        color=discord.Color.greyple(),
+        timestamp=now_jst(),
+        description=(
+            f"**Artist:** [{artist['name']}]({artist['external_urls']['spotify']})\n"
+            f"**Release Date:** {album['release_date']}\n"
+            f"[Listen this album!]({album['external_urls']['spotify']})"
+        ),
+    )
+    if album["images"]:
+        embed.set_image(url=album["images"][0]["url"])
+    return embed
+
+
+EMBED_BUILDERS = {"song": _song_embed, "artist": _artist_embed, "album": _album_embed}
+
+
+def search_embed(select: str, keyword: str) -> discord.Embed | None:
+    """検索して最初の1件をEmbedにする。見つからなければNone。"""
+    search_type = SEARCH_TYPES[select]
+    result = _client().search(q=keyword, type=search_type, market="JP", limit=1)
+    items = result[f"{search_type}s"]["items"]
+    return EMBED_BUILDERS[select](items[0]) if items else None
 
 
 class Spotify(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @app_commands.command(
-        name="spotify",
-        description="Spotifyの曲情報を検索します。",
-    )
+    @app_commands.command(name="spotify", description="Spotifyの曲情報を検索します。")
     @app_commands.describe(select="選択してください。", search="検索ワードを入力してください。")
     @app_commands.choices(
         select=[
-            discord.app_commands.Choice(name="Song", value="song"),
-            discord.app_commands.Choice(name="Artist", value="artist"),
-            discord.app_commands.Choice(name="Album", value="album"),
+            app_commands.Choice(name="Song", value="song"),
+            app_commands.Choice(name="Artist", value="artist"),
+            app_commands.Choice(name="Album", value="album"),
         ]
     )
     async def sp(self, interaction: discord.Interaction, select: str, search: str):
         # interactionは3秒以内にレスポンスしないといけないとエラーになるのでこの処理を入れる。
         await interaction.response.defer()
 
-        # arguments = ' '.join(args)
-        arguments = search
-
-        # 起動
-        client_id = os.environ["SPOTIFY_CLIENT_ID"]
-        client_secret = os.environ["SPOTIFY_CLIENT_SECRET"]
-        client_credentials_manager = spotipy.oauth2.SpotifyClientCredentials(
-            client_id, client_secret
-        )
-        spo = spotipy.Spotify(
-            client_credentials_manager=client_credentials_manager, language="ja"
-        )
-
-        # Songの検索の場合
-        if select == "song":
-            # searchから曲名を取る
-            searchtrack = spo.search(q=f"{arguments}", type="track", market="JP", limit=1)
-            for idx, track in enumerate(searchtrack["tracks"]["items"]):
-                songname = track["name"]
-
-            # searchから曲のidを取る
-            for track in searchtrack["tracks"]["items"]:
-                song_id = track["id"]
-
-            # アーティスト情報
-            trackinfo = spo.track(song_id)
-            arname = [d.get("name") for d in trackinfo["artists"]]
-            arname = ", ".join(arname)
-
-            # ジャケ
-            track = trackinfo["album"]["images"][0]
-            imageurl = track["url"]
-
-            # Popularity
-            for track in trackinfo["artists"]:
-                popularities = trackinfo["popularity"]
-
-            # track url
-            trackurl = trackinfo["external_urls"]["spotify"]
-
-            # embed
-            # NOTE: Spotifyは2024年11月にAudio Features/Analysis APIへの
-            # 一般アプリのアクセスを廃止したため、BPM等の分析情報は取得不可。
-            embed = discord.Embed()
-            JST = timezone(timedelta(hours=+9), "JST")
-            embed.timestamp = datetime.now(JST)
-            embed.title = "Spotify song search"
-            embed.color = discord.Color.red()
-            embed.description = (
-                f"**Track:** {songname}\n**Artist:** {arname}\n[Listen this track!]({trackurl})"
-            )
-            embed.set_thumbnail(url=imageurl)
-            embed.add_field(name="Popularity", value=f"```{popularities}```")
-            await interaction.followup.send(embed=embed)
-
-        # Artistの検索の場合
-        elif select == "artist":
-            # 検索ワード
-            searchartist = spo.search(q=f"{arguments}", type="artist", market="JP", limit=1)
-
-            # searchからアーティスト名を取る
-            for idx, track in enumerate(searchartist["artists"]["items"]):
-                artistname = track["name"]
-
-            # searchからアーティストidを取る
-            for track in searchartist["artists"]["items"]:
-                artist_id = track["id"]
-
-            # ジャンルをすべて取る
-            artistinfo = spo.artist(artist_id)
-            artistgenre = artistinfo["genres"]
-            argenre = ", ".join(artistgenre)
-
-            # アー写の一番でかいやつ
-            track = artistinfo["images"][0]
-            imgurl = track["url"]
-
-            # フォロワー
-            follower = "{:,}".format(artistinfo["followers"]["total"])
-
-            # Popularity
-            artistpopularity = artistinfo["popularity"]
-
-            # artist url
-            artisturl = artistinfo["external_urls"]["spotify"]
-
-            # artist embed
-            embed = discord.Embed()
-            JST = timezone(timedelta(hours=+9), "JST")
-            embed.timestamp = datetime.now(JST)
-            embed.title = f"{artistname}'s Profile"
-            embed.color = discord.Color.green()
-            embed.description = f"**Popularity:** {artistpopularity}\n**Followers:** {follower}\n\
-                **Genre:** {argenre}\n[Listen this artist!]({artisturl})"
-            embed.set_image(url=imgurl)
-            await interaction.followup.send(embed=embed)
-
-        # Albumの検索の場合
-        elif select == "album":
-            # 検索ワード
-            searchalbum = spo.search(q=f"{arguments}", type="album", market="JP", limit=1)
-
-            # 諸々情報取得
-            album_title = searchalbum["albums"]["items"][0]["name"]
-            album_release_date = searchalbum["albums"]["items"][0]["release_date"]
-            album_artist_name = searchalbum["albums"]["items"][0]["artists"][0]["name"]
-            album_artist_url = searchalbum["albums"]["items"][0]["artists"][0]["external_urls"][
-                "spotify"
-            ]
-            album_url = searchalbum["albums"]["items"][0]["external_urls"]["spotify"]
-            album_image = searchalbum["albums"]["items"][0]["images"][0]["url"]
-
-            # album embed
-            embed = discord.Embed()
-            JST = timezone(timedelta(hours=+9), "JST")
-            embed.timestamp = datetime.now(JST)
-            embed.title = f"{album_title}"
-            embed.color = discord.Color.greyple()
-            embed.description = f"**Artist:** [{album_artist_name}]({album_artist_url})\n\
-                **Release Date:** {album_release_date}\n[Listen this album!]({album_url})"
-            embed.set_image(url=album_image)
-            await interaction.followup.send(embed=embed)
-
-        else:
-            await interaction.followup.send("Error")
+        embed = await asyncio.to_thread(search_embed, select, search)
+        if embed is None:
+            await interaction.followup.send(":warning: 見つかりませんでした。")
             return
+        await interaction.followup.send(embed=embed)
 
 
 async def setup(bot: commands.Bot):

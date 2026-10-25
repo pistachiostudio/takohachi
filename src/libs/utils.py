@@ -1,6 +1,7 @@
+import logging
+import random
 import re
 from datetime import datetime, timedelta, timezone
-from random import randint
 from urllib import parse
 
 import httpx
@@ -8,96 +9,61 @@ import yfinance as yf
 from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
 from yfinance.exceptions import YFRateLimitError
 
+logger = logging.getLogger(__name__)
 
-def get_now_timestamp_jst() -> datetime:
-    JST = timezone(timedelta(hours=+9), "JST")
+JST = timezone(timedelta(hours=+9), "JST")
+
+# Wikimedia Foundation User-Agent Policy 準拠の User-Agent
+# 参考: https://foundation.wikimedia.org/wiki/Policy:Wikimedia_Foundation_User-Agent_Policy
+USER_AGENT = (
+    "takohachi/1.0.0 (+https://github.com/pistachiostudio/takohachi; info@pistachiostudio.net)"
+)
+
+
+def now_jst() -> datetime:
     return datetime.now(JST)
 
 
 def get_what_today(this_month: int, this_day: int) -> str:
     """Wikipediaの「今日は何の日」に記載されている情報を取得します。
-    複数候補がある場合はランダムに1つ返却します。
-
-    Args:
-        this_month (int): 指定月
-        this_day (int): 指定日
-
-    Returns:
-        str: 今日は何の日の取得結果
+    複数候補がある場合はランダムに1つ返却します。取得できなければ日付だけを返します。
     """
-    # Wikimedia Foundation User-Agent Policy 準拠の User-Agent
-    # 参考: https://foundation.wikimedia.org/wiki/Policy:Wikimedia_Foundation_User-Agent_Policy
-    # TODO(zztkm): ここの値はアプリの定数値としてどこかに適切な場所に定義することを検討する
-    app_name = "takohachi"
-    app_version = "1.0.0"
-    app_url = "https://github.com/pistachiostudio/takohachi"
-    app_contact = "info@pistachiostudio.net"
-    user_agent = f"{app_name}/{app_version} (+{app_url}; {app_contact})"
-
-    base_url = "https://ja.wikipedia.org/wiki/Wikipedia:"
-    uri = f"今日は何の日_{this_month}月"
-
+    url = "https://ja.wikipedia.org/wiki/Wikipedia:" + parse.quote(f"今日は何の日_{this_month}月")
     fallback = f"{this_month}月{this_day}日です。"
 
     try:
-        res = httpx.get(
-            base_url + parse.quote(uri),
-            headers={"User-Agent": user_agent},
-        )
-        html = res.text
+        html = httpx.get(url, headers={"User-Agent": USER_AGENT}, timeout=15).text
         today_idx = html.index(f'id="{this_month}月{this_day}日"')
         ul_start_idx = html.index("ul", today_idx)
         ul_end_idx = html.index("/ul", ul_start_idx)
         ul = html[ul_start_idx:ul_end_idx].replace("\n", "")
-        ul_match_list = re.findall(r"<li[^>]*>.+?<\/li>", ul)
-        ul_match_sub_list = [re.sub("<.+?>", "", s) for s in ul_match_list]
+        items = [re.sub("<.+?>", "", s) for s in re.findall(r"<li[^>]*>.+?<\/li>", ul)]
     except (ValueError, httpx.HTTPError) as e:
-        print(f"Failed to fetch/parse 'what today' page: {e}")
+        logger.warning("Failed to fetch/parse 'what today' page: %s", e)
         return fallback
 
-    if not ul_match_sub_list:
-        print("項目が見つかりませんでした")
+    if not items:
+        logger.warning("'what today' items not found")
         return fallback
-
-    return ul_match_sub_list[randint(0, len(ul_match_sub_list) - 1)]
-
-
-def get_weather(citycode: str):
-    url = "https://weather.tsukumijima.net/api/forecast"
-
-    # citycode一覧"https://weather.tsukumijima.net/primary_area.xml"
-    params = {"city": citycode}
-
-    res = httpx.get(url, params=params)
-    json = res.json()
-
-    # date = json["forecasts"][0]["date"]
-    city = json["location"]["city"]
-    # body_text = json["description"]["bodyText"]
-    weather = json["forecasts"][0]["detail"]["weather"]
-    weather = weather.replace("　", "")
-    # min_temp = json["forecasts"][0]["temperature"]["min"]["celsius"]
-    max_temp = json["forecasts"][0]["temperature"]["max"]["celsius"]
-    chanceOfRain_morning = json["forecasts"][0]["chanceOfRain"]["T06_12"]
-    chanceOfRain_evening = json["forecasts"][0]["chanceOfRain"]["T12_18"]
-    chanceOfRain_night = json["forecasts"][0]["chanceOfRain"]["T18_24"]
-
-    result = f"- {city}: {weather}\n  - ️️️️🌡️ 最高気温: {max_temp} ℃\n  - ☔ 朝: {chanceOfRain_morning} | 昼: {chanceOfRain_evening} | 晩: {chanceOfRain_night}"  # noqa: E501
-
-    return result
+    return random.choice(items)
 
 
-def get_exchange_rate():
-    # demoに制限が出てくれば、無料のAPIキーを取得する。
-    url = "https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=USD&to_currency=JPY&apikey=demo"
+def get_weather(citycode: str) -> str:
+    # citycode一覧 "https://weather.tsukumijima.net/primary_area.xml"
+    res = httpx.get(
+        "https://weather.tsukumijima.net/api/forecast", params={"city": citycode}, timeout=15
+    )
+    data = res.json()
+    today = data["forecasts"][0]
+    city = data["location"]["city"]
+    weather = today["detail"]["weather"].replace("　", "")
+    max_temp = today["temperature"]["max"]["celsius"]
+    rain = today["chanceOfRain"]
 
-    result = httpx.get(url)
-    json = result.json()
-
-    usd_jpy = float(json["Realtime Currency Exchange Rate"]["5. Exchange Rate"])
-    round_usd_jpy = round(usd_jpy, 2)
-
-    return round_usd_jpy
+    return (
+        f"- {city}: {weather}\n  - ️️️️🌡️ 最高気温: {max_temp} ℃\n"
+        f"  - ☔ 朝: {rain['T06_12']} | 昼: {rain['T12_18']} | 晩: {rain['T18_24']}"
+    )
 
 
 @retry(
@@ -123,10 +89,5 @@ def get_stock_price(ticker_symbol: str):
     stock_yesterday = closes.iloc[-2]
     stock_today = closes.iloc[-1]
     day_before_ratio = round(stock_today - stock_yesterday, 1)
-
-    if day_before_ratio > 0:
-        day_before_ratio = f"+{day_before_ratio:,}"
-    else:
-        day_before_ratio = f"{day_before_ratio:,}"
-
-    return day_before_ratio, stock_today
+    sign = "+" if day_before_ratio > 0 else ""
+    return f"{sign}{day_before_ratio:,}", stock_today
