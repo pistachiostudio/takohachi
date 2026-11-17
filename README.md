@@ -18,7 +18,7 @@
 
 ## 🐙 About
 
-これは[ピスタチオゲーム部親睦会](https://discord.gg/pistachiogaming)というDiscordサーバーのためのユースレスBotです。
+これは[ピスタチオゲーム部親睦会](https://discord.gg/HzjVPFUuwx)というDiscordサーバーのためのユースレスBotです。
 
 Python 3.12 と [discord.py](https://github.com/Rapptz/discord.py) で作られていて、依存関係は [uv](https://docs.astral.sh/uv/) で管理しています。
 
