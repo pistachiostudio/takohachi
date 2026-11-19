@@ -58,7 +58,7 @@ class WTTasks(commands.Cog):
         try:
             what_today = await asyncio.to_thread(get_what_today, today.month, today.day)
             weathers = [await asyncio.to_thread(get_weather, code) for code in WEATHER_CITY_CODES]
-            # Geminiで雑学を生成し、TypeSafeで検証して取得
+            # Geminiで雑学を生成し、Gemini Decisionで検証して取得
             trivia_section = format_trivia_section(await get_trivia())
 
             embed = discord.Embed(

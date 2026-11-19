@@ -27,7 +27,7 @@ def _interaction():
 
 
 def _run_command(repo, keyword, suggestions=None, suggest_error=None):
-    """Trigger.trigger を、リポジトリとJevをモックして実行する。"""
+    """Trigger.trigger を、リポジトリとあいまい検索をモックして実行する。"""
     interaction = _interaction()
     suggest = AsyncMock(return_value=suggestions or [], side_effect=suggest_error)
 
