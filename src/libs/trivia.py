@@ -1,11 +1,11 @@
-"""朝の投稿用の雑学を、Geminiで生成しTypeSafeで検証して返すモジュール。"""
+"""朝の投稿用の雑学を、Geminiで生成しGemini Decision(判定モデル)で検証して返すモジュール。"""
 
 import logging
 import os
 import random
 from typing import NamedTuple
 
-from libs import typesafe
+from libs import gemini_decision
 from libs.http_client import HTTPClient
 
 logger = logging.getLogger(__name__)
@@ -15,15 +15,15 @@ logger = logging.getLogger(__name__)
 # 成功する見込みは薄く、クォータを追加で消費するだけになる。モデルを変えれば
 # 別のクォータ枠になるため、503(一時的な過負荷)にも429にも効く。
 #
-# 2026年9月時点、gemini-3.6/3.7/3.8-flash は新モデル特有の需要過多で503が頻発しており
-# (Google公式フォーラムで報告多数)、3.8が落ちていると3.6も道連れで落ちていることがある。
-# 3.5-flash-lite は軽量モデルで別のGPU枠のため影響を受けにくく、2.5-flashは実績のある
-# 最後の砦として残す。
-GEMINI_MODELS = ["gemini-3.8-flash", "gemini-3.5-flash-lite", "gemini-2.5-flash"]
+# gemini-4-hydrogen(2026年11月12日リリースのGemini 4の高速版。3.8-flashの後継)を主モデルにする。
+# リリース直後のモデルは需要過多で503が頻発しやすい(2026年9月の3.8-flashでも同様だった)ため、
+# 実績のある3.8-flashと、軽量で別のGPU枠のため影響を受けにくい3.5-flash-liteへ順に落とす。
+# gemini-2.5-flash は2026年12月1日に廃止(3.5-flash-liteへ自動転送)されるため外した。
+GEMINI_MODELS = ["gemini-4-hydrogen", "gemini-3.8-flash", "gemini-3.5-flash-lite"]
 
 # 検証に通らなかった場合に雑学を作り直す最大回数(初回を含む)
 MAX_ATTEMPTS = 3
-# Noulの確率(yesである確率)がこの値以上なら「問題あり」として却下する。
+# noulの確率(yesである確率)がこの値以上なら「問題あり」として却下する。
 # 実際の出力を見ながら調整する想定の初期値。
 REJECT_THRESHOLD = 0.5
 
@@ -34,17 +34,17 @@ class Trivia(NamedTuple):
     text: str
     # 実際に生成できたGeminiのモデル名。生成できなかった(フォールバック文言の)場合はNone。
     model: str | None = None
-    # TypeSafe(Jev)の検証を通過した場合のみ設定される「事実誤認がない確率」(0〜1)。
+    # Gemini Decisionの検証を通過した場合のみ設定される「事実誤認がない確率」(0.01〜0.99)。
     # 検証のスキップ・失敗時やフォールバック時はNone。
     truth: float | None = None
 
 
 def format_trivia_section(trivia: Trivia) -> str:
-    """投稿用に、雑学の本文とクレジット行(使用モデル・検証済みならJevのスコア付き)を組み立てる。"""
+    """投稿用に、雑学の本文とクレジット行(使用モデル・検証済みなら判定モデルのスコア付き)を組み立てる。"""
     model = trivia.model or "Gemini"
     credit = f"Powered by {model}"
     if trivia.truth is not None:
-        credit += f" / Jev truthfulness score: {trivia.truth:.0%}"
+        credit += f" / {gemini_decision.DECISION_MODEL} truthfulness score: {trivia.truth:.0%}"
     return f"{trivia.text}\n({credit})"
 
 
@@ -68,7 +68,7 @@ TRIVIA_PROMPT = (
     "- 挨拶・前置き・分野名・見出し・締めの一言は書かず、雑学の本文のみを出力すること。"
 )
 
-# yes(=1に近い)が「問題あり」を意味するNoul質問。回答は質問IDごとに返る。
+# yes(=1に近い)が「問題あり」を意味するnoul質問。回答は質問IDごとに返る。
 CHECK_QUESTIONS = {
     "has_factual_error": {
         "type": "noul",
@@ -78,8 +78,8 @@ CHECK_QUESTIONS = {
             "都市伝説や俗説を「そう言われている」「俗説である」と明示して紹介している場合は含みません。"
         ),
         "criteria": {
-            "true": "事実として誤っている、または俗説・捏造を事実として断定している",
-            "false": "事実として妥当、または俗説であることが明示されている",
+            "true_description": "事実として誤っている、または俗説・捏造を事実として断定している",
+            "false_description": "事実として妥当、または俗説であることが明示されている",
         },
     },
     "has_preamble": {
@@ -89,16 +89,16 @@ CHECK_QUESTIONS = {
             "「以下に紹介します」のような案内文、締めの一言など)が含まれていますか？"
         ),
         "criteria": {
-            "true": "本文以外の挨拶・前置き・見出し・案内文などを含む",
-            "false": "雑学の本文のみで構成されている",
+            "true_description": "本文以外の挨拶・前置き・見出し・案内文などを含む",
+            "false_description": "雑学の本文のみで構成されている",
         },
     },
     "is_incomplete": {
         "type": "noul",
         "instructions": "この文章は、途中で途切れていたり、文の途中で終わっていたりしますか？",
         "criteria": {
-            "true": "文の途中で終わっている、または内容が未完成",
-            "false": "最後まで文章として完結している",
+            "true_description": "文の途中で終わっている、または内容が未完成",
+            "false_description": "最後まで文章として完結している",
         },
     },
 }
@@ -150,8 +150,8 @@ async def _generate_with_model(model: str) -> str:
 
 
 async def check_trivia(trivia: str) -> dict[str, float]:
-    """TypeSafeで雑学を検証し、質問IDごとの「問題がある確率」を返す。"""
-    answers = await typesafe.system_one(trivia, CHECK_QUESTIONS)
+    """Gemini Decisionで雑学を検証し、質問IDごとの「問題がある確率」を返す。"""
+    answers = await gemini_decision.decide(trivia, CHECK_QUESTIONS)
     probabilities = {q: answers[q]["noul"] for q in CHECK_QUESTIONS}
     # 閾値を実データで調整するため、通った場合も含めて毎回確率を残す。
     logger.info(
@@ -166,16 +166,12 @@ async def check_trivia(trivia: str) -> dict[str, float]:
 async def get_trivia() -> Trivia:
     """雑学を返す。取得できなかった場合はフォールバック文言を返す。
 
-    TYPESAFE_API_KEY が未設定、またはTypeSafeの呼び出しに失敗した場合は、
-    朝の投稿を止めないため検証をスキップして生成結果をそのまま返す。
+    検証(Gemini Decision)の呼び出しに失敗した場合は、朝の投稿を止めないため
+    検証をスキップして生成結果をそのまま返す。
     """
     if not os.getenv("GEMINI_API_KEY"):
         logger.error("GEMINI_API_KEY is not set")
         return Trivia(FALLBACK_MESSAGE)
-
-    verify = typesafe.is_configured()
-    if not verify:
-        logger.warning("TYPESAFE_API_KEY is not set; skipping trivia verification")
 
     for attempt in range(1, MAX_ATTEMPTS + 1):
         try:
@@ -183,9 +179,6 @@ async def get_trivia() -> Trivia:
         except Exception:
             logger.exception("Failed to generate trivia (attempt %d)", attempt)
             continue
-
-        if not verify:
-            return Trivia(text, model)
 
         try:
             probabilities = await check_trivia(text)

@@ -38,7 +38,7 @@ class Trigger(commands.Cog):
             await interaction.followup.send(not_found)
             return
 
-        # 完全一致しなかった場合は、Jevが選んだ候補を、本人にだけ見えるボタンで提示する。
+        # 完全一致しなかった場合は、判定モデル(Gemini Decision)が選んだ候補を、本人にだけ見えるボタンで提示する。
         # 最初に公開で出した「考え中」の表示は、非公開のメッセージに切り替えられない
         # 可能性があるため、いったん消してから送る。
         try:

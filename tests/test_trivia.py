@@ -4,12 +4,12 @@ from unittest.mock import AsyncMock, patch
 import pytest
 from tenacity import wait_none
 
-from libs import trivia, typesafe
+from libs import gemini_decision, trivia
 from libs.http_client import APIError
 
 
 def _noul(**values):
-    """CHECK_QUESTIONS 全項目分のTypeSafeレスポンスを作る。指定のない項目は0.0(問題なし)。"""
+    """CHECK_QUESTIONS 全項目分のGemini Decisionレスポンスを作る。指定のない項目は0.0(問題なし)。"""
     return {
         "answers": {
             q: {"type": "noul", "noul": values.get(q, 0.0)} for q in trivia.CHECK_QUESTIONS
@@ -26,7 +26,6 @@ def _gemini(text="雑学です。", finish_reason="STOP"):
 @pytest.fixture(autouse=True)
 def _keys(monkeypatch):
     monkeypatch.setenv("GEMINI_API_KEY", "test-gemini")
-    monkeypatch.setenv("TYPESAFE_API_KEY", "test-typesafe")
 
 
 def _run(post_side_effect):
@@ -65,19 +64,24 @@ def test_fallback_after_max_attempts():
     assert result == trivia.Trivia(trivia.FALLBACK_MESSAGE)
 
 
-def test_posts_unverified_when_typesafe_fails():
-    result, _ = _run([_gemini("未検証の雑学"), RuntimeError("typesafe down")])
+def test_posts_unverified_when_decision_fails():
+    result, _ = _run([_gemini("未検証の雑学"), RuntimeError("decision down")])
 
     assert result == trivia.Trivia("未検証の雑学", trivia.GEMINI_MODELS[0])
 
 
-def test_skips_verification_without_typesafe_key(monkeypatch):
-    monkeypatch.delenv("TYPESAFE_API_KEY")
+def test_verification_uses_decisions_api():
+    _, post = _run([_gemini("雑学"), _noul()])
 
-    result, post = _run([_gemini("雑学")])
-
-    assert result == trivia.Trivia("雑学", trivia.GEMINI_MODELS[0])
-    assert post.await_count == 1
+    call = post.await_args_list[1]
+    assert call.args[0] == gemini_decision.DECISIONS_API_URL
+    body = call.kwargs["json"]
+    assert body["model"] == "gemini-decision-1"
+    assert body["input"] == "雑学"
+    assert set(body["questions"]) == set(trivia.CHECK_QUESTIONS)
+    # noulのcriteriaはDecisions APIの形式(true_description/false_description)で送る
+    for q in body["questions"].values():
+        assert set(q["criteria"]) == {"true_description", "false_description"}
 
 
 def test_truncated_output_falls_back_to_next_model():
@@ -107,9 +111,9 @@ def test_primary_model_failure_falls_back_within_one_generate_call():
 def test_three_models_configured_newest_first():
     # 障害時、より軽量/実績のあるモデルへ段階的にフォールバックする構成になっている
     assert trivia.GEMINI_MODELS == [
+        "gemini-4-hydrogen",
         "gemini-3.8-flash",
         "gemini-3.5-flash-lite",
-        "gemini-2.5-flash",
     ]
 
 
@@ -150,9 +154,11 @@ def test_low_truth_is_still_accepted():
 
 
 def test_format_section_with_score():
-    text = trivia.format_trivia_section(trivia.Trivia("本文", "gemini-3.8-flash", truth=0.97))
+    text = trivia.format_trivia_section(trivia.Trivia("本文", "gemini-4-hydrogen", truth=0.97))
 
-    assert text == "本文\n(Powered by gemini-3.8-flash / Jev truthfulness score: 97%)"
+    assert text == (
+        "本文\n(Powered by gemini-4-hydrogen / gemini-decision-1 truthfulness score: 97%)"
+    )
 
 
 def test_format_section_without_score():
@@ -169,8 +175,8 @@ def test_format_section_without_model():
     assert text == "本文\n(Powered by Gemini)"
 
 
-def test_transient_typesafe_error_is_retried(monkeypatch):
-    monkeypatch.setattr(typesafe.system_one.retry, "wait", wait_none())
+def test_transient_decision_error_is_retried(monkeypatch):
+    monkeypatch.setattr(gemini_decision.decide.retry, "wait", wait_none())
 
     result, post = _run([_gemini("雑学"), APIError("overloaded", status_code=529), _noul()])
 
@@ -179,7 +185,7 @@ def test_transient_typesafe_error_is_retried(monkeypatch):
 
 
 def test_non_transient_error_is_not_retried(monkeypatch):
-    monkeypatch.setattr(typesafe.system_one.retry, "wait", wait_none())
+    monkeypatch.setattr(gemini_decision.decide.retry, "wait", wait_none())
 
     result, post = _run([_gemini("雑学"), APIError("unauthorized", status_code=401)])
 

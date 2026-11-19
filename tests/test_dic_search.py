@@ -22,12 +22,12 @@ def _answers(**probabilities):
 
 @pytest.fixture(autouse=True)
 def _key(monkeypatch):
-    monkeypatch.setenv("TYPESAFE_API_KEY", "test-typesafe")
+    monkeypatch.setenv("GEMINI_API_KEY", "test-gemini")
 
 
 def _suggest(query, entries, answers=None, error=None):
     mock = AsyncMock(return_value=answers, side_effect=error)
-    with patch("libs.dic_search.typesafe.system_one", new=mock):
+    with patch("libs.dic_search.gemini_decision.decide", new=mock):
         return asyncio.run(dic_search.suggest(query, entries)), mock
 
 
@@ -44,7 +44,8 @@ def test_build_question_describes_each_entry():
     assert list(criteria) == ["gomi", "genkai", dic_search.NONE_OPTION]
     assert criteria["gomi"].startswith("別名: ごみ / タイトル: ゴミの日 / 説明: ")
     assert criteria["gomi"].count("a") == dic_search.DESCRIPTION_CHARS
-    assert criteria["genkai"] is None
+    # Decisions APIは説明にnullを受け付けないため、手がかりがなければ空文字にする
+    assert criteria["genkai"] == ""
 
 
 def test_build_question_dedupes_and_caps_options():
@@ -88,9 +89,25 @@ def test_suggest_skips_without_key_or_entries(monkeypatch):
     result, mock = _suggest("x", [])
     assert result == [] and mock.await_count == 0
 
-    monkeypatch.delenv("TYPESAFE_API_KEY")
+    monkeypatch.delenv("GEMINI_API_KEY")
     result, mock = _suggest("x", [_entry("gomi")])
     assert result == [] and mock.await_count == 0
+
+
+def test_build_question_skips_option_ids_rejected_by_api():
+    entries = [_entry(" spaced "), _entry("x" * 129), _entry(""), _entry("徳井病")]
+
+    criteria = dic_search.build_question(entries)["criteria"]
+
+    assert list(criteria) == ["徳井病", dic_search.NONE_OPTION]
+
+
+def test_suggest_sends_query_as_text_input():
+    entries = [_entry("gomi")]
+
+    _, mock = _suggest("ごみ捨て", entries, _answers(gomi=0.9, **{"__none__": 0.1}))
+
+    assert mock.await_args.args[0] == "query: ごみ捨て"
 
 
 def test_suggest_falls_back_to_empty_on_error():
